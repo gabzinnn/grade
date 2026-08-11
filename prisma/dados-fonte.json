@@ -1,0 +1,218 @@
+{
+  "_meta": {
+    "aluno": "Gabriel Ladeira Quintella",
+    "dre": "124031561",
+    "curso": "14352 - Engenharia de Produção (UFRJ / Escola Politécnica)",
+    "versaoCurricular": "2015/1",
+    "periodoAtual": 6,
+    "semestreAtual": "2026/2",
+    "metaFormatura": "10º período (2028/2)",
+    "tetoCreditosPorPeriodo": 32,
+    "crAcumulado": 8.1,
+    "creditosObtidos": 124,
+    "prazoMaximoIntegralizacao": 15,
+    "fontes": "BOA 08/08/2026, Histórico 08/08/2026, CRID 2026/2, Grade Curricular SIGA, Quadro de Horários 2026/2, Lista de turmas SIGA",
+    "statusHorarios": "Todos os horários foram conferidos e confirmados pelo aluno em 08/08/2026. Não há mais divergências pendentes entre o quadro de horários e a lista de turmas."
+  },
+
+  "metaCreditos": {
+    "obrigatorias":        { "total": 200, "cumpridos": 117, "falta": 83 },
+    "escolhaCondicionada": { "total": 9,   "cumpridos": 3,   "falta": 6  },
+    "grupoHumanas":        { "total": 4,   "cumpridos": 0,   "falta": 4  },
+    "livreEscolha":        { "total": 3,   "cumpridos": 4,   "falta": 0  },
+    "grupoACE":            { "totalCH": 405, "observacao": "Coberto por EEWZ56 (400h, cursando) + 15h de extensão do NCG011. Tratar como CONCLUÍDO no HTML. Falta só reivindicar na secretaria. 0 créditos." },
+    "enfase":              { "total": 24, "cumpridos": 0, "falta": 24,
+                             "regra": "15 créditos na ênfase escolhida (ENGENHARIA ECONÔMICA) + 9 créditos de contra-ênfase (GERÊNCIA DA PRODUÇÃO)",
+                             "observacao": "NÃO aparece no BOA nem na Grade Curricular do SIGA, mas o Gabriel confirmou que é obrigatório. Os 200 créditos de obrigatórias NÃO incluem a ênfase (soma verificada disciplina a disciplina = exatamente 200,0)." }
+  },
+
+  "resumoRestante": {
+    "aposConcluir6oPeriodo": {
+      "obrigatorias": 53,
+      "enfaseEconomica": 15,
+      "enfaseGerencia": 9,
+      "escolhaCondicionada": 6,
+      "grupoHumanas": 4,
+      "TOTAL": 87,
+      "periodosDisponiveis": 4,
+      "mediaPorPeriodo": 21.75
+    }
+  },
+
+  "concluidas": [
+    "ICP114","MAC118","EEH210","FIS111","FIT112","EEI200","IQG111",
+    "ICP225","MAC128","FIS121","FIT122","EEI212","IQG112","EEG105",
+    "EEG301","EEI325","EEA212","EEI201","MAE125",
+    "EEI735","MAC238","ICP231","EEI426","FIN231","FIM230","EEI533","NCG011","EET310",
+    "MAC248","EEK345","EEI058","EEI541","FIM240","EEI551","EEI722","EEA338"
+  ],
+  "_notaEquivalencias": {
+    "EEI201": "satisfaz MAD201 (Probabilidade e Estatística)",
+    "EEA212": "satisfaz EEN212 (pré-requisito de EEN344)",
+    "EEI426": "satisfaz EEI323 + EEI324",
+    "EEI735": "satisfaz EEI423",
+    "EEE390": "substitui EEE385 (Eletricidade I) — EEE385 não é mais ofertada"
+  },
+
+  "cursandoAtualmente_2026_2": [
+    "EEI613","EEI621","EEI634","EEI642","EEI643","EEK355","EEN344","EEI652","FIN241","EEWZ56"
+  ],
+
+  "disciplinas": [
+
+    { "codigo":"FIN241","nome":"Física Experimental IV","creditos":1,"ch":30,"categoria":"OBRIGATORIA","periodoGrade":4,"prereq":[],
+      "turmas":[{"turma":"12565","nome":"Física Experimental-IV / EPT1","horarios":[{"dia":"SEG","ini":"13:00","fim":"15:00"}]}],
+      "obs":"No CRID 2026/2. Gabriel NÃO vai tirar." },
+
+    { "codigo":"EEI613","nome":"Instalações Industriais","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":6,"prereq":["FIM230"],
+      "turmas":[{"turma":"15229","nome":"INST.INDUSTRIAIS EP1 (Sérgio Leal)","prof":"Juliana Souza Baioco","horarios":[{"dia":"QUA","ini":"07:00","fim":"09:00"},{"dia":"SEX","ini":"07:00","fim":"09:00"}]}] },
+
+    { "codigo":"EEI621","nome":"Org e Avaliação do Trabalho","creditos":3,"ch":45,"categoria":"OBRIGATORIA","periodoGrade":6,"prereq":["EEI426"],
+      "turmas":[{"turma":"10872","nome":"ORG. E AVAL.DO TRAB. EP1","prof":"José Augusto Nogueira Kamel","horarios":[{"dia":"TER","ini":"11:00","fim":"13:00"},{"dia":"QUI","ini":"11:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI634","nome":"Economia da Engenharia","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":6,"prereq":[],
+      "turmas":[{"turma":"15224","nome":"ECONOMIA DA ENGª EP1 F116","prof":"Roberto Ivo da Rocha Lima Filho","horarios":[{"dia":"SEG","ini":"11:00","fim":"13:00"},{"dia":"QUA","ini":"11:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI642","nome":"Estatística Aplicada II","creditos":3,"ch":45,"categoria":"OBRIGATORIA","periodoGrade":6,"prereq":["EEI541"],
+      "turmas":[{"turma":"10710","nome":"ESTAT. APLICADA II S/I-105 A","prof":"André Assis de Salles","horarios":[{"dia":"SEX","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI643","nome":"Pesquisa Operacional I","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":6,"prereq":["MAE125"],
+      "turmas":[{"turma":"11038","nome":"PESQUISA OPERACIONAL I EP1","prof":"José Roberto Ribas","horarios":[{"dia":"TER","ini":"09:00","fim":"11:00"},{"dia":"QUI","ini":"09:00","fim":"11:00"}]}] },
+
+    { "codigo":"EEK355","nome":"Termodinâmica Aplicada","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":6,"prereq":[],
+      "turmas":[{"turma":"8123","nome":"Termodinâmica Aplicada - EP1","prof":"Silvio Carlos Anibal de Almeida","horarios":[{"dia":"SEG","ini":"09:00","fim":"11:00"},{"dia":"QUA","ini":"09:00","fim":"11:00"}]}] },
+
+    { "codigo":"EEN344","nome":"Mecânica Aplicada às Máquinas","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":6,"prereq":["EEA212"],
+      "turmas":[{"turma":"12458","nome":"Mecânica Aplicada às Máquinas","prof":"Luiz Antonio Vaz Pinto","horarios":[{"dia":"TER","ini":"07:00","fim":"09:00"},{"dia":"QUI","ini":"07:00","fim":"09:00"}]}] },
+
+    { "codigo":"EEI652","nome":"Engenharia da Informação","creditos":3,"ch":45,"categoria":"OBRIGATORIA","periodoGrade":5,"prereq":[],
+      "turmas":[{"turma":"10781","nome":"ENG DA INFORMAÇÃO S/I-105 A","horarios":[{"dia":"TER","ini":"13:00","fim":"15:00"}]}],
+      "obs":"No CRID 2026/2, mas Gabriel pode TIRAR se passar no estágio. Se tirar, reencaixar em período futuro." },
+
+    { "codigo":"EEE390","nome":"Fundamentos de Eletricidade","creditos":4,"ch":75,"categoria":"OBRIGATORIA","periodoGrade":5,"prereq":[],
+      "turmas":[
+        {"turma":"16450","nome":"EB2","prof":"Henrique Resende de Almeida","horarios":[{"dia":"SEX","ini":"07:00","fim":"10:00"}]},
+        {"turma":"16451","nome":"EB1","prof":"Henrique Resende de Almeida","horarios":[{"dia":"SEX","ini":"10:00","fim":"13:00"}]},
+        {"turma":"16452","nome":"EB3","prof":"Rodrigo Vasconcelos Gloria","horarios":[{"dia":"QUA","ini":"15:00","fim":"18:00"}]}
+      ],
+      "obs":"Substitui EEE385 Eletricidade I. PENDENTE — não está no CRID 2026/2." },
+
+    { "codigo":"EEI714","nome":"Sist. de Produção Mecânica e Controle Numérico","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":7,"prereq":[],
+      "turmas":[{"turma":"13701","nome":"SIST.DE PROD.E CONTR.NUMERICO EP1","prof":"Renato Florido Cameira","horarios":[{"dia":"SEG","ini":"13:00","fim":"15:00"},{"dia":"QUI","ini":"13:00","fim":"15:00"}]}] },
+
+    { "codigo":"EEI744","nome":"Pesquisa Operacional II","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":7,"prereq":["EEI541"],
+      "turmas":[{"turma":"10853","nome":"PESQUISA OPERACIONAL II EP1","prof":"George Victor Brigagão","horarios":[{"dia":"TER","ini":"16:00","fim":"18:00"},{"dia":"QUI","ini":"15:00","fim":"17:00"}]}] },
+
+    { "codigo":"EEI753","nome":"Controle de Qualidade","creditos":3,"ch":45,"categoria":"OBRIGATORIA","periodoGrade":7,"prereq":["EEI642"],
+      "turmas":[{"turma":"10698","nome":"CONTROLE DE QUALIDADE EP1","prof":"Amarildo da Cruz Fernandes","horarios":[{"dia":"QUA","ini":"15:00","fim":"18:00"}]}] },
+
+    { "codigo":"EEI754","nome":"Planejamento das Instalações","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":7,"prereq":["EEI426"],
+      "turmas":[{"turma":"11105","nome":"PLANEJAMENTO DAS INSTALAÇÕES EP1","prof":"Leonardo Luiz Lima Navarro","horarios":[{"dia":"QUA","ini":"13:00","fim":"15:00"},{"dia":"SEX","ini":"13:00","fim":"15:00"}]}] },
+
+    { "codigo":"EQW471","nome":"Introdução à Indústria Química e Eng. de Processos","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":7,"prereq":[],
+      "turmas":[{"turma":"10590","nome":"INT IND QUIM E ENG PROC/EP1","prof":"Bettina Susanne Hoffmann Daflon","horarios":[{"dia":"SEX","ini":"15:00","fim":"18:00"}]}] },
+
+    { "codigo":"EEI815","nome":"Manufatura Integrada por Computador","creditos":3,"ch":45,"categoria":"OBRIGATORIA","periodoGrade":8,"prereq":[],
+      "turmas":[{"turma":"13697","nome":"MANUFATURA INTEG. POR COMP. I-105 A EP1","prof":"Renato Florido Cameira","horarios":[{"dia":"QUI","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI836","nome":"Economia da Empresa","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":8,"prereq":["EEI533"],
+      "turmas":[{"turma":"11075","nome":"ECONOMIA DA EMPRESA EP1","prof":"Klitia Valeska Bicalho de Sá","horarios":[{"dia":"SEG","ini":"11:00","fim":"13:00"},{"dia":"QUA","ini":"11:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI837","nome":"Custos Industriais","creditos":2,"ch":30,"categoria":"OBRIGATORIA","periodoGrade":8,"prereq":["EEI735"],
+      "turmas":[{"turma":"11072","nome":"CUSTOS INDUSTRIAIS EP1","prof":"Klitia Valeska Bicalho de Sá","horarios":[{"dia":"SEG","ini":"09:00","fim":"11:00"}]}] },
+
+    { "codigo":"EEI845","nome":"Simulação","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":8,"prereq":["EEI541"],
+      "turmas":[{"turma":"11152","nome":"SIMULAÇÃO EP1 I-105-A","prof":"Lino Guimarães Marujo","horarios":[{"dia":"SEG","ini":"15:00","fim":"19:00"}]}] },
+
+    { "codigo":"EEI855","nome":"Gerência de Qualidade","creditos":3,"ch":45,"categoria":"OBRIGATORIA","periodoGrade":8,"prereq":["EEI753"],
+      "turmas":[{"turma":"10700","nome":"GERENCIA DA QUALIDADE EP1","prof":"Amarildo da Cruz Fernandes","horarios":[{"dia":"TER","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI856","nome":"Planejamento e Controle da Produção I","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":8,"prereq":["EEI643","EEI744","EEI754"],
+      "turmas":[{"turma":"13509","nome":"PCP I","prof":"Leonardo de Aragão Guimarães","horarios":[{"dia":"QUA","ini":"09:00","fim":"11:00"},{"dia":"SEX","ini":"10:00","fim":"12:00"}]}] },
+
+    { "codigo":"EEWX00","nome":"Projeto de Graduação (TCC)","creditos":4,"ch":180,"categoria":"OBRIGATORIA","periodoGrade":8,"prereq":[],
+      "turmas":[{"turma":"—","nome":"sem horário fixo","horarios":[]}],
+      "obs":"Gabriel fará no 9º ou 10º. Bloco sem horário — não ocupa slot no calendário." },
+
+    { "codigo":"EEI957","nome":"Planejamento e Controle da Produção II","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":9,"prereq":["EEI856"],
+      "turmas":[{"turma":"11110","nome":"PLANEJ.E CONT.PRODUÇÃO II EP1","prof":"Leonardo Luiz Lima Navarro","horarios":[{"dia":"TER","ini":"10:00","fim":"12:00"},{"dia":"QUI","ini":"10:00","fim":"12:00"}]}] },
+
+    { "codigo":"EEWU00","nome":"Estágio Obrigatório","creditos":2,"ch":160,"categoria":"OBRIGATORIA","periodoGrade":9,"prereq":[],
+      "turmas":[{"turma":"—","nome":"sem horário fixo","horarios":[]}],
+      "obs":"Bloco sem horário. Não ocupa slot no calendário." },
+
+    { "codigo":"EEI933","nome":"Economia Brasileira","creditos":3,"ch":45,"categoria":"ENFASE_ECONOMICA","prereq":[],
+      "turmas":[{"turma":"13719","nome":"ECONOMIA BRASILEIRA EP1","prof":"Ricardo Ferreira de Mello","horarios":[{"dia":"SEX","ini":"07:00","fim":"10:00"}]}] },
+
+    { "codigo":"EEI934","nome":"Marketing","creditos":3,"ch":45,"categoria":"ENFASE_ECONOMICA","prereq":[],
+      "turmas":[{"turma":"13572","nome":"MARKETING EP1","prof":"Maria Alice Ferruccio da Rocha","horarios":[{"dia":"TER","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI034","nome":"Análise de Riscos de Investimentos","creditos":3,"ch":45,"categoria":"ENFASE_ECONOMICA","prereq":[],
+      "turmas":[{"turma":"10768","nome":"ANALISE DE RISCO DE INVEST. EP1","prof":"Armando Celestino Gonçalves Neto","horarios":[{"dia":"QUI","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI031","nome":"Análise de Investimentos","creditos":3,"ch":45,"categoria":"ENFASE_ECONOMICA","prereq":[],
+      "turmas":[{"turma":"10772","nome":"ANALISE DE INVESTIMENTOS EP1","prof":"Armando Celestino Gonçalves Neto","horarios":[{"dia":"TER","ini":"13:00","fim":"16:00"}]}] },
+
+    { "codigo":"EEI931","nome":"Macroeconomia","creditos":3,"ch":45,"categoria":"ENFASE_ECONOMICA","prereq":[],
+      "turmas":[{"turma":"15222","nome":"MACROECONOMIA","prof":"Roberto Ivo da Rocha Lima Filho","horarios":[{"dia":"QUA","ini":"13:00","fim":"16:00"}]}] },
+
+    { "codigo":"EEI032","nome":"Projetos Industriais","creditos":3,"ch":45,"categoria":"ENFASE_ECONOMICA","prereq":[],
+      "turmas":[{"turma":"10758","nome":"PROJ. INDUSTRIAIS EP1","prof":"Bruno Cabral Muniz Freire","horarios":[{"dia":"SEX","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI021","nome":"Gerência de Recursos Humanos","creditos":3,"ch":45,"categoria":"ENFASE_GERENCIA","prereq":[],
+      "turmas":[{"turma":"13556","nome":"GER. DE RECURSOS HUMANOS EP1","prof":"Maria Alice Ferruccio da Rocha","horarios":[{"dia":"TER","ini":"07:00","fim":"10:00"}]}] },
+
+    { "codigo":"EEI052","nome":"Engenharia de Processos de Negócios","creditos":3,"ch":45,"categoria":"ENFASE_GERENCIA","prereq":[],
+      "turmas":[{"turma":"13695","nome":"ENG. DE PROCESSOS DE NEGOCIOS I-105A EP1","prof":"Renato Florido Cameira","horarios":[{"dia":"SEG","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI050","nome":"Planejamento Estratégico","creditos":3,"ch":45,"categoria":"ENFASE_GERENCIA","prereq":[],
+      "turmas":[{"turma":"10667","nome":"PLANEJAMENTO ESTRATEGICO EP1","prof":"Adriano Proença","horarios":[{"dia":"QUA","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI958","nome":"Logística","creditos":3,"ch":45,"categoria":"ENFASE_GERENCIA","prereq":[],
+      "turmas":[{"turma":"11148","nome":"LOGISTICA EP1 I-105 A","prof":"Lino Guimarães Marujo","horarios":[{"dia":"QUA","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI054","nome":"Gerência de Projetos e Engenharia Simultânea","creditos":3,"ch":45,"categoria":"ENFASE_GERENCIA","prereq":[],
+      "turmas":[{"turma":"13721","nome":"GER. DE PROJ. E ENG. SIMULTANEA","prof":"Ricardo Ferreira de Mello","horarios":[{"dia":"SEX","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEWX02","nome":"Projeto de Extensão em Empreendedorismo e Novos Negócios","creditos":4,"ch":60,"categoria":"CONDICIONADA","prereq":[],
+      "turmas":[
+        {"turma":"16985","nome":"L.E","prof":"Maria Alice Ferruccio da Rocha","horarios":[{"dia":"SEG","ini":"10:00","fim":"13:00"}]},
+        {"turma":"4016","nome":"S/D-105","prof":"Maria Alice Ferruccio da Rocha","horarios":[{"dia":"SEG","ini":"10:00","fim":"13:00"}]}
+      ] },
+
+    { "codigo":"EEI053","nome":"Gerência da Inovação e Criação de Emp. de Base Tecnológica","creditos":3,"ch":45,"categoria":"CONDICIONADA","prereq":[],
+      "turmas":[{"turma":"10665","nome":"SALA L.E","prof":"Adriano Proença","horarios":[{"dia":"SEG","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI948","nome":"Métodos Quantitativos Aplicados a Finanças","creditos":3,"ch":45,"categoria":"CONDICIONADA","prereq":[],
+      "turmas":[{"turma":"10717","nome":"L.E","prof":"André Assis de Salles","horarios":[{"dia":"QUA","ini":"10:00","fim":"13:00"}]}],
+      "obs":"BOA marca INSCRIÇÃO VEDADA — verificar pré-requisito antes de planejar." },
+
+    { "codigo":"EEI005","nome":"Inteligência Artificial Aplicada à Gestão da Produção","creditos":2,"ch":30,"categoria":"CONDICIONADA","prereq":[],
+      "turmas":[{"turma":"13629","nome":"S/F-116","prof":"Maria Alice Ferruccio da Rocha","horarios":[{"dia":"SEG","ini":"13:00","fim":"15:00"}]}] },
+
+    { "codigo":"EEI051","nome":"Análise Sistêmica de Empresas e Produtividade","creditos":3,"ch":45,"categoria":"CONDICIONADA","prereq":[],
+      "turmas":[{"turma":"10705","nome":"L.E","prof":"Amarildo da Cruz Fernandes","horarios":[{"dia":"TER","ini":"15:00","fim":"17:00"}]}] },
+
+    { "codigo":"EEI202","nome":"Humanidades e Ciências Sociais","creditos":2,"ch":30,"categoria":"HUMANAS","prereq":[],
+      "turmas":[{"turma":"10868","nome":"ET1+ER1 S/F222","prof":"José Augusto Nogueira Kamel","horarios":[{"dia":"TER","ini":"08:00","fim":"10:00"}]}] },
+
+    { "codigo":"EEI206","nome":"História da Tecnologia","creditos":2,"ch":30,"categoria":"HUMANAS","prereq":[],
+      "turmas":[{"turma":"10822","nome":"EP1-S/I-105A","prof":"Fabio Luiz Pires Moraes","horarios":[{"dia":"TER","ini":"10:00","fim":"12:00"}]}] },
+
+    { "codigo":"EEI922","nome":"Ética e Engenharia de Produção","creditos":3,"ch":45,"categoria":"HUMANAS","prereq":[],
+      "turmas":[{"turma":"11080","nome":"S/F-225","prof":"Klitia Valeska Bicalho de Sá","horarios":[{"dia":"QUA","ini":"13:00","fim":"16:00"}]}] },
+
+    { "codigo":"EEL191","nome":"Engenharia e Sociedade","creditos":4,"ch":60,"categoria":"HUMANAS","prereq":[],
+      "turmas":[{"turma":"15715","nome":"EL1+EP1 SF-115","prof":"Roberto Ivo da Rocha Lima Filho","horarios":[{"dia":"SEG","ini":"13:00","fim":"17:00"}]}] },
+
+    { "codigo":"EEW602","nome":"Evolução da Ciência e Engenharia","creditos":4,"ch":60,"categoria":"HUMANAS","prereq":[],
+      "turmas":[{"turma":"5794","nome":"—","prof":"Luiz Eduardo Azambuja Sauerbronn","horarios":[{"dia":"TER","ini":"15:00","fim":"19:00"}]}] }
+  ],
+
+  "outrasTurmasOfertadas_naoNecessarias": [
+    { "codigo":"EEG507","nome":"Modelo Digital da Edificação BIM","turma":"6382","horarios":[{"dia":"TER","ini":"08:00","fim":"10:00"},{"dia":"QUI","ini":"08:00","fim":"10:00"}] },
+    { "codigo":"MAE013","nome":"Introdução à Análise Topológica de Dados","turma":"16341","horarios":[{"dia":"QUA","ini":"17:00","fim":"18:30"}],"obs":"tem também um bloco na SEG, horário cortado" },
+    { "codigo":"MAE014","nome":"Tóp. Ciência de Dados: Estrutura de Dados","turma":"16351","horarios":[{"dia":"TER","ini":"15:00","fim":"17:00"},{"dia":"QUI","ini":"15:00","fim":"17:00"}] },
+    { "codigo":"EET100","nome":"Tecnologia e Desenvolvimento Social","turma":"6848","horarios":[{"dia":"SEX","ini":"08:00","fim":"10:00"}] }
+  ]
+}

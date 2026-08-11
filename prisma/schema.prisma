@@ -1,0 +1,392 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────── enums
+
+enum StatusHistorico {
+  CONCLUIDA
+  CURSANDO
+  REPROVADA
+  TRANCADA
+  DISPENSADA
+}
+
+enum TipoRequisito {
+  PRE
+  CO
+}
+
+enum PapelEnfase {
+  PRINCIPAL
+  CONTRA
+}
+
+enum PapelAcesso {
+  EDITOR
+  LEITOR
+}
+
+enum TipoBloco {
+  ESTAGIO
+  TRABALHO
+  PESSOAL
+  DESLOCAMENTO
+}
+
+// ─────────────────────────── catálogo institucional
+
+model Instituicao {
+  id          String       @id @default(cuid())
+  sigla       String       @unique
+  nome        String
+  cursos      Curso[]
+  disciplinas Disciplina[]
+  professores Professor[]
+  locais      Local[]
+}
+
+model Curso {
+  id            String             @id @default(cuid())
+  instituicaoId String
+  codigo        String // "14352"
+  nome          String
+  instituicao   Instituicao        @relation(fields: [instituicaoId], references: [id], onDelete: Cascade)
+  versoes       VersaoCurricular[]
+
+  @@unique([instituicaoId, codigo])
+}
+
+model VersaoCurricular {
+  id                  String             @id @default(cuid())
+  cursoId             String
+  codigo              String // "2015/1"
+  tetoCreditosPadrao  Int
+  prazoMaximoPeriodos Int
+  curso               Curso              @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  categorias          Categoria[]
+  disciplinas         DisciplinaVersao[]
+  regrasEnfase        RegraEnfase[]
+  equivalencias       Equivalencia[]
+  perfis              Perfil[]
+  planos              Plano[]
+
+  @@unique([cursoId, codigo])
+}
+
+/// Categoria pertence à versão curricular: "Ênfase em Engenharia Econômica"
+/// só existe em Eng. de Produção 2015/1.
+model Categoria {
+  id                  String             @id @default(cuid())
+  versaoCurricularId  String
+  chave               String // OBRIGATORIA, ENFASE_ECONOMICA...
+  nome                String
+  corHex              String
+  ordem               Int
+  ehEnfase            Boolean            @default(false)
+  creditosExigidos    Decimal?           @db.Decimal(5, 1) // null quando a exigência vem de RegraEnfase
+  cargaHorariaExigida Int? // p/ grupos medidos em horas (ACE)
+  versaoCurricular    VersaoCurricular   @relation(fields: [versaoCurricularId], references: [id], onDelete: Cascade)
+  disciplinas         DisciplinaVersao[]
+  enfasePrincipalDe   Plano[]            @relation("EnfasePrincipal")
+  contraEnfaseDe      Plano[]            @relation("ContraEnfase")
+
+  @@unique([versaoCurricularId, chave])
+}
+
+/// Quantos créditos a ênfase escolhida e a contra-ênfase exigem.
+/// Não cabe em Categoria porque o valor depende do PAPEL que o aluno dá a ela
+/// (15 se for a principal, 9 se for a contra), não da categoria em si.
+model RegraEnfase {
+  versaoCurricularId String
+  papel              PapelEnfase
+  creditosExigidos   Decimal          @db.Decimal(5, 1)
+  versaoCurricular   VersaoCurricular @relation(fields: [versaoCurricularId], references: [id], onDelete: Cascade)
+
+  @@id([versaoCurricularId, papel])
+}
+
+model Disciplina {
+  id            String             @id @default(cuid())
+  instituicaoId String
+  codigo        String // "EEI643"
+  nome          String
+  creditos      Decimal            @db.Decimal(4, 1)
+  cargaHoraria  Int
+  instituicao   Instituicao        @relation(fields: [instituicaoId], references: [id], onDelete: Cascade)
+  versoes       DisciplinaVersao[]
+  turmas        Turma[]
+  requisitoDe   Requisito[]        @relation("DisciplinaExigida")
+  historico     HistoricoItem[]
+  planoItens    PlanoItem[]
+  equivCursada  Equivalencia[]     @relation("Cursada")
+  equivSatisfaz Equivalencia[]     @relation("Satisfaz")
+
+  @@unique([instituicaoId, codigo])
+}
+
+/// A ponte que resolve a dependência transitiva: categoria e período sugerido
+/// são propriedades do par (disciplina, versão curricular), não da disciplina.
+model DisciplinaVersao {
+  id                 String           @id @default(cuid())
+  versaoCurricularId String
+  disciplinaId       String
+  categoriaId        String
+  periodoSugerido    Int?
+  versaoCurricular   VersaoCurricular @relation(fields: [versaoCurricularId], references: [id], onDelete: Cascade)
+  disciplina         Disciplina       @relation(fields: [disciplinaId], references: [id], onDelete: Cascade)
+  categoria          Categoria        @relation(fields: [categoriaId], references: [id])
+  requisitos         Requisito[]
+
+  @@unique([versaoCurricularId, disciplinaId])
+  @@index([categoriaId])
+}
+
+model Requisito {
+  id                  String           @id @default(cuid())
+  disciplinaVersaoId  String // quem exige
+  disciplinaExigidaId String // o que é exigido
+  tipo                TipoRequisito    @default(PRE)
+  disciplinaVersao    DisciplinaVersao @relation(fields: [disciplinaVersaoId], references: [id], onDelete: Cascade)
+  disciplinaExigida   Disciplina       @relation("DisciplinaExigida", fields: [disciplinaExigidaId], references: [id])
+
+  @@unique([disciplinaVersaoId, disciplinaExigidaId, tipo])
+  @@index([disciplinaExigidaId])
+}
+
+/// "EEI426 satisfaz EEI323 e EEI324" — vale por versão curricular.
+model Equivalencia {
+  versaoCurricularId String
+  cursadaId          String
+  satisfazId         String
+  versaoCurricular   VersaoCurricular @relation(fields: [versaoCurricularId], references: [id], onDelete: Cascade)
+  cursada            Disciplina       @relation("Cursada", fields: [cursadaId], references: [id])
+  satisfaz           Disciplina       @relation("Satisfaz", fields: [satisfazId], references: [id])
+
+  @@id([versaoCurricularId, cursadaId, satisfazId])
+}
+
+// ─────────────────────────── oferta
+
+model Semestre {
+  id           Int                      @id @default(autoincrement())
+  ano          Int
+  periodo      Int // 1 ou 2
+  inicioAulas  DateTime?                @db.Date
+  fimAulas     DateTime?                @db.Date
+  turmas       Turma[]
+  historico    HistoricoItem[]
+  periodos     PlanoPeriodo[]
+  blocos       BlocoIndisponibilidade[]
+  ingressantes Perfil[]                 @relation("Ingresso")
+
+  @@unique([ano, periodo])
+}
+
+model Professor {
+  id            String           @id @default(cuid())
+  instituicaoId String
+  nome          String
+  instituicao   Instituicao      @relation(fields: [instituicaoId], references: [id], onDelete: Cascade)
+  turmas        TurmaProfessor[]
+
+  @@unique([instituicaoId, nome])
+}
+
+model Local {
+  id            String         @id @default(cuid())
+  instituicaoId String
+  predio        String
+  sala          String
+  instituicao   Instituicao    @relation(fields: [instituicaoId], references: [id], onDelete: Cascade)
+  horarios      HorarioTurma[]
+
+  @@unique([instituicaoId, predio, sala])
+}
+
+model Turma {
+  id           String           @id @default(cuid())
+  disciplinaId String
+  semestreId   Int
+  codigo       String // "15229"
+  nome         String?
+  vagas        Int?
+  disciplina   Disciplina       @relation(fields: [disciplinaId], references: [id], onDelete: Cascade)
+  semestre     Semestre         @relation(fields: [semestreId], references: [id])
+  professores  TurmaProfessor[]
+  horarios     HorarioTurma[]
+  planoItens   PlanoItem[]
+
+  @@unique([disciplinaId, semestreId, codigo])
+  /// existe só para permitir a FK composta em PlanoItem (ver 4.3)
+  @@unique([id, disciplinaId])
+  @@index([semestreId])
+}
+
+model TurmaProfessor {
+  turmaId     String
+  professorId String
+  turma       Turma     @relation(fields: [turmaId], references: [id], onDelete: Cascade)
+  professor   Professor @relation(fields: [professorId], references: [id], onDelete: Cascade)
+
+  @@id([turmaId, professorId])
+}
+
+model HorarioTurma {
+  id        String  @id @default(cuid())
+  turmaId   String
+  diaSemana Int // 1 = segunda ... 7 = domingo (ISO)
+  inicioMin Int // minutos desde 00:00 — 420 = 07:00
+  fimMin    Int
+  localId   String?
+  turma     Turma   @relation(fields: [turmaId], references: [id], onDelete: Cascade)
+  local     Local?  @relation(fields: [localId], references: [id])
+
+  @@unique([turmaId, diaSemana, inicioMin])
+  @@index([diaSemana, inicioMin])
+}
+
+// ─────────────────────────── pessoas
+
+model Perfil {
+  id                 String                   @id @db.Uuid // = auth.users.id do Supabase
+  nome               String
+  apelido            String?
+  dre                String?
+  versaoCurricularId String?
+  semestreIngressoId Int? // âncora: ordem 1 ↔ 2023/1
+  criadoEm           DateTime                 @default(now())
+  versaoCurricular   VersaoCurricular?        @relation(fields: [versaoCurricularId], references: [id])
+  semestreIngresso   Semestre?                @relation("Ingresso", fields: [semestreIngressoId], references: [id])
+  historico          HistoricoItem[]
+  planos             Plano[]
+  acessos            PlanoAcesso[]
+  blocos             BlocoIndisponibilidade[]
+  preferencias       Preferencia?
+}
+
+model Preferencia {
+  perfilId           String @id @db.Uuid
+  evitarAntesDeMin   Int?
+  evitarDepoisDeMin  Int?
+  janelaMaximaMin    Int?
+  maxDiasPresenciais Int?
+  perfil             Perfil @relation(fields: [perfilId], references: [id], onDelete: Cascade)
+}
+
+/// Fonte única da verdade sobre o que a pessoa já cursou.
+/// "Concluída" nunca é flag na disciplina — é um fato do par (perfil, disciplina).
+model HistoricoItem {
+  id           String          @id @default(cuid())
+  perfilId     String          @db.Uuid
+  disciplinaId String
+  semestreId   Int?
+  status       StatusHistorico
+  nota         Decimal?        @db.Decimal(3, 1)
+  perfil       Perfil          @relation(fields: [perfilId], references: [id], onDelete: Cascade)
+  disciplina   Disciplina      @relation(fields: [disciplinaId], references: [id])
+  semestre     Semestre?       @relation(fields: [semestreId], references: [id])
+
+  @@index([perfilId, status])
+  @@index([disciplinaId])
+}
+
+// ─────────────────────────── planejamento
+
+model Plano {
+  id                 String           @id @default(cuid())
+  donoId             String           @db.Uuid
+  versaoCurricularId String
+  nome               String // "Plano A", "Sem estágio"
+  principal          Boolean          @default(false)
+  arquivado          Boolean          @default(false)
+  enfasePrincipalId  String?
+  contraEnfaseId     String?
+  criadoEm           DateTime         @default(now())
+  atualizadoEm       DateTime         @updatedAt
+  dono               Perfil           @relation(fields: [donoId], references: [id], onDelete: Cascade)
+  versaoCurricular   VersaoCurricular @relation(fields: [versaoCurricularId], references: [id])
+  enfasePrincipal    Categoria?       @relation("EnfasePrincipal", fields: [enfasePrincipalId], references: [id])
+  contraEnfase       Categoria?       @relation("ContraEnfase", fields: [contraEnfaseId], references: [id])
+  periodos           PlanoPeriodo[]
+  acessos            PlanoAcesso[]
+
+  @@unique([donoId, nome])
+  @@index([donoId, arquivado])
+}
+
+/// Compartilhamento — é isto que faz o app servir a duas (ou N) pessoas.
+model PlanoAcesso {
+  planoId  String
+  perfilId String      @db.Uuid
+  papel    PapelAcesso
+  criadoEm DateTime    @default(now())
+  plano    Plano       @relation(fields: [planoId], references: [id], onDelete: Cascade)
+  perfil   Perfil      @relation(fields: [perfilId], references: [id], onDelete: Cascade)
+
+  @@id([planoId, perfilId])
+  @@index([perfilId])
+}
+
+model PlanoPeriodo {
+  id           String      @id @default(cuid())
+  planoId      String
+  ordem        Int // 1, 2, 3... até o último
+  semestreId   Int?
+  tetoCreditos Int? // null = usa o padrão da versão curricular
+  encerradoEm  DateTime? // null = editável; preenchido = registro
+  trancado     Boolean     @default(false) // semestre sem matrícula: conta no prazo, não nos créditos
+  plano        Plano       @relation(fields: [planoId], references: [id], onDelete: Cascade)
+  semestre     Semestre?   @relation(fields: [semestreId], references: [id])
+  itens        PlanoItem[]
+
+  @@unique([planoId, ordem])
+}
+
+model PlanoItem {
+  id             String             @id @default(cuid())
+  planoPeriodoId String
+  disciplinaId   String
+  turmaId        String? // null enquanto a oferta não existir
+  fixado         Boolean            @default(false)
+  observacao     String?
+  planoPeriodo   PlanoPeriodo       @relation(fields: [planoPeriodoId], references: [id], onDelete: Cascade)
+  disciplina     Disciplina         @relation(fields: [disciplinaId], references: [id])
+  turma          Turma?             @relation(fields: [turmaId, disciplinaId], references: [id, disciplinaId])
+  horarios       PlanoItemHorario[]
+
+  @@unique([planoPeriodoId, disciplinaId])
+  @@index([disciplinaId])
+}
+
+/// Só existe quando a pessoa sobrescreve o horário (turma sem horário no sistema,
+/// ou período futuro sem oferta). Vazio = usar HorarioTurma.
+model PlanoItemHorario {
+  id          String    @id @default(cuid())
+  planoItemId String
+  diaSemana   Int
+  inicioMin   Int
+  fimMin      Int
+  planoItem   PlanoItem @relation(fields: [planoItemId], references: [id], onDelete: Cascade)
+
+  @@unique([planoItemId, diaSemana, inicioMin])
+}
+
+model BlocoIndisponibilidade {
+  id         String    @id @default(cuid())
+  perfilId   String    @db.Uuid
+  semestreId Int? // null = vale para todos
+  titulo     String
+  tipo       TipoBloco
+  diaSemana  Int
+  inicioMin  Int
+  fimMin     Int
+  perfil     Perfil    @relation(fields: [perfilId], references: [id], onDelete: Cascade)
+  semestre   Semestre? @relation(fields: [semestreId], references: [id])
+
+  @@index([perfilId, diaSemana])
+}

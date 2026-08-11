@@ -1,0 +1,380 @@
+<!DOCTYPE html><html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Configurar meu curso - Lumina Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Quicksand:wght@700&amp;family=Roboto+Flex:wght@400&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-surface": "#241913",
+                      "on-error-container": "#93000a",
+                      "tertiary-container": "#00a7e9",
+                      "on-tertiary-fixed": "#001e2e",
+                      "primary-fixed": "#ffdbc9",
+                      "surface-container-low": "#fff1eb",
+                      "outline-variant": "#dec1b1",
+                      "secondary-container": "#edddd3",
+                      "primary-fixed-dim": "#ffb68d",
+                      "tertiary-fixed": "#c7e7ff",
+                      "primary-container": "#f47b25",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed-variant": "#763400",
+                      "outline": "#8b7265",
+                      "on-secondary-fixed-variant": "#4f453e",
+                      "on-primary": "#ffffff",
+                      "surface-tint": "#9a4600",
+                      "on-background": "#241913",
+                      "tertiary": "#00658f",
+                      "inverse-on-surface": "#ffede5",
+                      "surface": "#fff8f6",
+                      "on-error": "#ffffff",
+                      "on-primary-container": "#592500",
+                      "on-surface-variant": "#574237",
+                      "on-tertiary-fixed-variant": "#004c6c",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-container": "#003852",
+                      "on-tertiary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "background": "#fff8f6",
+                      "inverse-surface": "#3a2e27",
+                      "inverse-primary": "#ffb68d",
+                      "on-secondary": "#ffffff",
+                      "surface-bright": "#fff8f6",
+                      "primary": "#9a4600",
+                      "secondary-fixed-dim": "#d3c4ba",
+                      "secondary": "#675c55",
+                      "surface-container": "#ffeae0",
+                      "on-primary-fixed": "#321200",
+                      "surface-dim": "#ebd6cc",
+                      "on-secondary-container": "#6c6059",
+                      "on-secondary-fixed": "#221a14",
+                      "surface-container-highest": "#f4ded4",
+                      "surface-container-high": "#fae4d9",
+                      "surface-variant": "#f4ded4",
+                      "tertiary-fixed-dim": "#85cfff",
+                      "secondary-fixed": "#efdfd6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "page_padding": "32px",
+                      "stack_lg": "24px",
+                      "gutter": "24px",
+                      "stack_md": "16px",
+                      "stack_sm": "8px",
+                      "card_padding": "24px"
+              },
+              "fontFamily": {
+                      "wordmark": [
+                              "Quicksand"
+                      ],
+                      "page-title": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "data-display": [
+                              "Roboto Flex"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "section-title": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "wordmark": [
+                              "22px",
+                              {
+                                      "lineHeight": "auto",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "page-title": [
+                              "26px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-caps": [
+                              "11px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.06em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "data-display": [
+                              "14px",
+                              {
+                                      "lineHeight": "14px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "section-title": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-sm": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: #FFF8DC; /* Canvas */
+        }
+        .card-surface {
+            background-color: #FFFCF4; /* Surface */
+            box-shadow: 0 1px 2px rgba(93,64,55,0.05), 0 4px 12px rgba(93,64,55,0.05); /* Resting Shadow */
+        }
+        .recess-bg {
+            background-color: #F6EFDA; /* Recess */
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased flex flex-col md:flex-row h-screen overflow-hidden font-body-md text-body-md">
+<!-- Mobile TopAppBar -->
+<header class="md:hidden flex justify-between items-center w-full px-page_padding h-20 bg-surface text-primary font-page-title text-page-title docked full-width top-0 z-50">
+<div class="font-wordmark text-wordmark text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+            Configurar
+        </div>
+<div class="flex items-center gap-4">
+<span class="font-label-caps text-label-caps text-on-surface-variant">PASSO 2/4</span>
+</div>
+</header>
+<!-- Sidebar (Wizard Steps) -->
+<aside class="hidden md:flex flex-col h-full py-stack_lg px-stack_md w-72 border-r border-outline-variant bg-surface shrink-0 z-10 shadow-sm relative">
+<div class="mb-stack_lg px-4 flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-primary mb-1">NOVO SEMESTRE</span>
+<h1 class="font-wordmark text-wordmark text-primary">Configuração</h1>
+</div>
+<button class="text-on-surface-variant hover:bg-surface-container rounded-full p-2 transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<nav class="flex-1 space-y-4 mt-8 px-4 relative">
+<div class="absolute left-6 top-8 bottom-12 w-0.5 bg-outline-variant/50 -z-10"></div>
+<!-- Step 1: Completed -->
+<div class="flex items-start gap-4">
+<div class="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0 mt-0.5 z-10 ring-4 ring-surface">
+<span class="material-symbols-outlined text-[12px] text-on-primary font-bold">check</span>
+</div>
+<div>
+<h3 class="font-section-title text-section-title text-on-surface">Informações básicas</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Semestre, datas e instituição</p>
+</div>
+</div>
+<!-- Step 2: Active -->
+<div class="flex items-start gap-4">
+<div class="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0 mt-0.5 z-10 ring-4 ring-surface">
+<span class="font-label-caps text-[10px] text-on-primary">2</span>
+</div>
+<div>
+<h3 class="font-section-title text-section-title text-primary font-bold">Importar histórico</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Cole seu BOA/CRID</p>
+</div>
+</div>
+<!-- Step 3: Pending -->
+<div class="flex items-start gap-4 opacity-60">
+<div class="w-5 h-5 rounded-full bg-surface-container-highest border-2 border-outline-variant flex items-center justify-center shrink-0 mt-0.5 z-10 ring-4 ring-surface">
+<span class="font-label-caps text-[10px] text-on-surface-variant">3</span>
+</div>
+<div>
+<h3 class="font-section-title text-section-title text-on-surface-variant">Disciplinas atuais</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Carga horária e professores</p>
+</div>
+</div>
+<!-- Step 4: Pending -->
+<div class="flex items-start gap-4 opacity-60">
+<div class="w-5 h-5 rounded-full bg-surface-container-highest border-2 border-outline-variant flex items-center justify-center shrink-0 mt-0.5 z-10 ring-4 ring-surface">
+<span class="font-label-caps text-[10px] text-on-surface-variant">4</span>
+</div>
+<div>
+<h3 class="font-section-title text-section-title text-on-surface-variant">Metas e grade</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Planejamento de estudos</p>
+</div>
+</div>
+</nav>
+<div class="mt-auto px-4 text-center">
+<img alt="Illustration of a student looking at a map or schedule" class="w-48 mx-auto opacity-80" data-alt="A small, stylized illustration of a student organizing papers or looking at a schedule, rendered in warm earth tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBygBJFZs4S8Cy94mw--rLP-U-GeLk2u1_R1LaK5zfFK7nxEEeocfgcYYHzXGBH1maAM32dLe9FQVFwWZKwGLpeHvQlwKH9PjIJGbrDX8S53XHT-0WYHH18En_4xenqZhQeWKpazvKDJX-ajNOSFeEPZrLVHZc5ihpzbK8oVkR-Ra2HyZ01c8DEu2fX8Zg0tbsBa5MbU40bLdegZ0d65K-2MFnmAX-4mlvM4AZBEIthl5ehJdfgpik">
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full bg-[#FFF8DC] relative">
+<div class="flex-1 overflow-y-auto p-page_padding pb-32">
+<header class="mb-stack_lg">
+<h2 class="font-page-title text-page-title text-on-surface mb-2">Importar histórico acadêmico</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">Para calcularmos seu progresso e sugerirmos a melhor grade, precisamos do seu histórico. Você pode colar o texto diretamente do portal do aluno ou enviar o PDF.</p>
+</header>
+<!-- Side-by-Side Layout -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-gutter h-[calc(100%-80px)] min-h-[500px]">
+<!-- Left Column: Input -->
+<section class="card-surface rounded-[16px] p-card_padding flex flex-col h-full border border-outline-variant/30">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-section-title text-section-title text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">content_paste</span>
+                            Cole o texto aqui
+                        </h3>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant text-on-surface-variant font-section-title text-[14px] hover:bg-surface-container transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">upload_file</span>
+                                Enviar PDF
+                            </button>
+</div>
+</div>
+<div class="relative flex-1">
+<textarea class="w-full h-full bg-surface-container-lowest border border-outline-variant/50 rounded-lg p-4 font-body-sm text-body-sm text-on-surface resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Cole o texto do seu Boletim de Orientação Acadêmica (BOA) ou Comprovante de Rendimento Escolar (CRID)...">Universidade Federal
+Boletim de Orientação Acadêmica
+Nome: Mariana Silva
+Matrícula: 202100456
+
+DISCIPLINAS CURSADAS
+Código - Nome - C.H. - Situação - Nota
+ART101 - História da Arte 1 - 60h - Aprovado - 8.5
+SOC201 - Sociologia Básica - 60h - Aprovado - 9.0
+COM105 - Introdução à Comunicação - 60h - Aprovado - 7.5
+FIL102 - Filosofia Moderna - 60h - Aproveitamento - -
+ART102 - História da Arte 2 - 60h - Aprovado - 8.0
+HIS301 - História Contemporânea - 60h - Reprovado - 4.5</textarea>
+<div class="absolute bottom-4 right-4 text-on-surface-variant font-label-caps text-label-caps flex items-center gap-1 bg-surface-container-lowest px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container animate-pulse">sync</span>
+                             Analisando texto...
+                        </div>
+</div>
+</section>
+<!-- Right Column: Preview -->
+<section class="card-surface rounded-[16px] p-card_padding flex flex-col h-full border border-outline-variant/30">
+<div class="flex justify-between items-end mb-4">
+<div>
+<h3 class="font-section-title text-section-title text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">fact_check</span>
+                                Pré-visualização
+                            </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">37 disciplinas reconhecidas</p>
+</div>
+<span class="bg-surface-container-high text-on-surface-variant px-2 py-1 rounded font-label-caps text-[10px]">ATUALIZAÇÃO EM TEMPO REAL</span>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 -mr-2 space-y-2">
+<!-- Recognized Row -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/20">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-tertiary-container">check_circle</span>
+<div>
+<p class="font-body-md text-body-md font-medium">História da Arte 1</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">ART101 • 60h</p>
+</div>
+</div>
+<span class="bg-surface-container px-2 py-1 rounded text-on-surface-variant font-label-caps text-[10px]">APROVADO</span>
+</div>
+<!-- Recognized Row -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/20">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-tertiary-container">check_circle</span>
+<div>
+<p class="font-body-md text-body-md font-medium">Sociologia Básica</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">SOC201 • 60h</p>
+</div>
+</div>
+<span class="bg-surface-container px-2 py-1 rounded text-on-surface-variant font-label-caps text-[10px]">APROVADO</span>
+</div>
+<!-- Needs Review Row (Highlighted) -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-[#FFF9E6] border-2 border-[#F59E0B]">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-[#F59E0B]">warning</span>
+<div>
+<p class="font-body-md text-body-md font-medium text-on-surface">Introdução à Comunicação</p>
+<p class="font-body-sm text-body-sm text-[#B45309]">COM105 • Carga horária divergente</p>
+</div>
+</div>
+<button class="text-primary font-section-title text-[14px] hover:underline">Revisar</button>
+</div>
+<!-- Recognized Row -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/20">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-tertiary-container">check_circle</span>
+<div>
+<p class="font-body-md text-body-md font-medium">Filosofia Moderna</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">FIL102 • 60h</p>
+</div>
+</div>
+<span class="bg-surface-container-low px-2 py-1 rounded text-on-surface-variant font-label-caps text-[10px]">APROVEITAMENTO</span>
+</div>
+<!-- Needs Review Row (Highlighted) -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-[#FFF9E6] border-2 border-[#F59E0B]">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-[#F59E0B]">warning</span>
+<div>
+<p class="font-body-md text-body-md font-medium text-on-surface">História Contemporânea</p>
+<p class="font-body-sm text-body-sm text-[#B45309]">HIS301 • Semestre não identificado</p>
+</div>
+</div>
+<button class="text-primary font-section-title text-[14px] hover:underline">Revisar</button>
+</div>
+<!-- Needs Review Row (Highlighted) -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-[#FFF9E6] border-2 border-[#F59E0B]">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-[#F59E0B]">warning</span>
+<div>
+<p class="font-body-md text-body-md font-medium text-on-surface">Eletiva Livre</p>
+<p class="font-body-sm text-body-sm text-[#B45309]">Nome incompleto</p>
+</div>
+</div>
+<button class="text-primary font-section-title text-[14px] hover:underline">Revisar</button>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<div class="fixed bottom-0 left-0 md:left-72 right-0 h-20 bg-surface border-t border-outline-variant/30 flex items-center justify-between px-page_padding z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+<button class="px-6 py-2 rounded-lg text-on-surface-variant font-section-title text-section-title hover:bg-surface-container transition-colors">
+                Voltar
+            </button>
+<div class="flex items-center gap-4">
+<button class="px-6 py-2 rounded-lg text-primary font-section-title text-section-title hover:bg-surface-container transition-colors">
+                    Pular esta etapa
+                </button>
+<button class="px-8 py-2.5 rounded-lg bg-primary text-on-primary font-section-title text-section-title hover:bg-surface-tint transition-colors shadow-md flex items-center gap-2">
+                    Continuar
+                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</main>
+</body></html>

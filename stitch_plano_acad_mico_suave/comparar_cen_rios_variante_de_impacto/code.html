@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumina Academy - Comparar Cenários</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400&amp;family=Inter:wght@400;500;600&amp;family=Quicksand:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#592500",
+                        "surface-bright": "#fff8f6",
+                        "secondary-fixed": "#efdfd6",
+                        "surface-container": "#ffeae0",
+                        "on-secondary-fixed": "#221a14",
+                        "surface-dim": "#ebd6cc",
+                        "on-secondary": "#ffffff",
+                        "surface-variant": "#f4ded4",
+                        "on-tertiary-fixed-variant": "#004c6c",
+                        "on-background": "#241913",
+                        "surface-container-highest": "#f4ded4",
+                        "surface-container-high": "#fae4d9",
+                        "tertiary": "#00658f",
+                        "secondary": "#675c55",
+                        "on-surface": "#241913",
+                        "background": "#fff8f6",
+                        "outline": "#8b7265",
+                        "secondary-container": "#edddd3",
+                        "on-primary-fixed": "#321200",
+                        "secondary-fixed-dim": "#d3c4ba",
+                        "primary": "#9a4600",
+                        "tertiary-fixed-dim": "#85cfff",
+                        "inverse-on-surface": "#ffede5",
+                        "outline-variant": "#dec1b1",
+                        "tertiary-fixed": "#c7e7ff",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#763400",
+                        "error": "#ba1a1a",
+                        "surface": "#fff8f6",
+                        "on-secondary-fixed-variant": "#4f453e",
+                        "on-tertiary-container": "#003852",
+                        "on-surface-variant": "#574237",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#ffb68d",
+                        "surface-container-low": "#fff1eb",
+                        "inverse-surface": "#3a2e27",
+                        "tertiary-container": "#00a7e9",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#ffdbc9",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#001e2e",
+                        "surface-tint": "#9a4600",
+                        "primary-container": "#f47b25",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#ffb68d",
+                        "on-secondary-container": "#6c6059"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "card_padding": "24px",
+                        "stack_sm": "8px",
+                        "stack_lg": "24px",
+                        "stack_md": "16px",
+                        "page_padding": "32px"
+                    },
+                    "fontFamily": {
+                        "data-display": ["Roboto Flex"],
+                        "section-title": ["Inter"],
+                        "page-title": ["Inter"],
+                        "body-md": ["Inter"],
+                        "wordmark": ["Quicksand"],
+                        "label-caps": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-display": ["14px", { "lineHeight": "14px", "fontWeight": "400" }],
+                        "section-title": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "page-title": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "wordmark": ["22px", { "lineHeight": "auto", "fontWeight": "700" }],
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }]
+                    },
+                    "boxShadow": {
+                        "resting": "0 1px 2px rgba(93,64,55,0.05), 0 4px 12px rgba(93,64,55,0.05)",
+                        "floating": "0 12px 32px rgba(93,64,55,0.14)"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #FFF8DC; /* Canvas */
+        }
+        .recess-bg {
+            background-color: #F6EFDA;
+        }
+    </style>
+</head>
+<body class="text-on-background font-body-md h-screen flex flex-col md:flex-row overflow-hidden">
+<!-- SideNavBar (Hidden on Mobile, Visible on Web) -->
+<nav class="hidden md:flex flex-col h-full py-stack_lg px-stack_md bg-surface dark:bg-surface text-primary dark:text-primary-fixed-dim font-body-md text-body-md h-screen w-64 border-r border-outline-variant dark:border-outline flat no shadows shrink-0 z-20 shadow-resting relative">
+<div class="mb-stack_lg">
+<h1 class="font-wordmark text-wordmark text-primary dark:text-primary-fixed-dim">Lumina Academy</h1>
+<p class="text-on-surface-variant font-body-sm text-body-sm mt-1">Fall Semester 2024</p>
+</div>
+<button class="mb-stack_lg w-full bg-primary text-on-primary py-2 rounded-lg font-section-title text-section-title shadow-floating hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+            Add New Task
+        </button>
+<ul class="flex-grow space-y-stack_sm">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md text-primary font-semibold border-r-4 border-primary bg-primary-container/10 transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">calendar_view_week</span>
+                    Timetable
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">assignment</span>
+                    Tasks
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">library_books</span>
+                    Courses
+                </a>
+</li>
+</ul>
+<div class="mt-auto space-y-stack_sm pt-stack_lg border-t border-outline-variant/30">
+<a class="flex items-center gap-3 px-3 py-2 rounded-md text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">help</span>
+                Support
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col h-full overflow-hidden relative">
+<!-- TopAppBar (Visible on Mobile, Hidden on Desktop Nav logic handled by flex-row/col above, but TopAppBar fits Mobile) -->
+<header class="md:hidden flex justify-between items-center w-full px-page_padding h-20 bg-surface dark:bg-surface font-page-title text-page-title text-on-surface dark:text-on-surface docked full-width top-0 flat no shadows z-20 border-b border-outline-variant/20">
+<span class="font-wordmark text-wordmark text-primary dark:text-primary-fixed-dim">Lumina Academy</span>
+<div class="flex items-center gap-4 text-primary dark:text-primary-fixed-dim cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined hover:bg-surface-container-low transition-colors rounded-full p-1">notifications</span>
+<span class="material-symbols-outlined hover:bg-surface-container-low transition-colors rounded-full p-1">search</span>
+<img alt="User profile" class="w-8 h-8 rounded-full object-cover border border-outline-variant" data-alt="A small circular profile picture of a university student looking focused in a warm, light-filled modern library setting. The aesthetic is clean, light-mode, and academic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1j1EGsHaATgeL1pm2TocYOD1IjXhtlPcyBZm3pZxiaiRn3c1CYtmPjBdbffchEDICl4P1teYLexqbrOWi3eKKxgziJMmnhVX_L1z58BrZqW5OMQNJXWXHq2WugSOkZYgZk5gda8w4dxFurl8qMXUTCBKcaMMEykx2NnKDWby3rYNuFsRFYruGBeYBK70BB-AMnV2PSFyFVnrskUxTLxw1MuPa9v00iRqq8y4hdqhWb-3cRAeQaDk"/>
+</div>
+</header>
+<!-- Main Canvas Scrollable -->
+<main class="flex-1 overflow-y-auto p-stack_md md:p-page_padding pb-32">
+<!-- Page Header -->
+<div class="mb-stack_lg flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-variant transition-colors text-on-surface-variant flex-shrink-0">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div>
+<h2 class="font-page-title text-page-title text-on-surface">Comparar Cenários</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Análise de impacto no seu plano de estudos</p>
+</div>
+</div>
+<!-- Top: Plan Selection Cards -->
+<div class="grid grid-cols-2 gap-stack_md mb-stack_lg">
+<!-- Plan A (Current) -->
+<button class="flex flex-col items-center justify-center p-card_padding rounded-[16px] bg-surface shadow-resting border border-outline-variant/30 hover:shadow-floating transition-all group relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="material-symbols-outlined text-4xl text-on-surface-variant mb-2 group-hover:scale-110 transition-transform duration-300">school</span>
+<span class="font-section-title text-section-title text-on-surface">Plano Atual</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Foco padrão</span>
+</button>
+<!-- Plan B (Alternative) -->
+<button class="flex flex-col items-center justify-center p-card_padding rounded-[16px] bg-[#FFFFFF] shadow-floating border-2 border-primary group relative overflow-hidden">
+<div class="absolute top-2 right-2 flex items-center justify-center w-6 h-6 rounded-full bg-primary-container text-on-primary-container">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="material-symbols-outlined text-4xl text-primary mb-2 group-hover:scale-110 transition-transform duration-300" style="font-variation-settings: 'FILL' 1;">work</span>
+<span class="font-section-title text-section-title text-on-surface">Cenário B</span>
+<span class="font-body-sm text-body-sm text-primary font-medium">Estágio Avançado</span>
+</button>
+</div>
+<!-- Central Comparison: Stat Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack_md mb-stack_lg">
+<!-- Graduation Date -->
+<div class="bg-surface rounded-[16px] p-card_padding shadow-resting">
+<h3 class="font-section-title text-section-title text-on-surface mb-stack_md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">event_available</span>
+                        Previsão de Formatura
+                    </h3>
+<div class="flex items-end justify-between mb-2">
+<div>
+<span class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-1">Cenário B</span>
+<span class="font-page-title text-page-title text-on-surface">Dez 2025</span>
+</div>
+<div class="text-right">
+<span class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-1">Atual</span>
+<span class="font-body-md text-body-md text-on-surface-variant line-through">Jul 2025</span>
+</div>
+</div>
+<div class="recess-bg h-2 rounded-full mt-4 overflow-hidden">
+<div class="bg-primary h-full rounded-full w-[85%] relative">
+<div class="absolute right-0 top-0 bottom-0 w-1 bg-white"></div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">+1 Semestre em relação ao ideal</p>
+</div>
+<!-- Average Credits -->
+<div class="bg-surface rounded-[16px] p-card_padding shadow-resting">
+<h3 class="font-section-title text-section-title text-on-surface mb-stack_md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">moving</span>
+                        Ritmo de Créditos/Semestre
+                    </h3>
+<div class="flex items-end justify-between mb-2">
+<div>
+<span class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-1">Cenário B</span>
+<span class="font-page-title text-page-title text-on-surface">18 cr</span>
+</div>
+<div class="text-right">
+<span class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-1">Atual</span>
+<span class="font-body-md text-body-md text-on-surface-variant">24 cr</span>
+</div>
+</div>
+<div class="recess-bg h-2 rounded-full mt-4 overflow-hidden flex">
+<div class="bg-tertiary h-full w-[60%]"></div>
+<div class="bg-tertiary/30 h-full w-[40%]"></div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Carga mais leve para focar no estágio</p>
+</div>
+</div>
+<!-- Mid-section: Horizontal Timeline -->
+<div class="bg-surface rounded-[16px] p-card_padding shadow-resting mb-stack_lg">
+<h3 class="font-section-title text-section-title text-on-surface mb-stack_lg flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">linear_scale</span>
+                    Duração do Curso
+                </h3>
+<div class="relative pt-4 pb-8">
+<!-- Current Plan Line -->
+<div class="flex items-center mb-6">
+<span class="w-20 font-label-caps text-label-caps text-on-surface-variant flex-shrink-0">ATUAL</span>
+<div class="flex-1 recess-bg h-8 rounded-full flex relative overflow-hidden">
+<!-- Semesters -->
+<div class="w-1/8 border-r border-white/50 bg-outline/20 h-full"></div>
+<div class="w-1/8 border-r border-white/50 bg-outline/20 h-full"></div>
+<div class="w-1/8 border-r border-white/50 bg-outline/20 h-full"></div>
+<div class="w-1/8 border-r border-white/50 bg-outline/20 h-full"></div>
+<div class="w-1/8 border-r border-white/50 bg-primary/40 h-full"></div>
+<div class="w-1/8 border-r border-white/50 bg-primary/40 h-full relative group">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 font-label-caps text-[10px] text-primary whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Formatura</span>
+</div>
+<!-- Empty slots -->
+<div class="w-1/8 h-full"></div>
+<div class="w-1/8 h-full"></div>
+</div>
+</div>
+<!-- Scenario B Line -->
+<div class="flex items-center">
+<span class="w-20 font-label-caps text-label-caps text-primary font-bold flex-shrink-0">CENÁRIO B</span>
+<div class="flex-1 recess-bg h-8 rounded-full flex relative overflow-hidden shadow-inner">
+<!-- Semesters -->
+<div class="w-1/8 border-r border-white/50 bg-outline/20 h-full"></div>
+<div class="w-1/8 border-r border-white/50 bg-outline/20 h-full"></div>
+<div class="w-1/8 border-r border-white/50 bg-outline/20 h-full"></div>
+<div class="w-1/8 border-r border-white/50 bg-outline/20 h-full"></div>
+<div class="w-1/8 border-r border-white/50 bg-primary h-full relative">
+<div class="absolute inset-0 bg-black/10"></div>
+</div>
+<div class="w-1/8 border-r border-white/50 bg-primary h-full relative">
+<div class="absolute inset-0 bg-black/10"></div>
+</div>
+<div class="w-1/8 border-r border-white/50 bg-primary h-full relative group">
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-label-caps text-[10px] text-primary whitespace-nowrap">Nova Formatura</span>
+</div>
+<!-- Empty slots -->
+<div class="w-1/8 h-full"></div>
+</div>
+</div>
+<!-- Vertical Indicator Line (Current state) -->
+<div class="absolute top-0 bottom-0 left-[50%] w-[2px] bg-error/50 z-10 flex flex-col justify-between items-center">
+<div class="w-2 h-2 rounded-full bg-error"></div>
+<span class="bg-surface px-1 font-label-caps text-[9px] text-error">HOJE</span>
+<div class="w-2 h-2 rounded-full bg-error"></div>
+</div>
+</div>
+</div>
+<!-- Bottom: Stylized Weekly Rhythm Grids -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack_md">
+<!-- Current Rhythm -->
+<div class="bg-surface rounded-[16px] p-card_padding shadow-resting opacity-70">
+<h4 class="font-section-title text-section-title text-on-surface-variant mb-4 text-center">Ritmo Atual</h4>
+<div class="grid grid-cols-5 gap-1 h-32">
+<!-- Mon to Fri Columns -->
+<div class="flex flex-col gap-1">
+<div class="bg-outline/20 rounded-[4px] h-1/4"></div>
+<div class="bg-outline/40 rounded-[4px] h-2/4"></div>
+<div class="bg-transparent rounded-[4px] h-1/4"></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="bg-transparent rounded-[4px] h-1/4"></div>
+<div class="bg-outline/40 rounded-[4px] h-3/4"></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="bg-outline/20 rounded-[4px] h-2/4"></div>
+<div class="bg-transparent rounded-[4px] h-1/4"></div>
+<div class="bg-outline/40 rounded-[4px] h-1/4"></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="bg-transparent rounded-[4px] h-1/4"></div>
+<div class="bg-outline/40 rounded-[4px] h-2/4"></div>
+<div class="bg-transparent rounded-[4px] h-1/4"></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="bg-outline/20 rounded-[4px] h-1/4"></div>
+<div class="bg-transparent rounded-[4px] h-3/4"></div>
+</div>
+</div>
+</div>
+<!-- Scenario B Rhythm -->
+<div class="bg-[#FFFFFF] rounded-[16px] p-card_padding shadow-resting border border-primary/20 relative">
+<div class="absolute -top-3 -right-3 bg-tertiary text-on-tertiary font-label-caps text-[10px] px-2 py-1 rounded-full shadow-sm">Mais tempo livre</div>
+<h4 class="font-section-title text-section-title text-primary mb-4 text-center">Ritmo Cenário B</h4>
+<div class="grid grid-cols-5 gap-1 h-32">
+<!-- Mon to Fri Columns -->
+<div class="flex flex-col gap-1">
+<div class="bg-primary/20 rounded-[4px] h-1/4"></div>
+<div class="bg-primary/60 rounded-[4px] h-1/4"></div>
+<div class="bg-transparent rounded-[4px] h-2/4"></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="bg-transparent rounded-[4px] h-2/4"></div>
+<div class="bg-primary/60 rounded-[4px] h-2/4"></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="bg-primary/20 rounded-[4px] h-1/4"></div>
+<div class="bg-transparent rounded-[4px] h-2/4"></div>
+<div class="bg-primary/60 rounded-[4px] h-1/4"></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="bg-transparent rounded-[4px] h-3/4"></div>
+<div class="bg-primary/60 rounded-[4px] h-1/4"></div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="bg-primary/20 rounded-[4px] h-1/4"></div>
+<div class="bg-transparent rounded-[4px] h-3/4"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Fixed Bottom Action Area -->
+<div class="absolute bottom-0 left-0 right-0 p-stack_md bg-surface/90 backdrop-blur-md border-t border-outline-variant/30 flex items-center justify-between z-30 shadow-[0_-4px_12px_rgba(93,64,55,0.05)]">
+<button class="px-6 py-3 rounded-lg border border-outline-variant text-on-surface-variant font-section-title text-section-title hover:bg-surface-container transition-colors">
+                Cancelar
+            </button>
+<button class="px-8 py-3 rounded-lg bg-primary text-on-primary font-section-title text-section-title shadow-floating hover:bg-on-primary-fixed-variant transition-colors flex items-center gap-2">
+                Tornar o Plano B principal
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</body></html>

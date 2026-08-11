@@ -1,0 +1,450 @@
+<!DOCTYPE html><html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Início - Grade</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Quicksand:wght@600;700&amp;family=Roboto+Condensed:wght@400;500;600&amp;family=Roboto+Flex:wght@400&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-surface": "#241C16", /* adjusted for request */
+                      "on-error-container": "#93000a",
+                      "tertiary-container": "#00a7e9",
+                      "on-tertiary-fixed": "#001e2e",
+                      "primary-fixed": "#ffdbc9",
+                      "surface-container-low": "#fff1eb",
+                      "outline-variant": "#dec1b1",
+                      "secondary-container": "#edddd3",
+                      "primary-fixed-dim": "#ffb68d",
+                      "tertiary-fixed": "#c7e7ff",
+                      "primary-container": "#f47b25",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed-variant": "#763400",
+                      "outline": "#8b7265",
+                      "on-secondary-fixed-variant": "#4f453e",
+                      "on-primary": "#ffffff",
+                      "surface-tint": "#9a4600",
+                      "on-background": "#241913",
+                      "tertiary": "#00658f",
+                      "inverse-on-surface": "#ffede5",
+                      "surface": "#FFFCF4", /* Match sidebar bg */
+                      "on-error": "#ffffff",
+                      "on-primary-container": "#592500",
+                      "on-surface-variant": "#5D4037", /* adjusted for request */
+                      "on-tertiary-fixed-variant": "#004c6c",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-container": "#003852",
+                      "on-tertiary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "background": "#FFF8DC", /* Match canvas */
+                      "inverse-surface": "#3a2e27",
+                      "inverse-primary": "#ffb68d",
+                      "on-secondary": "#ffffff",
+                      "surface-bright": "#fff8f6",
+                      "primary": "#F47B25", /* adjusted to #F47B25 */
+                      "secondary-fixed-dim": "#d3c4ba",
+                      "secondary": "#675c55",
+                      "surface-container": "#ffeae0",
+                      "on-primary-fixed": "#321200",
+                      "surface-dim": "#ebd6cc",
+                      "on-secondary-container": "#6c6059",
+                      "on-secondary-fixed": "#221a14",
+                      "surface-container-highest": "#f4ded4",
+                      "surface-container-high": "#fae4d9",
+                      "surface-variant": "#f4ded4",
+                      "tertiary-fixed-dim": "#85cfff",
+                      "secondary-fixed": "#efdfd6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "page_padding": "32px",
+                      "stack_lg": "24px",
+                      "gutter": "24px",
+                      "stack_md": "16px",
+                      "stack_sm": "8px",
+                      "card_padding": "24px"
+              },
+              "fontFamily": {
+                      "wordmark": ["Quicksand"],
+                      "page-title": ["Inter"],
+                      "label-caps": ["Inter"],
+                      "data-display": ["Roboto Flex"],
+                      "body-md": ["Inter"],
+                      "section-title": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "condensed": ["Roboto Condensed"]
+              },
+              "fontSize": {
+                      "wordmark": ["20px", {"lineHeight": "auto", "fontWeight": "600"}],
+                      "page-title": ["26px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600"}],
+                      "data-display": ["14px", {"lineHeight": "14px", "fontWeight": "400"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "section-title": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: #FFF8DC; /* Canvas */
+        }
+        .card-surface {
+            background-color: #FFFCF4; /* Surface */
+            box-shadow: 0 1px 2px rgba(93,64,55,0.05), 0 4px 12px rgba(93,64,55,0.05); /* Resting Shadow */
+        }
+        .recess-bg {
+            background-color: #F6EFDA; /* Recess */
+        }
+        
+        /* Sidebar active item state */
+        .nav-item-active {
+            background-color: rgba(244, 123, 37, 0.12); /* 12% #F47B25 */
+            color: #241C16;
+            font-weight: 500;
+        }
+        .nav-item-active .nav-icon {
+            color: #F47B25;
+        }
+        .nav-item-active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 24px;
+            width: 3px;
+            background-color: #F47B25;
+            border-radius: 0 3px 3px 0;
+        }
+        .progress-bar-flat {
+            height: 6px;
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased flex flex-col md:flex-row h-screen overflow-hidden font-body-md text-body-md">
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex flex-col h-full bg-[#FFFCF4] shrink-0" style="width: 232px;">
+<div class="px-4" style="padding-top: 28px;">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#F47B25]" style="font-size: 18px;">calendar_month</span>
+<h1 class="font-wordmark text-[#241C16]">Grade</h1>
+</div>
+</div>
+<div class="flex-1 flex flex-col px-2" style="margin-top: 32px; gap: 4px;">
+<a class="relative flex items-center gap-3 px-4 rounded-[12px] nav-item-active transition-all" href="#" style="height: 40px;">
+<span class="material-symbols-outlined nav-icon" style="font-size: 20px;">home</span>
+<span style="font-size: 14px;">Início</span>
+</a>
+<a class="flex items-center gap-3 px-4 rounded-[12px] text-[#5D4037] hover:bg-[#F6EFDA] transition-all" href="#" style="height: 40px;">
+<span class="material-symbols-outlined text-[#9E6B47]" style="font-size: 20px;">calendar_today</span>
+<span style="font-size: 14px;">Planejador</span>
+</a>
+<a class="flex items-center gap-3 px-4 rounded-[12px] text-[#5D4037] hover:bg-[#F6EFDA] transition-all" href="#" style="height: 40px;">
+<span class="material-symbols-outlined text-[#9E6B47]" style="font-size: 20px;">route</span>
+<span style="font-size: 14px;">Trilha</span>
+</a>
+<a class="flex items-center gap-3 px-4 rounded-[12px] text-[#5D4037] hover:bg-[#F6EFDA] transition-all" href="#" style="height: 40px;">
+<span class="material-symbols-outlined text-[#9E6B47]" style="font-size: 20px;">menu_book</span>
+<span style="font-size: 14px;">Catálogo</span>
+</a>
+<a class="flex items-center gap-3 px-4 rounded-[12px] text-[#5D4037] hover:bg-[#F6EFDA] transition-all" href="#" style="height: 40px;">
+<span class="material-symbols-outlined text-[#9E6B47]" style="font-size: 20px;">view_week</span>
+<span style="font-size: 14px;">Nossa semana</span>
+</a>
+<div class="w-full bg-[#E6D8D0]" style="height: 1px; margin: 20px 0;"></div>
+<a class="flex items-center gap-3 px-4 rounded-[12px] text-[#5D4037] hover:bg-[#F6EFDA] transition-all" href="#" style="height: 40px;">
+<span class="material-symbols-outlined text-[#9E6B47]" style="font-size: 20px;">dashboard_customize</span>
+<span style="font-size: 14px;">Cenários</span>
+</a>
+<a class="flex items-center gap-3 px-4 rounded-[12px] text-[#5D4037] hover:bg-[#F6EFDA] transition-all" href="#" style="height: 40px;">
+<span class="material-symbols-outlined text-[#9E6B47]" style="font-size: 20px;">person</span>
+<span style="font-size: 14px;">Perfil</span>
+</a>
+</div>
+<div class="mt-auto px-4" style="padding-bottom: 24px; gap: 16px; display: flex; flex-direction: column;">
+<button class="w-full flex items-center justify-between px-3 bg-[#FFFFFF] rounded-[10px] border border-[#E6D8D0] shadow-sm" style="height: 44px;">
+<div class="flex flex-col items-start justify-center">
+<span class="font-label-caps text-[#00658f] uppercase" style="font-size: 11px;">PLANO</span>
+<span class="text-[#241C16] font-medium" style="font-size: 14px; line-height: 1;">Plano A</span>
+</div>
+<span class="material-symbols-outlined text-[#9E6B47]">expand_more</span>
+</button>
+<div class="flex items-center gap-3 px-2">
+<div class="w-[28px] h-[28px] rounded-full bg-[#F47B25] text-white flex items-center justify-center font-medium" style="font-size: 12px;">M</div>
+<span class="text-[#241C16] flex-1" style="font-size: 13px;">Mariana</span>
+<button class="text-[#9E6B47] hover:text-[#5D4037] transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size: 16px;">settings</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 h-full overflow-y-auto bg-[#FFF8DC]">
+<!-- TOP BAR -->
+<header class="flex items-center justify-between px-page_padding bg-[#FFF8DC]" style="height: 68px;">
+<div>
+<h2 class="font-page-title text-page-title text-on-surface">Início</h2>
+<p class="font-body-sm text-body-sm text-[#5D4037]">Bem-vinda de volta, Mariana</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#9E6B47]" style="font-size: 20px;">search</span>
+<input class="w-[320px] h-[40px] pl-10 pr-4 bg-[#FFFFFF] border border-[#E6D8D0] rounded-[10px] text-sm focus:outline-none focus:border-[#F47B25] transition-colors" placeholder="Buscar..." type="text">
+</div>
+<button class="relative w-10 h-10 flex items-center justify-center text-[#5D4037] hover:bg-[#F6EFDA] rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-[6px] h-[6px] bg-[#F47B25] rounded-full border border-[#FFF8DC]"></span>
+</button>
+<button class="h-[40px] px-4 bg-[#F47B25] text-white rounded-[10px] font-medium flex items-center gap-2 hover:bg-[#d86a1e] transition-colors" style="font-size: 14px;">
+<span class="material-symbols-outlined" style="font-size: 20px;">add</span>
+                Novo Plano
+            </button>
+</div>
+</header>
+<div style="height: 24px;"></div>
+<!-- Content Area -->
+<div class="px-page_padding pb-page_padding max-w-[1200px] w-full mx-auto">
+<!-- Top Section: Horizontal Period Rail -->
+<section class="card-surface rounded-[16px] p-card_padding mb-[20px] overflow-hidden">
+<div class="relative h-[80px] w-full flex items-center">
+<!-- The continuous line -->
+<div class="absolute left-0 right-0 h-[2px] bg-[#E6D8D0] top-1/2 -translate-y-1/2 z-0"></div>
+<!-- Past Segment -->
+<div class="relative z-10 flex items-center bg-[#F6EFDA] border border-[#E6D8D0] rounded-r-full h-[32px] w-[180px] pl-4 pr-3 mr-8 shadow-sm">
+<div class="flex flex-col justify-center flex-1">
+<span class="font-condensed text-[13px] font-medium text-[#241C16] leading-none mb-[2px]">1º – 5º</span>
+<span class="text-[11px] text-[#5D4037] leading-none">124 créditos · 35 disciplinas</span>
+</div>
+<span class="material-symbols-outlined text-[#9E6B47] text-[16px]">chevron_right</span>
+</div>
+<!-- Current Node (6º) -->
+<div class="relative z-10 flex flex-col items-center mx-6">
+<div class="absolute -top-[24px] bg-[#FFF8DC] text-[#F47B25] font-condensed text-[11px] px-2 py-0.5 rounded-[4px] border border-[#F47B25]/30">Em curso</div>
+<div class="w-[20px] h-[20px] rounded-full bg-[#FFFFFF] border-2 border-[#F47B25] flex items-center justify-center shadow-sm">
+<div class="w-[10px] h-[10px] rounded-full bg-[#F47B25]"></div>
+</div>
+<span class="font-condensed text-[13px] text-[#241C16] mt-2 font-medium">6º</span>
+<span class="font-condensed text-[11px] text-[#5D4037] mt-0.5">24/32</span>
+</div>
+<!-- Future Node (7º) -->
+<div class="relative z-10 flex flex-col items-center mx-6">
+<div class="w-[16px] h-[16px] rounded-full bg-[#FFFFFF] border-[1.5px] border-dashed border-[#9E6B47] flex items-center justify-center"></div>
+<span class="font-condensed text-[13px] text-[#5D4037] mt-2">7º</span>
+<span class="font-condensed text-[11px] text-[#5D4037] mt-0.5 opacity-60">24/32</span>
+</div>
+<!-- Future Node (8º) -->
+<div class="relative z-10 flex flex-col items-center mx-6">
+<div class="w-[16px] h-[16px] rounded-full bg-[#FFFFFF] border-[1.5px] border-dashed border-[#9E6B47] flex items-center justify-center"></div>
+<span class="font-condensed text-[13px] text-[#5D4037] mt-2">8º</span>
+<span class="font-condensed text-[11px] text-[#5D4037] mt-0.5 opacity-60">24/32</span>
+</div>
+<!-- Future Node (9º) -->
+<div class="relative z-10 flex flex-col items-center mx-6">
+<div class="w-[16px] h-[16px] rounded-full bg-[#FFFFFF] border-[1.5px] border-dashed border-[#9E6B47] flex items-center justify-center"></div>
+<span class="font-condensed text-[13px] text-[#5D4037] mt-2">9º</span>
+<span class="font-condensed text-[11px] text-[#5D4037] mt-0.5 opacity-60">12/32</span>
+</div>
+<!-- Future Node (10º) -->
+<div class="relative z-10 flex flex-col items-center mx-6">
+<div class="w-[16px] h-[16px] rounded-full bg-[#FFFFFF] border-[1.5px] border-dashed border-[#9E6B47] flex items-center justify-center"></div>
+<span class="font-condensed text-[13px] text-[#5D4037] mt-2">10º</span>
+<span class="font-condensed text-[11px] text-[#5D4037] mt-0.5 opacity-60">0/32</span>
+</div>
+<!-- Graduation Flag -->
+<div class="relative z-10 flex flex-col items-center ml-8">
+<span class="material-symbols-outlined text-[#F47B25] mb-1" style="font-size: 20px;">flag</span>
+<span class="font-condensed text-[13px] font-medium text-[#241C16]">Formatura</span>
+<span class="font-condensed text-[11px] text-[#5D4037] mt-0.5">2028/2</span>
+</div>
+<div class="flex-1"></div>
+<!-- Limit Tick -->
+<div class="relative z-10 flex flex-col items-center mr-4">
+<div class="w-[2px] h-[8px] bg-[#9E6B47] opacity-40"></div>
+<span class="font-condensed text-[10px] text-[#9E6B47] mt-1 whitespace-nowrap opacity-70">limite de integralização · 15º</span>
+</div>
+</div>
+</section>
+<!-- Main Section: Asymmetric Columns -->
+<div class="flex flex-col lg:flex-row gap-[20px]">
+<!-- Left Column (62%) -->
+<div class="w-full lg:w-[62%]">
+<section class="card-surface rounded-[16px] p-card_padding h-full">
+<h3 class="font-section-title text-section-title text-on-surface mb-stack_lg flex items-center gap-2">
+<span class="material-symbols-outlined text-[#F47B25]">school</span>
+                        Requisitos para a formatura
+                    </h3>
+<div class="space-y-[16px]">
+<!-- Row 1 -->
+<div class="flex items-center gap-4 h-[44px]">
+<div class="w-[140px] shrink-0 font-body-md text-[12px] uppercase tracking-wider text-[#5D4037] font-medium">Obrigatórias</div>
+<div class="flex-1 relative h-[6px] bg-[#F6EFDA]">
+<div class="absolute left-0 top-0 h-full bg-[#00658f]" style="width: 55%;"></div>
+<div class="absolute left-[55%] top-0 h-full bg-[#00658f]/40 border-t border-dashed border-[#00658f]" style="width: 25%;"></div>
+<div class="absolute top-[-2px] bottom-[-2px] w-[2px] bg-[#241C16]" style="left: 95%;"></div>
+</div>
+<div class="w-[100px] shrink-0 text-right font-condensed text-[14px] text-[#241C16]">
+<span class="font-medium">117</span> / 200 cr
+                                </div>
+</div>
+<!-- Row 2 -->
+<div class="flex items-center gap-4 h-[44px]">
+<div class="w-[140px] shrink-0 font-body-md text-[12px] uppercase tracking-wider text-[#5D4037] font-medium">Eletivas Livres</div>
+<div class="flex-1 relative h-[6px] bg-[#F6EFDA]">
+<div class="absolute left-0 top-0 h-full bg-[#F47B25]" style="width: 20%;"></div>
+<div class="absolute left-[20%] top-0 h-full bg-[#F47B25]/40 border-t border-dashed border-[#F47B25]" style="width: 40%;"></div>
+<div class="absolute top-[-2px] bottom-[-2px] w-[2px] bg-[#241C16]" style="left: 100%;"></div>
+</div>
+<div class="w-[100px] shrink-0 text-right font-condensed text-[14px] text-[#241C16]">
+<span class="font-medium">8</span> / 40 cr
+                                </div>
+</div>
+<!-- Row 3 -->
+<div class="flex items-center gap-4 h-[44px]">
+<div class="w-[140px] shrink-0 font-body-md text-[12px] uppercase tracking-wider text-[#5D4037] font-medium">Eletivas de Perfil</div>
+<div class="flex-1 relative h-[6px] bg-[#F6EFDA]">
+<div class="absolute left-0 top-0 h-full bg-[#675c55]" style="width: 15%;"></div>
+<div class="absolute left-[15%] top-0 h-full bg-[#675c55]/40 border-t border-dashed border-[#675c55]" style="width: 20%;"></div>
+<div class="absolute top-[-2px] bottom-[-2px] w-[2px] bg-[#241C16]" style="left: 100%;"></div>
+</div>
+<div class="w-[100px] shrink-0 text-right font-condensed text-[14px] text-[#241C16]">
+<span class="font-medium">6</span> / 40 cr
+                                </div>
+</div>
+<!-- Row 4 -->
+<div class="flex items-center gap-4 h-[44px]">
+<div class="w-[140px] shrink-0 font-body-md text-[12px] uppercase tracking-wider text-[#5D4037] font-medium">Horas Extensão</div>
+<div class="flex-1 relative h-[6px] bg-[#F6EFDA]">
+<div class="absolute left-0 top-0 h-full bg-[#9a4600]" style="width: 80%;"></div>
+<div class="absolute left-[80%] top-0 h-full bg-[#9a4600]/40 border-t border-dashed border-[#9a4600]" style="width: 10%;"></div>
+<div class="absolute top-[-2px] bottom-[-2px] w-[2px] bg-[#241C16]" style="left: 100%;"></div>
+</div>
+<div class="w-[100px] shrink-0 text-right font-condensed text-[14px] text-[#241C16]">
+<span class="font-medium">240</span> / 300 hr
+                                </div>
+</div>
+<!-- Row 5 -->
+<div class="flex items-center gap-4 h-[44px]">
+<div class="w-[140px] shrink-0 font-body-md text-[12px] uppercase tracking-wider text-[#5D4037] font-medium">Estágio</div>
+<div class="flex-1 relative h-[6px] bg-[#F6EFDA]">
+<div class="absolute left-0 top-0 h-full bg-[#00a7e9]" style="width: 0%;"></div>
+<div class="absolute left-[0%] top-0 h-full bg-[#00a7e9]/40 border-t border-dashed border-[#00a7e9]" style="width: 0%;"></div>
+<div class="absolute top-[-2px] bottom-[-2px] w-[2px] bg-[#241C16]" style="left: 100%;"></div>
+</div>
+<div class="w-[100px] shrink-0 text-right font-condensed text-[14px] text-[#241C16]">
+<span class="font-medium">0</span> / 180 hr
+                                </div>
+</div>
+<!-- Row 6 -->
+<div class="flex items-center gap-4 h-[44px]">
+<div class="w-[140px] shrink-0 font-body-md text-[12px] uppercase tracking-wider text-[#5D4037] font-medium">Atividades Comp.</div>
+<div class="flex-1 relative h-[6px] bg-[#F6EFDA]">
+<div class="absolute left-0 top-0 h-full bg-[#8b7265]" style="width: 100%;"></div>
+<div class="absolute top-[-2px] bottom-[-2px] w-[2px] bg-[#241C16]" style="left: 100%;"></div>
+</div>
+<div class="w-[100px] shrink-0 text-right font-condensed text-[14px] text-[#241C16]">
+<span class="font-medium">120</span> / 120 hr
+                                </div>
+</div>
+</div>
+<div class="mt-8 pt-4 border-t border-[#E6D8D0] text-[#5D4037] text-[13px]">
+                        83 créditos restantes em 5 períodos · média de 16,6 por período
+                    </div>
+</section>
+</div>
+<!-- Right Column (38%) -->
+<div class="w-full lg:w-[38%] flex flex-col gap-[20px]">
+<!-- Card A "Atenção" -->
+<section class="card-surface rounded-[16px] p-card_padding">
+<h3 class="font-section-title text-section-title text-on-surface mb-stack_md flex items-center gap-2">
+<span class="material-symbols-outlined text-[#F47B25]">warning</span>
+                        Atenção
+                    </h3>
+<div class="space-y-[12px]">
+<!-- Alert 1 -->
+<div class="flex items-center justify-between p-3 bg-[#FFFFFF] border border-[#E6D8D0] rounded-r-[8px] border-l-[3px] border-l-[#f59e0b] h-[64px]">
+<div>
+<h4 class="font-medium text-[14px] text-[#241C16] leading-tight">Pré-requisito ausente</h4>
+<p class="text-[12px] text-[#5D4037] mt-0.5">Física III bloqueia Metodologia</p>
+</div>
+<a class="text-[13px] text-[#00658f] hover:underline font-medium" href="#">Resolver</a>
+</div>
+<!-- Alert 2 -->
+<div class="flex items-center justify-between p-3 bg-[#FFFFFF] border border-[#E6D8D0] rounded-r-[8px] border-l-[3px] border-l-[#ef4444] h-[64px]">
+<div>
+<h4 class="font-medium text-[14px] text-[#241C16] leading-tight">Choque de horário</h4>
+<p class="text-[12px] text-[#5D4037] mt-0.5">Segunda 19h no próximo semestre</p>
+</div>
+<a class="text-[13px] text-[#00658f] hover:underline font-medium" href="#">Resolver</a>
+</div>
+<!-- Alert 3 -->
+<div class="flex items-center justify-between p-3 bg-[#FFFFFF] border border-[#E6D8D0] rounded-r-[8px] border-l-[3px] border-l-[#9ca3af] h-[64px]">
+<div>
+<h4 class="font-medium text-[14px] text-[#241C16] leading-tight">Eletiva não oferecida</h4>
+<p class="text-[12px] text-[#5D4037] mt-0.5">Optativa 4 foi descontinuada</p>
+</div>
+<a class="text-[13px] text-[#00658f] hover:underline font-medium" href="#">Resolver</a>
+</div>
+</div>
+</section>
+<!-- Card B "Meus planos" -->
+<section class="card-surface rounded-[16px] p-card_padding flex-1">
+<h3 class="font-section-title text-section-title text-on-surface mb-stack_md flex items-center gap-2">
+<span class="material-symbols-outlined text-[#F47B25]">dashboard_customize</span>
+                        Meus planos
+                    </h3>
+<div class="space-y-[8px]">
+<!-- Plan 1 -->
+<div class="flex items-center justify-between p-3 hover:bg-[#F6EFDA] rounded-[8px] transition-colors cursor-pointer border border-transparent hover:border-[#E6D8D0]">
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-medium text-[14px] text-[#241C16]">Plano A</h4>
+<span class="text-[10px] bg-[#E6D8D0] text-[#5D4037] px-1.5 py-0.5 rounded-[4px] uppercase font-semibold">Principal</span>
+</div>
+<p class="text-[12px] text-[#5D4037] mt-0.5">12 disciplinas · 4 períodos</p>
+</div>
+<span class="material-symbols-outlined text-[#9E6B47]" style="font-size: 20px;">chevron_right</span>
+</div>
+<!-- Plan 2 -->
+<div class="flex items-center justify-between p-3 hover:bg-[#F6EFDA] rounded-[8px] transition-colors cursor-pointer border border-transparent hover:border-[#E6D8D0]">
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-medium text-[14px] text-[#241C16]">Plano B (Acelerado)</h4>
+</div>
+<p class="text-[12px] text-[#5D4037] mt-0.5">15 disciplinas · 3 períodos</p>
+</div>
+<span class="material-symbols-outlined text-[#9E6B47]" style="font-size: 20px;">chevron_right</span>
+</div>
+<!-- Plan 3 -->
+<div class="flex items-center justify-between p-3 hover:bg-[#F6EFDA] rounded-[8px] transition-colors cursor-pointer border border-transparent hover:border-[#E6D8D0]">
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-medium text-[14px] text-[#241C16]">Plano Intercâmbio</h4>
+</div>
+<p class="text-[12px] text-[#5D4037] mt-0.5">8 disciplinas · 5 períodos</p>
+</div>
+<span class="material-symbols-outlined text-[#9E6B47]" style="font-size: 20px;">chevron_right</span>
+</div>
+</div>
+<div class="mt-4">
+<button class="w-full h-[40px] flex items-center justify-center gap-2 text-[#F47B25] font-medium text-[14px] border border-[#F47B25]/30 rounded-[8px] hover:bg-[#F47B25]/5 transition-colors">
+                            + Novo cenário
+                        </button>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+</body></html>

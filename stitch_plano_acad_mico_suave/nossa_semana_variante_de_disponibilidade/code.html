@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumina Academy - Planejador - Só janelas livres</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600&amp;family=Roboto+Flex:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#675c55",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#fff1eb",
+                        "secondary-container": "#edddd3",
+                        "surface-tint": "#9a4600",
+                        "surface-bright": "#fff8f6",
+                        "primary-container": "#f47b25",
+                        "background": "#fff8f6",
+                        "inverse-primary": "#ffb68d",
+                        "on-tertiary-container": "#003852",
+                        "secondary-fixed-dim": "#d3c4ba",
+                        "on-primary-fixed-variant": "#763400",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-surface": "#241913",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#c7e7ff",
+                        "surface-container": "#ffeae0",
+                        "outline-variant": "#dec1b1",
+                        "on-primary-fixed": "#321200",
+                        "tertiary-fixed-dim": "#85cfff",
+                        "surface-container-highest": "#f4ded4",
+                        "on-tertiary-fixed-variant": "#004c6c",
+                        "on-primary-container": "#592500",
+                        "primary-fixed": "#ffdbc9",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "outline": "#8b7265",
+                        "tertiary-container": "#00a7e9",
+                        "inverse-surface": "#3a2e27",
+                        "surface-container-high": "#fae4d9",
+                        "on-secondary-container": "#6c6059",
+                        "surface-dim": "#ebd6cc",
+                        "on-secondary-fixed": "#221a14",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#ffede5",
+                        "on-secondary-fixed-variant": "#4f453e",
+                        "on-background": "#241913",
+                        "secondary-fixed": "#efdfd6",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#001e2e",
+                        "surface-variant": "#f4ded4",
+                        "primary-fixed-dim": "#ffb68d",
+                        "tertiary": "#00658f",
+                        "primary": "#9a4600",
+                        "surface": "#fff8f6",
+                        "on-surface-variant": "#574237",
+                        "canvas": "#FFF8DC",
+                        "recess": "#F6EFDA",
+                        "surface-card": "#FFFCF4",
+                        "raised": "#FFFFFF",
+                        "accent": "#9a4600",
+                        "accent-ring": "rgba(154, 70, 0, 0.4)",
+                        "free-time": "#50B87A"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "page_padding": "32px",
+                        "stack_md": "16px",
+                        "stack_sm": "8px",
+                        "gutter": "24px",
+                        "card_padding": "24px",
+                        "stack_lg": "24px"
+                    },
+                    "fontFamily": {
+                        "data-display": ["Roboto Flex"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Inter"],
+                        "wordmark": ["Quicksand"],
+                        "body-sm": ["Inter"],
+                        "section-title": ["Inter"],
+                        "page-title": ["Inter"],
+                        "condensed": ["Roboto Condensed"]
+                    },
+                    "fontSize": {
+                        "data-display": ["14px", {"lineHeight": "14px", "fontWeight": "400"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "wordmark": ["22px", {"lineHeight": "auto", "fontWeight": "700"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "section-title": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "page-title": ["26px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "stats": ["13px", {"lineHeight": "16px", "fontWeight": "500"}]
+                    },
+                    "boxShadow": {
+                        "resting": "0 1px 2px rgba(93,64,55,0.05), 0 4px 12px rgba(93,64,55,0.05)",
+                        "floating": "0 12px 32px rgba(93,64,55,0.14)"
+                    },
+                    backgroundImage: {
+                        'hatch-pattern': 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(93,64,55,0.1) 4px, rgba(93,64,55,0.1) 8px)'
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.canvas'); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .time-grid {
+            background-image: linear-gradient(to bottom, rgba(93,64,55,0.12) 1px, transparent 1px);
+            background-size: 100% 60px; /* 60px per hour */
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased h-screen overflow-hidden flex selection:bg-primary-container selection:text-on-primary-container">
+<!-- App Shell: SideNavBar -->
+<nav class="flex flex-col h-full py-stack_lg px-stack_md bg-surface dark:bg-surface text-primary dark:text-primary-fixed-dim font-body-md text-body-md h-screen w-64 border-r border-outline-variant dark:border-outline bg-surface dark:bg-surface flat no shadows z-20 shrink-0">
+<div class="mb-8 px-4 flex flex-col gap-2">
+<span class="font-wordmark text-wordmark text-primary dark:text-primary-fixed-dim">Lumina Academy</span>
+<span class="text-body-sm text-on-surface-variant">Fall Semester 2024</span>
+</div>
+<button class="mb-8 mx-4 bg-primary text-on-primary rounded-lg py-2 px-4 font-section-title text-section-title shadow-resting hover:shadow-floating transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add</span>
+            Add New Task
+        </button>
+<ul class="flex flex-col gap-2 flex-grow">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-semibold border-r-4 border-primary bg-primary-container/10 hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">calendar_view_week</span>
+                    Timetable
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">assignment</span>
+                    Tasks
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">library_books</span>
+                    Courses
+                </a>
+</li>
+</ul>
+<div class="mt-auto flex flex-col gap-2 border-t border-outline-variant pt-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">help</span>
+                Support
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full bg-canvas relative">
+<!-- Top App Bar (Hidden on desktop per SideNav usage, but if needed for mobile responsive) -->
+<header class="hidden md:flex justify-between items-center w-full px-page_padding h-20 bg-surface dark:bg-surface text-primary dark:text-primary-fixed-dim font-page-title text-page-title text-on-surface dark:text-on-surface font-wordmark text-wordmark text-primary dark:text-primary-fixed-dim docked full-width top-0 bg-surface dark:bg-surface flat no shadows z-10 border-b border-outline-variant/30 hidden">
+<span>Lumina Academy</span>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<button class="hover:bg-surface-container-low transition-colors cursor-pointer active:opacity-80 p-2 rounded-full"><span class="material-symbols-outlined">notifications</span></button>
+<button class="hover:bg-surface-container-low transition-colors cursor-pointer active:opacity-80 p-2 rounded-full"><span class="material-symbols-outlined">search</span></button>
+<div class="w-8 h-8 rounded-full bg-secondary-container overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A detailed 50-100 word prompt..." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGOTq-xg-zqiCcbY7oLxX-BbMYxF-eR9iRLLDblZFy5Vk4k6pnwp0unbx5j9Dm5IjlH1Eqz-zSH9-a9j71uidb6AYgFmH9AEzEM8sevGODH6G_GZGdEkZPHEbZRTXUK7wW7r7dfq19SCgA39Eqs4-yeMaVC_pHet8coV8d6QBdZ6Ah91YmEKtfq2l3tI2LvYwHCJkAMmeku_ONX5b0KOUrYZWW_wbXKnAgJWpTZrvbNqMHWIAri94"/>
+</div>
+</div>
+</header>
+<!-- Horizontal Period Rail -->
+<div class="h-20 px-page_padding py-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-bright shrink-0">
+<div class="flex items-center gap-4 w-full">
+<!-- View Segmented Control -->
+<div class="flex bg-surface-container-low p-1 rounded-lg border border-outline-variant shadow-sm mr-4">
+<button class="px-4 py-1.5 rounded-md text-body-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors">Grade completa</button>
+<button class="px-4 py-1.5 rounded-md text-body-sm font-medium bg-raised text-primary shadow-sm border border-outline-variant/30">Só janelas livres</button>
+</div>
+<!-- 1-5 Small Solid (Expanded view logic) -->
+<div class="flex items-center gap-2 text-on-surface-variant ml-auto hidden">
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+</div>
+<!-- 6 Solid (Past) -->
+<div class="w-3 h-3 rounded-full bg-outline hidden"></div>
+<!-- 7 Selected -->
+<div class="flex items-center gap-4 bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant shadow-resting ml-auto">
+<div class="relative flex items-center justify-center">
+<div class="w-4 h-4 rounded-full bg-accent absolute"></div>
+<div class="w-6 h-6 rounded-full border-2 border-accent/40 absolute"></div>
+</div>
+<span class="font-section-title text-section-title ml-4">Nossa Semana</span>
+</div>
+</div>
+<button class="ml-4 shrink-0 px-4 py-2 border border-outline-variant rounded-lg text-body-sm text-secondary hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+                Configurar
+            </button>
+</div>
+<!-- Main Body Area -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Left: Timetable Area (72%) -->
+<div class="w-[72%] h-full flex flex-col border-r border-outline-variant/30 relative bg-surface-card z-0">
+<!-- Days Header -->
+<div class="flex border-b border-outline-variant/30 h-12 bg-recess sticky top-0 z-20">
+<div class="w-[56px] border-r border-outline-variant/30 shrink-0"></div> <!-- Time Col Header -->
+<div class="flex-1 grid grid-cols-5 divide-x divide-outline-variant/30 text-center text-body-sm text-on-surface-variant font-medium">
+<div class="py-3">Seg</div>
+<div class="py-3">Ter</div>
+<div class="py-3">Qua</div>
+<div class="py-3">Qui</div>
+<div class="py-3">Sex</div>
+</div>
+</div>
+<!-- Scrollable Timetable Canvas -->
+<div class="flex-1 overflow-y-auto relative bg-canvas scrollbar-hide">
+<div class="flex relative min-h-[840px]"> <!-- 14 hours * 60px -->
+<!-- Hour Column -->
+<div class="w-[56px] shrink-0 bg-recess border-r border-outline-variant/30 flex flex-col z-10">
+<!-- JS will populate hours from 07:00 to 21:00 -->
+<script>
+                                for(let i=7; i<=21; i++) {
+                                    document.write(`<div class="h-[60px] flex items-start justify-center pt-1"><span class="text-[11px] text-on-surface-variant/70 font-condensed tracking-wide">${i.toString().padStart(2, '0')}:00</span></div>`);
+                                }
+                            </script>
+</div>
+<!-- Grid Area -->
+<div class="flex-1 grid grid-cols-5 divide-x divide-outline-variant/30 relative time-grid">
+<!-- Seg --> <div class="relative">
+<!-- Free time band 1 -->
+<div class="absolute top-[180px] left-1 right-1 h-[240px] rounded-[8px] bg-free-time/20 border-l-[4px] border-free-time shadow-sm p-4 z-10 flex flex-col items-center justify-center cursor-pointer hover:bg-free-time/30 transition-colors backdrop-blur-sm">
+<span class="material-symbols-outlined text-free-time text-[32px] mb-2">event_available</span>
+<span class="font-section-title text-on-surface font-semibold text-center leading-tight">Janela Comum</span>
+<span class="text-body-sm text-on-surface-variant mt-1">10:00 - 14:00 (4h)</span>
+<div class="flex -space-x-2 mt-3">
+<div class="w-6 h-6 rounded-full bg-secondary-container border border-surface-card"></div>
+<div class="w-6 h-6 rounded-full bg-tertiary-container border border-surface-card"></div>
+<div class="w-6 h-6 rounded-full bg-primary-container border border-surface-card"></div>
+</div>
+</div>
+</div>
+<!-- Ter -->
+<div class="relative">
+<!-- Ghosted Class Outline -->
+<div class="absolute top-[120px] left-1 w-[calc(50%-4px)] h-[120px] rounded-[6px] border border-dashed border-outline-variant bg-surface/30 p-2 z-0 flex flex-col gap-1 overflow-hidden opacity-40">
+<span class="font-label-caps text-on-surface-variant">MAT101</span>
+<span class="text-body-sm font-medium leading-tight">Cálculo I</span>
+</div>
+<div class="absolute top-[120px] left-[50%] right-1 h-[120px] rounded-[6px] border border-dashed border-outline-variant bg-surface/30 p-2 z-0 flex flex-col gap-1 overflow-hidden opacity-40">
+<span class="font-label-caps text-on-surface-variant">FIS101</span>
+<span class="text-body-sm font-medium leading-tight">Física I</span>
+</div>
+</div>
+<!-- Qua -->
+<div class="relative">
+<!-- Ghosted Class -->
+<div class="absolute top-[180px] left-2 right-2 h-[120px] rounded-[6px] border border-dashed border-outline-variant bg-surface/30 p-3 z-0 flex flex-col gap-1 overflow-hidden opacity-40">
+<span class="font-label-caps text-on-surface-variant">QMC201</span>
+<span class="text-body-sm font-medium leading-tight">Química Orgânica</span>
+</div>
+<!-- Free time band 2 -->
+<div class="absolute top-[300px] left-1 right-1 h-[120px] rounded-[8px] bg-free-time/20 border-l-[4px] border-free-time shadow-sm p-4 z-10 flex flex-col items-center justify-center cursor-pointer hover:bg-free-time/30 transition-colors backdrop-blur-sm">
+<span class="font-section-title text-on-surface font-semibold text-center leading-tight">Almoço Livre</span>
+<span class="text-body-sm text-on-surface-variant mt-1">12:00 - 14:00 (2h)</span>
+<span class="text-[11px] font-medium text-free-time mt-2 bg-white/50 px-2 py-0.5 rounded-full">Alta adesão</span>
+</div>
+</div>
+<!-- Qui -->
+<div class="relative">
+<!-- Ghosted Personal Block -->
+<div class="absolute top-[420px] left-2 right-2 h-[240px] rounded-[6px] border border-dashed border-outline-variant bg-transparent p-3 z-0 flex flex-col gap-1 justify-center items-center text-center opacity-30">
+<span class="text-body-sm font-medium text-secondary">Estágio Supervisionado</span>
+</div>
+<!-- Free time band 3 -->
+<div class="absolute top-[60px] left-1 right-1 h-[180px] rounded-[8px] bg-free-time/10 border border-dashed border-free-time/50 p-4 z-10 flex flex-col items-center justify-center cursor-pointer hover:bg-free-time/20 transition-colors">
+<span class="font-section-title text-on-surface/60 font-semibold text-center leading-tight">Manhã Livre</span>
+<span class="text-body-sm text-on-surface-variant/60 mt-1">08:00 - 11:00 (3h)</span>
+<span class="text-[11px] text-on-surface-variant/50 mt-2">2 pessoas</span>
+</div>
+</div>
+<!-- Sex --> <div class="relative"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: Pendências (28%) -->
+<div class="w-[28%] h-full bg-surface-card flex flex-col shadow-[-4px_0_12px_rgba(93,64,55,0.02)] z-10 relative">
+<div class="p-6 border-b border-outline-variant/30 bg-surface sticky top-0 z-10">
+<h2 class="font-section-title text-section-title mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-free-time">schedule</span>
+    Melhores Janelas
+</h2>
+<!-- Summary Text -->
+<p class="text-body-sm text-on-surface-variant mb-6 leading-relaxed">
+    Encontramos <strong>3 períodos longos</strong> em comum nesta semana para o seu grupo de 5 pessoas.
+</p>
+</div>
+<!-- List Area -->
+<div class="flex-1 overflow-y-auto p-4 flex flex-col gap-3 scrollbar-hide bg-canvas/30">
+<!-- Common Window 1 -->
+<div class="rounded-xl border border-free-time/30 bg-free-time/5 p-4 flex flex-col gap-3 cursor-pointer hover:bg-free-time/10 transition-colors relative overflow-hidden shadow-sm">
+<div class="absolute top-0 right-0 bg-free-time text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg uppercase tracking-wider">Top Escolha</div>
+<div class="flex items-start justify-between">
+<div>
+<h3 class="font-section-title text-on-surface font-semibold">Segunda-feira</h3>
+<p class="text-body-sm text-on-surface-variant">10:00 - 14:00 (4 horas)</p>
+</div>
+</div>
+<div class="flex items-center justify-between mt-2 pt-3 border-t border-outline-variant/20">
+<div class="flex -space-x-1.5">
+<div class="w-6 h-6 rounded-full bg-secondary-container border-2 border-surface-card flex items-center justify-center text-[10px] font-medium">A</div>
+<div class="w-6 h-6 rounded-full bg-tertiary-container border-2 border-surface-card flex items-center justify-center text-[10px] font-medium text-white">M</div>
+<div class="w-6 h-6 rounded-full bg-primary-container border-2 border-surface-card flex items-center justify-center text-[10px] font-medium text-white">J</div>
+<div class="w-6 h-6 rounded-full bg-surface-variant border-2 border-surface-card flex items-center justify-center text-[10px] font-medium">+2</div>
+</div>
+<button class="text-body-sm font-medium text-primary hover:underline">Agendar evento</button>
+</div>
+</div>
+<!-- Common Window 2 -->
+<div class="rounded-xl border border-outline-variant/50 bg-surface p-4 flex flex-col gap-3 cursor-pointer hover:bg-surface-container-low transition-colors shadow-sm">
+<div class="flex items-start justify-between">
+<div>
+<h3 class="font-section-title text-on-surface font-medium">Quarta-feira</h3>
+<p class="text-body-sm text-on-surface-variant">12:00 - 14:00 (2 horas)</p>
+</div>
+</div>
+<div class="flex items-center justify-between mt-2 pt-3 border-t border-outline-variant/20">
+<div class="flex -space-x-1.5">
+<div class="w-6 h-6 rounded-full bg-secondary-container border-2 border-surface flex items-center justify-center text-[10px] font-medium">A</div>
+<div class="w-6 h-6 rounded-full bg-tertiary-container border-2 border-surface flex items-center justify-center text-[10px] font-medium text-white">M</div>
+<div class="w-6 h-6 rounded-full bg-primary-container border-2 border-surface flex items-center justify-center text-[10px] font-medium text-white">J</div>
+<div class="w-6 h-6 rounded-full bg-outline-variant border-2 border-surface flex items-center justify-center text-[10px] font-medium">+1</div>
+</div>
+<span class="text-[12px] text-on-surface-variant font-medium">4 de 5 livres</span>
+</div>
+</div>
+<!-- Common Window 3 -->
+<div class="rounded-xl border border-outline-variant/30 bg-surface/60 p-4 flex flex-col gap-3 cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="flex items-start justify-between">
+<div>
+<h3 class="font-section-title text-on-surface/80 font-medium">Quinta-feira</h3>
+<p class="text-body-sm text-on-surface-variant/80">08:00 - 11:00 (3 horas)</p>
+</div>
+</div>
+<div class="flex items-center justify-between mt-2 pt-3 border-t border-outline-variant/20">
+<div class="flex -space-x-1.5 opacity-70">
+<div class="w-6 h-6 rounded-full bg-secondary-container border-2 border-surface flex items-center justify-center text-[10px] font-medium">A</div>
+<div class="w-6 h-6 rounded-full bg-tertiary-container border-2 border-surface flex items-center justify-center text-[10px] font-medium text-white">M</div>
+</div>
+<span class="text-[12px] text-on-surface-variant/70 font-medium">2 de 5 livres</span>
+</div>
+</div>
+<button class="mt-4 w-full py-2.5 border border-dashed border-outline-variant rounded-lg text-body-sm font-medium text-secondary hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+    Sugerir novo horário
+</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

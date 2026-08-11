@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planejador de Grade — Eng. de Produção UFRJ</title>
+<style>
+/* ============ Design tokens ============ */
+:root{
+  --bg:#f4f4f1;
+  --surface:#fcfcfb;
+  --ink:#0b0b0b;
+  --ink-2:#52514e;
+  --muted:#898781;
+  --hairline:rgba(11,11,11,.10);
+  --grid:#e1e0d9;
+  --baseline:#c3c2b7;
+  --navy-1:#122a40;
+  --navy-2:#1b4364;
+  --accent:#2a78d6;
+  --good:#0ca30c; --good-text:#006300;
+  --warn:#fab219; --serious:#ec835a; --crit:#d03b3b;
+  /* categorias — paleta validada (CVD + contraste) */
+  --c-OBRIGATORIA:#2a78d6;        --t-OBRIGATORIA:#e6effb;  --d-OBRIGATORIA:#164a8c;
+  --c-ENFASE_ECONOMICA:#199e70;   --t-ENFASE_ECONOMICA:#e4f3ed; --d-ENFASE_ECONOMICA:#0e6b4c;
+  --c-ENFASE_GERENCIA:#eb6834;    --t-ENFASE_GERENCIA:#fdece5;  --d-ENFASE_GERENCIA:#a63d12;
+  --c-CONDICIONADA:#4a3aa7;       --t-CONDICIONADA:#eae8f6;     --d-CONDICIONADA:#38307e;
+  --c-HUMANAS:#9c2f63;            --t-HUMANAS:#f3e6ec;          --d-HUMANAS:#7c2450;
+  --font-display:'Bahnschrift','Segoe UI Semibold','Segoe UI',system-ui,sans-serif;
+  --font-body:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --font-mono:'Cascadia Mono',Consolas,'Courier New',monospace;
+  --hour-h:46px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light}
+body{
+  font:14px/1.45 var(--font-body);
+  background:
+    radial-gradient(1200px 400px at 70% -120px, rgba(42,120,214,.06), transparent 60%),
+    var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+}
+button{font:inherit;cursor:pointer}
+input,select{font:inherit;color:var(--ink)}
+::selection{background:rgba(42,120,214,.22)}
+
+/* ============ Header ============ */
+header.app{
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.045) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.045) 0 1px, transparent 1px 24px),
+    linear-gradient(120deg, var(--navy-1) 0%, var(--navy-2) 70%, #1e5a86 100%);
+  color:#f2f6fa;
+  padding:16px 22px 14px;
+  box-shadow:0 2px 10px rgba(12,28,44,.25);
+}
+.hd-row{max-width:1500px;margin:0 auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.hd-title h1{
+  font-family:var(--font-display);font-weight:600;font-size:21px;letter-spacing:.4px;
+}
+.hd-title small{display:block;color:#a8c2d8;font-size:12px;margin-top:1px}
+.hd-status{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-left:auto}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(255,255,255,.22);border-radius:999px;
+  padding:4px 11px;font-size:12.5px;background:rgba(255,255,255,.07);
+  font-family:var(--font-display);letter-spacing:.3px;white-space:nowrap;
+}
+.chip.ok{border-color:rgba(120,220,120,.55);background:rgba(20,120,40,.30)}
+.chip.bad{border-color:rgba(255,140,120,.6);background:rgba(150,40,30,.32)}
+.hd-actions{display:flex;gap:8px}
+.hd-actions button{
+  background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.28);color:#eef4fa;
+  border-radius:7px;padding:5px 12px;font-size:12.5px;transition:background .15s;
+  font-family:var(--font-display);letter-spacing:.3px;
+}
+.hd-actions button:hover{background:rgba(255,255,255,.22)}
+
+/* ============ Layout ============ */
+.wrap{
+  max-width:1500px;margin:0 auto;padding:16px 20px 60px;
+  display:grid;grid-template-columns:minmax(0,1fr) 356px;gap:16px;align-items:start;
+}
+@media(max-width:1150px){.wrap{grid-template-columns:1fr}}
+.card{
+  background:var(--surface);border:1px solid var(--hairline);border-radius:10px;
+  box-shadow:0 1px 3px rgba(18,42,64,.06);
+  animation:rise .4s ease both;
+}
+.col-main>.card{margin-bottom:14px}
+.col-side>.card{margin-bottom:14px}
+.col-main>.card:nth-child(2){animation-delay:.05s}
+.col-main>.card:nth-child(3){animation-delay:.10s}
+.col-side>.card:nth-child(1){animation-delay:.08s}
+.col-side>.card:nth-child(2){animation-delay:.14s}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.card h2{
+  font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:.5px;
+  text-transform:uppercase;color:var(--ink-2);
+  padding:12px 16px 0;
+}
+
+/* ============ Abas de período ============ */
+.tabs{display:flex;gap:6px;padding:14px 16px 0;flex-wrap:wrap}
+.tab{
+  border:1px solid var(--hairline);background:#f1f1ee;border-radius:9px 9px 0 0;
+  padding:8px 14px 7px;display:flex;flex-direction:column;align-items:center;gap:1px;
+  min-width:86px;transition:background .15s,border-color .15s;position:relative;border-bottom:none;
+}
+.tab:hover{background:#e9edf3}
+.tab .t-num{font-family:var(--font-display);font-weight:600;font-size:15px;letter-spacing:.4px}
+.tab .t-sem{font-size:10.5px;color:var(--muted)}
+.tab .t-cred{font-size:11px;color:var(--ink-2)}
+.tab.active{background:var(--navy-2);border-color:var(--navy-2)}
+.tab.active .t-num{color:#fff}
+.tab.active .t-sem{color:#a8c2d8}
+.tab.active .t-cred{color:#d7e5f0}
+.tab .t-flag{position:absolute;top:-7px;right:-5px;font-size:10px;background:var(--crit);color:#fff;
+  border-radius:999px;padding:1px 6px;font-weight:600}
+.tab .t-badge{font-size:9.5px;color:#7ba86f;font-weight:600;letter-spacing:.4px}
+.tab.active .t-badge{color:#9fd48f}
+
+/* ============ Barra de status do período ============ */
+.period-stats{
+  display:flex;gap:18px;align-items:baseline;padding:10px 16px 4px;flex-wrap:wrap;
+}
+.pstat{display:flex;align-items:baseline;gap:7px}
+.pstat .lb{font-size:12px;color:var(--muted)}
+.pstat .vl{font-family:var(--font-display);font-weight:600;font-size:17px}
+.pstat .vl.over{color:var(--crit)}
+.pstat .vl.okc{color:var(--good-text)}
+
+/* ============ Calendário ============ */
+.cal-scroll{padding:8px 16px 14px;overflow-x:auto}
+.cal{min-width:640px}
+.cal-head{display:grid;grid-template-columns:52px repeat(5,1fr);gap:0 4px;margin-bottom:4px}
+.cal-head .dh{
+  text-align:center;font-family:var(--font-display);font-weight:600;font-size:12.5px;
+  letter-spacing:.8px;color:var(--ink-2);padding:5px 0;background:#f1f3f0;border-radius:6px;
+}
+.cal-body{display:grid;grid-template-columns:52px repeat(5,1fr);gap:0 4px}
+.cal-times{position:relative;height:calc(var(--hour-h)*14)}
+.cal-times span{
+  position:absolute;right:8px;transform:translateY(-6px);
+  font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums;
+}
+.cal-times span.strong{color:var(--ink-2);font-weight:600}
+.cal-day{
+  position:relative;height:calc(var(--hour-h)*14);
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% var(--hour-h),
+    linear-gradient(180deg,#fafbf9 0 calc(var(--hour-h)*7),#f4f6f3 0);
+  border:1px solid var(--grid);border-radius:6px;overflow:hidden;
+}
+.cal-day::after{ /* linha 13:00 — divisa manhã/tarde */
+  content:"";position:absolute;left:0;right:0;top:calc(var(--hour-h)*7);
+  border-top:1.5px solid var(--baseline);pointer-events:none;
+}
+.blk{
+  position:absolute;border-radius:6px;overflow:hidden;padding:3px 6px 2px;
+  border:1px solid;cursor:pointer;transition:filter .12s, box-shadow .12s;
+  background:var(--t-cat, #eee);border-color:var(--c-cat,#999);
+  border-left-width:4px;
+}
+.blk:hover{filter:brightness(.965);box-shadow:0 2px 8px rgba(18,42,64,.18);z-index:5}
+.blk .b-cod{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--d-cat,#333)}
+.blk .b-tur{font-size:9.5px;color:var(--ink-2);font-family:var(--font-mono)}
+.blk .b-nom{
+  font-size:10.5px;line-height:1.25;color:var(--ink-2);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.blk .b-hor{font-size:9.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.blk.conflict{
+  border-color:var(--crit);
+  background-image:repeating-linear-gradient(45deg, rgba(208,59,59,.20) 0 5px, transparent 5px 11px);
+  box-shadow:0 0 0 1.5px var(--crit) inset;
+}
+.blk.matric{opacity:.92}
+.blk.viol{box-shadow:0 0 0 2px var(--crit)}
+
+/* sem horário */
+.nosched{padding:0 16px 12px}
+.nosched .ns-row{display:flex;gap:8px;flex-wrap:wrap}
+.ns-chip{
+  display:inline-flex;align-items:center;gap:7px;border:1px dashed var(--c-cat,#999);
+  background:var(--t-cat,#eee);border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;
+}
+.ns-chip .b-cod{font-family:var(--font-mono);font-weight:700;color:var(--d-cat,#333)}
+.ns-lbl{font-size:11px;color:var(--muted);margin:0 0 6px}
+
+/* ============ Avisos ============ */
+.warnbox{padding:0 16px 12px;display:flex;flex-direction:column;gap:6px}
+.warn-item{
+  border-left:4px solid var(--crit);background:#fbeaea;border-radius:0 7px 7px 0;
+  padding:7px 11px;font-size:12.5px;color:#6c1f1f;
+}
+.warn-item.yellow{border-left-color:var(--warn);background:#fdf4de;color:#6b4d05}
+.warn-item b{font-family:var(--font-mono);font-weight:700}
+
+/* ============ Barra de estágio ============ */
+.est-wrap{padding:10px 16px 14px;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+@media(max-width:760px){.est-wrap{grid-template-columns:1fr}}
+.est-hero .eh-lb{font-size:12px;color:var(--muted)}
+.est-hero .eh-vl{
+  font-family:var(--font-display);font-weight:700;font-size:46px;line-height:1.05;letter-spacing:.5px;
+}
+.est-hero .eh-vl small{font-size:20px;color:var(--muted);font-weight:600}
+.est-hero.full .eh-vl{color:var(--good-text)}
+.est-days{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;min-width:0}
+.est-day{border:1px solid var(--hairline);border-radius:8px;padding:7px 8px;text-align:center;background:#fbfbf9}
+.est-day.dead{background:#f7efee;border-color:rgba(208,59,59,.35)}
+.est-day .ed-nm{font-family:var(--font-display);font-weight:600;font-size:12px;letter-spacing:.6px;color:var(--ink-2)}
+.est-day .ed-st{font-size:13px;line-height:1;margin-top:2px}
+.turnos{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.turno{
+  font-size:10.5px;border-radius:5px;padding:3px 4px;letter-spacing:.2px;
+  background:#eceeea;color:var(--muted);
+}
+.turno.free{background:#e2f3e0;color:var(--good-text);font-weight:600}
+.est-msgs{grid-column:1/-1;display:flex;flex-direction:column;gap:4px}
+.est-msg{font-size:12px;color:#8a4a1f;background:#fdf1e7;border-left:3px solid var(--serious);
+  border-radius:0 6px 6px 0;padding:5px 10px}
+.est-msg b{font-family:var(--font-mono)}
+
+/* ============ Cadeia crítica ============ */
+.chain{padding:10px 16px 14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ch-node{
+  border:1.5px solid var(--baseline);border-radius:8px;padding:5px 10px;text-align:center;background:#fafaf8;
+}
+.ch-node .cn-cod{font-family:var(--font-mono);font-weight:700;font-size:12px}
+.ch-node .cn-p{font-size:10.5px;color:var(--muted)}
+.ch-node.ok{border-color:var(--good);background:#effaf0}
+.ch-node.ok .cn-p{color:var(--good-text);font-weight:600}
+.ch-node.bad{border-color:var(--crit);background:#fbeaea}
+.ch-node.bad .cn-p{color:var(--crit);font-weight:600}
+.ch-arrow{color:var(--baseline);font-size:15px}
+.ch-plus{color:var(--muted);font-weight:700}
+.chain-alert{margin:0 16px 14px;border:1.5px solid var(--crit);border-radius:8px;background:#fbeaea;
+  padding:9px 13px;font-size:12.5px;color:#6c1f1f;font-weight:600}
+
+/* ============ Sidebar: progresso ============ */
+.prog-list{padding:10px 16px 6px;display:flex;flex-direction:column;gap:9px}
+.prog-item .pi-top{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
+.prog-item .pi-nm{color:var(--ink-2)}
+.prog-item .pi-vl{font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.prog-item .pi-vl b{color:var(--ink)}
+.meter{height:8px;border-radius:99px;background:var(--tr,#eee);overflow:hidden}
+.meter i{display:block;height:100%;border-radius:99px;background:var(--fl,#999);transition:width .3s ease}
+.status-line{margin:4px 16px 0;border-radius:8px;padding:9px 12px;font-size:13px;font-weight:600}
+.status-line.ok{background:#e2f3e0;color:var(--good-text)}
+.status-line.pend{background:#fdf4de;color:#6b4d05}
+.side-stats{display:flex;gap:14px;padding:10px 16px 14px;flex-wrap:wrap}
+.sstat .lb{font-size:11.5px;color:var(--muted)}
+.sstat .vl{font-family:var(--font-display);font-weight:600;font-size:18px}
+
+/* ============ Sidebar: pool ============ */
+.pool-tools{padding:10px 16px 8px;display:flex;flex-direction:column;gap:8px}
+.pool-tools input[type=search]{
+  width:100%;border:1px solid var(--hairline);border-radius:7px;padding:7px 11px;background:#fff;
+}
+.pool-tools input[type=search]:focus{outline:2px solid rgba(42,120,214,.35);border-color:var(--accent)}
+.fchips{display:flex;gap:5px;flex-wrap:wrap}
+.fchip{
+  border:1px solid var(--hairline);background:#f1f1ee;border-radius:999px;padding:3px 10px;
+  font-size:11.5px;color:var(--ink-2);transition:all .12s;
+}
+.fchip:hover{background:#e9edf3}
+.fchip.on{background:var(--navy-2);border-color:var(--navy-2);color:#fff}
+.pool{max-height:900px;overflow-y:auto;padding:0 10px 12px}
+.pool-grp{margin-top:10px}
+.pool-grp .pg-hd{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:4px 8px;margin-bottom:4px;border-left:4px solid var(--c-cat,#999);
+  background:var(--t-cat,#eee);border-radius:0 6px 6px 0;
+}
+.pool-grp .pg-nm{font-family:var(--font-display);font-weight:600;font-size:12px;letter-spacing:.4px;color:var(--d-cat,#333)}
+.pool-grp .pg-meta{font-size:10.5px;color:var(--ink-2)}
+.pitem{
+  display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:7px;cursor:pointer;
+  border:1px solid transparent;transition:background .12s,border-color .12s;
+}
+.pitem:hover{background:#f2f4f7;border-color:var(--hairline)}
+.pitem.alloc{background:#f0f6ef}
+.pitem.alloc:hover{background:#e8f1e6}
+.pitem .sem{font-size:12px;width:16px;text-align:center;flex:none}
+.pitem .pi-main{min-width:0;flex:1}
+.pitem .pi-l1{display:flex;gap:6px;align-items:baseline}
+.pitem .pi-cod{font-family:var(--font-mono);font-weight:700;font-size:12px;color:var(--d-cat,#333)}
+.pitem .pi-cr{font-size:10.5px;color:var(--muted)}
+.pitem .pi-nome{font-size:11.5px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pitem .selo{flex:none;font-size:13px}
+.pitem .pi-alloc{
+  flex:none;font-size:10px;font-weight:700;background:var(--navy-2);color:#fff;
+  border-radius:999px;padding:2px 7px;letter-spacing:.3px;
+}
+.pitem .pi-edit{
+  flex:none;border:none;background:none;color:var(--muted);font-size:13px;padding:2px 4px;border-radius:5px;
+  opacity:0;transition:opacity .12s;
+}
+.pitem:hover .pi-edit{opacity:1}
+.pitem .pi-edit:hover{background:#e3e7ec;color:var(--ink)}
+.pool-add{margin:12px 6px 0;width:calc(100% - 12px);border:1.5px dashed var(--baseline);
+  background:none;border-radius:8px;padding:8px;color:var(--ink-2);font-size:12.5px;transition:all .15s}
+.pool-add:hover{border-color:var(--accent);color:var(--accent);background:#f4f8fd}
+
+/* ============ Popover / modal ============ */
+.overlay{
+  position:fixed;inset:0;background:rgba(12,24,38,.45);display:flex;align-items:center;justify-content:center;
+  z-index:50;animation:fadein .15s ease;padding:20px;
+}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.modal{
+  background:var(--surface);border-radius:12px;max-width:600px;width:100%;max-height:88vh;overflow-y:auto;
+  box-shadow:0 12px 40px rgba(10,25,40,.35);animation:rise .18s ease;
+}
+.modal .m-hd{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 10px;border-bottom:1px solid var(--hairline)}
+.modal .m-hd h3{font-family:var(--font-display);font-size:16px;font-weight:600}
+.modal .m-hd h3 span{font-family:var(--font-mono);color:var(--accent)}
+.modal .m-x{border:none;background:none;font-size:19px;color:var(--muted);padding:2px 8px;border-radius:6px}
+.modal .m-x:hover{background:#eee;color:var(--ink)}
+.modal .m-bd{padding:14px 18px}
+.modal .m-ft{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px 16px;border-top:1px solid var(--hairline)}
+.frow{display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;margin-bottom:9px}
+.frow label{font-size:12px;color:var(--ink-2)}
+.frow input,.frow select{border:1px solid var(--hairline);border-radius:6px;padding:6px 9px;background:#fff;width:100%}
+.btn{border:1px solid var(--hairline);background:#f1f1ee;border-radius:7px;padding:7px 14px;font-size:13px;transition:background .12s}
+.btn:hover{background:#e7e7e3}
+.btn.primary{background:var(--navy-2);border-color:var(--navy-2);color:#fff}
+.btn.primary:hover{background:#255278}
+.btn.danger{background:#fbeaea;border-color:rgba(208,59,59,.4);color:var(--crit)}
+.btn.danger:hover{background:#f6d9d9}
+.btn.sm{padding:3px 9px;font-size:11.5px;border-radius:6px}
+.hor-row{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.hor-row select,.hor-row input{border:1px solid var(--hairline);border-radius:6px;padding:5px 7px;background:#fff}
+.turma-box{border:1px solid var(--hairline);border-radius:8px;padding:10px;margin-bottom:10px;background:#fbfbf9}
+.turma-box .tb-hd{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.turma-box .tb-hd input{flex:1;border:1px solid var(--hairline);border-radius:6px;padding:5px 8px}
+.mut{font-size:11.5px;color:var(--muted)}
+.det-info{font-size:12.5px;color:var(--ink-2);margin-bottom:10px;line-height:1.6}
+.det-info b{font-family:var(--font-mono)}
+.tsel{margin:6px 0 12px}
+.tsel .topt{
+  display:flex;align-items:center;gap:8px;border:1.5px solid var(--hairline);border-radius:8px;
+  padding:7px 11px;margin-bottom:5px;cursor:pointer;font-size:12.5px;transition:all .12s;background:#fff;width:100%;text-align:left;
+}
+.tsel .topt:hover{border-color:var(--accent)}
+.tsel .topt.sel{border-color:var(--navy-2);background:#eef3f8;font-weight:600}
+.tsel .topt .tt-ok{margin-left:auto;font-size:11.5px;color:var(--good-text);font-weight:600}
+.tsel .topt .tt-bad{margin-left:auto;font-size:11.5px;color:var(--crit);font-weight:600}
+
+/* ============ Toast ============ */
+#toasts{position:fixed;right:18px;bottom:18px;display:flex;flex-direction:column;gap:8px;z-index:80}
+.toast{
+  background:var(--navy-1);color:#eef4fa;border-radius:9px;padding:10px 15px;font-size:12.5px;
+  box-shadow:0 6px 20px rgba(10,25,40,.35);animation:rise .2s ease;max-width:340px;
+}
+.toast b{font-family:var(--font-mono)}
+
+/* tooltip nativo melhorado via title attr apenas */
+.footer-note{max-width:1500px;margin:0 auto;padding:0 20px 30px;font-size:11.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="app">
+  <div class="hd-row">
+    <div class="hd-title">
+      <h1>Planejador de Grade · Engenharia de Produção</h1>
+      <small>UFRJ — Gabriel Ladeira Quintella · meta: formatura no 10º período (2028/2)</small>
+    </div>
+    <div class="hd-status" id="hdStatus"></div>
+    <div class="hd-actions">
+      <button id="btnExport" title="Baixar o estado atual como JSON">Exportar JSON</button>
+      <button id="btnImport" title="Carregar um JSON exportado">Importar JSON</button>
+      <button id="btnReset" title="Voltar ao plano de referência validado">Restaurar plano</button>
+      <input type="file" id="fileImport" accept="application/json" hidden>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="col-main">
+
+    <div class="card">
+      <div class="tabs" id="tabs"></div>
+      <div class="period-stats" id="periodStats"></div>
+      <div class="cal-scroll">
+        <div class="cal">
+          <div class="cal-head" id="calHead"></div>
+          <div class="cal-body" id="calBody"></div>
+        </div>
+      </div>
+      <div class="nosched" id="noSched"></div>
+      <div class="warnbox" id="warnBox"></div>
+    </div>
+
+    <div class="card">
+      <h2>Estágio — turnos livres (Seg–Sex)</h2>
+      <div class="est-wrap" id="estWrap"></div>
+    </div>
+
+    <div class="card">
+      <h2>Cadeia crítica de pré-requisitos</h2>
+      <div class="chain" id="chainBox"></div>
+      <div id="chainAlert"></div>
+    </div>
+
+  </div>
+
+  <div class="col-side">
+
+    <div class="card">
+      <h2>Progresso para a formatura</h2>
+      <div id="statusLine"></div>
+      <div class="prog-list" id="progList"></div>
+      <div class="side-stats" id="sideStats"></div>
+    </div>
+
+    <div class="card">
+      <h2>Disciplinas pendentes</h2>
+      <div class="pool-tools">
+        <input type="search" id="poolSearch" placeholder="Buscar por código ou nome…">
+        <div class="fchips" id="fchipsCat"></div>
+        <div class="fchips" id="fchipsTurno"></div>
+      </div>
+      <div class="pool" id="pool"></div>
+    </div>
+
+  </div>
+</div>
+
+<p class="footer-note">
+  Clique numa disciplina do painel para adicioná-la ao período ativo; clique de novo para remover.
+  Clique num bloco do calendário para ver detalhes, trocar de turma ou editar horários.
+  Os dados ficam salvos automaticamente neste navegador (localStorage).
+</p>
+
+<div id="toasts"></div>
+<div id="modalRoot"></div>
+
+<script>
+"use strict";
+/* =====================================================================
+   DADOS — conteúdo integral de dados-grade.json (fonte de verdade).
+   Não editar aqui: use a interface (os ajustes ficam no localStorage).
+   ===================================================================== */
+const DADOS = {
+  "_meta": {
+    "aluno": "Gabriel Ladeira Quintella",
+    "dre": "124031561",
+    "curso": "14352 - Engenharia de Produção (UFRJ / Escola Politécnica)",
+    "versaoCurricular": "2015/1",
+    "periodoAtual": 6,
+    "semestreAtual": "2026/2",
+    "metaFormatura": "10º período (2028/2)",
+    "tetoCreditosPorPeriodo": 32,
+    "crAcumulado": 8.1,
+    "creditosObtidos": 124,
+    "prazoMaximoIntegralizacao": 15,
+    "fontes": "BOA 08/08/2026, Histórico 08/08/2026, CRID 2026/2, Grade Curricular SIGA, Quadro de Horários 2026/2, Lista de turmas SIGA",
+    "statusHorarios": "Todos os horários foram conferidos e confirmados pelo aluno em 08/08/2026. Não há mais divergências pendentes entre o quadro de horários e a lista de turmas."
+  },
+
+  "metaCreditos": {
+    "obrigatorias":        { "total": 200, "cumpridos": 117, "falta": 83 },
+    "escolhaCondicionada": { "total": 9,   "cumpridos": 3,   "falta": 6  },
+    "grupoHumanas":        { "total": 4,   "cumpridos": 0,   "falta": 4  },
+    "livreEscolha":        { "total": 3,   "cumpridos": 4,   "falta": 0  },
+    "grupoACE":            { "totalCH": 405, "observacao": "Coberto por EEWZ56 (400h, cursando) + 15h de extensão do NCG011. Tratar como CONCLUÍDO no HTML. Falta só reivindicar na secretaria. 0 créditos." },
+    "enfase":              { "total": 24, "cumpridos": 0, "falta": 24,
+                             "regra": "15 créditos na ênfase escolhida (ENGENHARIA ECONÔMICA) + 9 créditos de contra-ênfase (GERÊNCIA DA PRODUÇÃO)",
+                             "observacao": "NÃO aparece no BOA nem na Grade Curricular do SIGA, mas o Gabriel confirmou que é obrigatório. Os 200 créditos de obrigatórias NÃO incluem a ênfase (soma verificada disciplina a disciplina = exatamente 200,0)." }
+  },
+
+  "resumoRestante": {
+    "aposConcluir6oPeriodo": {
+      "obrigatorias": 53,
+      "enfaseEconomica": 15,
+      "enfaseGerencia": 9,
+      "escolhaCondicionada": 6,
+      "grupoHumanas": 4,
+      "TOTAL": 87,
+      "periodosDisponiveis": 4,
+      "mediaPorPeriodo": 21.75
+    }
+  },
+
+  "concluidas": [
+    "ICP114","MAC118","EEH210","FIS111","FIT112","EEI200","IQG111",
+    "ICP225","MAC128","FIS121","FIT122","EEI212","IQG112","EEG105",
+    "EEG301","EEI325","EEA212","EEI201","MAE125",
+    "EEI735","MAC238","ICP231","EEI426","FIN231","FIM230","EEI533","NCG011","EET310",
+    "MAC248","EEK345","EEI058","EEI541","FIM240","EEI551","EEI722","EEA338"
+  ],
+  "_notaEquivalencias": {
+    "EEI201": "satisfaz MAD201 (Probabilidade e Estatística)",
+    "EEA212": "satisfaz EEN212 (pré-requisito de EEN344)",
+    "EEI426": "satisfaz EEI323 + EEI324",
+    "EEI735": "satisfaz EEI423",
+    "EEE390": "substitui EEE385 (Eletricidade I) — EEE385 não é mais ofertada"
+  },
+
+  "cursandoAtualmente_2026_2": [
+    "EEI613","EEI621","EEI634","EEI642","EEI643","EEK355","EEN344","EEI652","FIN241","EEWZ56"
+  ],
+
+  "disciplinas": [
+
+    { "codigo":"FIN241","nome":"Física Experimental IV","creditos":1,"ch":30,"categoria":"OBRIGATORIA","periodoGrade":4,"prereq":[],
+      "turmas":[{"turma":"12565","nome":"Física Experimental-IV / EPT1","horarios":[{"dia":"SEG","ini":"13:00","fim":"15:00"}]}],
+      "obs":"No CRID 2026/2. Gabriel NÃO vai tirar." },
+
+    { "codigo":"EEI613","nome":"Instalações Industriais","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":6,"prereq":["FIM230"],
+      "turmas":[{"turma":"15229","nome":"INST.INDUSTRIAIS EP1 (Sérgio Leal)","prof":"Juliana Souza Baioco","horarios":[{"dia":"QUA","ini":"07:00","fim":"09:00"},{"dia":"SEX","ini":"07:00","fim":"09:00"}]}] },
+
+    { "codigo":"EEI621","nome":"Org e Avaliação do Trabalho","creditos":3,"ch":45,"categoria":"OBRIGATORIA","periodoGrade":6,"prereq":["EEI426"],
+      "turmas":[{"turma":"10872","nome":"ORG. E AVAL.DO TRAB. EP1","prof":"José Augusto Nogueira Kamel","horarios":[{"dia":"TER","ini":"11:00","fim":"13:00"},{"dia":"QUI","ini":"11:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI634","nome":"Economia da Engenharia","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":6,"prereq":[],
+      "turmas":[{"turma":"15224","nome":"ECONOMIA DA ENGª EP1 F116","prof":"Roberto Ivo da Rocha Lima Filho","horarios":[{"dia":"SEG","ini":"11:00","fim":"13:00"},{"dia":"QUA","ini":"11:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI642","nome":"Estatística Aplicada II","creditos":3,"ch":45,"categoria":"OBRIGATORIA","periodoGrade":6,"prereq":["EEI541"],
+      "turmas":[{"turma":"10710","nome":"ESTAT. APLICADA II S/I-105 A","prof":"André Assis de Salles","horarios":[{"dia":"SEX","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI643","nome":"Pesquisa Operacional I","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":6,"prereq":["MAE125"],
+      "turmas":[{"turma":"11038","nome":"PESQUISA OPERACIONAL I EP1","prof":"José Roberto Ribas","horarios":[{"dia":"TER","ini":"09:00","fim":"11:00"},{"dia":"QUI","ini":"09:00","fim":"11:00"}]}] },
+
+    { "codigo":"EEK355","nome":"Termodinâmica Aplicada","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":6,"prereq":[],
+      "turmas":[{"turma":"8123","nome":"Termodinâmica Aplicada - EP1","prof":"Silvio Carlos Anibal de Almeida","horarios":[{"dia":"SEG","ini":"09:00","fim":"11:00"},{"dia":"QUA","ini":"09:00","fim":"11:00"}]}] },
+
+    { "codigo":"EEN344","nome":"Mecânica Aplicada às Máquinas","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":6,"prereq":["EEA212"],
+      "turmas":[{"turma":"12458","nome":"Mecânica Aplicada às Máquinas","prof":"Luiz Antonio Vaz Pinto","horarios":[{"dia":"TER","ini":"07:00","fim":"09:00"},{"dia":"QUI","ini":"07:00","fim":"09:00"}]}] },
+
+    { "codigo":"EEI652","nome":"Engenharia da Informação","creditos":3,"ch":45,"categoria":"OBRIGATORIA","periodoGrade":5,"prereq":[],
+      "turmas":[{"turma":"10781","nome":"ENG DA INFORMAÇÃO S/I-105 A","horarios":[{"dia":"TER","ini":"13:00","fim":"15:00"}]}],
+      "obs":"No CRID 2026/2, mas Gabriel pode TIRAR se passar no estágio. Se tirar, reencaixar em período futuro." },
+
+    { "codigo":"EEE390","nome":"Fundamentos de Eletricidade","creditos":4,"ch":75,"categoria":"OBRIGATORIA","periodoGrade":5,"prereq":[],
+      "turmas":[
+        {"turma":"16450","nome":"EB2","prof":"Henrique Resende de Almeida","horarios":[{"dia":"SEX","ini":"07:00","fim":"10:00"}]},
+        {"turma":"16451","nome":"EB1","prof":"Henrique Resende de Almeida","horarios":[{"dia":"SEX","ini":"10:00","fim":"13:00"}]},
+        {"turma":"16452","nome":"EB3","prof":"Rodrigo Vasconcelos Gloria","horarios":[{"dia":"QUA","ini":"15:00","fim":"18:00"}]}
+      ],
+      "obs":"Substitui EEE385 Eletricidade I. PENDENTE — não está no CRID 2026/2." },
+
+    { "codigo":"EEI714","nome":"Sist. de Produção Mecânica e Controle Numérico","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":7,"prereq":[],
+      "turmas":[{"turma":"13701","nome":"SIST.DE PROD.E CONTR.NUMERICO EP1","prof":"Renato Florido Cameira","horarios":[{"dia":"SEG","ini":"13:00","fim":"15:00"},{"dia":"QUI","ini":"13:00","fim":"15:00"}]}] },
+
+    { "codigo":"EEI744","nome":"Pesquisa Operacional II","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":7,"prereq":["EEI541"],
+      "turmas":[{"turma":"10853","nome":"PESQUISA OPERACIONAL II EP1","prof":"George Victor Brigagão","horarios":[{"dia":"TER","ini":"16:00","fim":"18:00"},{"dia":"QUI","ini":"15:00","fim":"17:00"}]}] },
+
+    { "codigo":"EEI753","nome":"Controle de Qualidade","creditos":3,"ch":45,"categoria":"OBRIGATORIA","periodoGrade":7,"prereq":["EEI642"],
+      "turmas":[{"turma":"10698","nome":"CONTROLE DE QUALIDADE EP1","prof":"Amarildo da Cruz Fernandes","horarios":[{"dia":"QUA","ini":"15:00","fim":"18:00"}]}] },
+
+    { "codigo":"EEI754","nome":"Planejamento das Instalações","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":7,"prereq":["EEI426"],
+      "turmas":[{"turma":"11105","nome":"PLANEJAMENTO DAS INSTALAÇÕES EP1","prof":"Leonardo Luiz Lima Navarro","horarios":[{"dia":"QUA","ini":"13:00","fim":"15:00"},{"dia":"SEX","ini":"13:00","fim":"15:00"}]}] },
+
+    { "codigo":"EQW471","nome":"Introdução à Indústria Química e Eng. de Processos","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":7,"prereq":[],
+      "turmas":[{"turma":"10590","nome":"INT IND QUIM E ENG PROC/EP1","prof":"Bettina Susanne Hoffmann Daflon","horarios":[{"dia":"SEX","ini":"15:00","fim":"18:00"}]}] },
+
+    { "codigo":"EEI815","nome":"Manufatura Integrada por Computador","creditos":3,"ch":45,"categoria":"OBRIGATORIA","periodoGrade":8,"prereq":[],
+      "turmas":[{"turma":"13697","nome":"MANUFATURA INTEG. POR COMP. I-105 A EP1","prof":"Renato Florido Cameira","horarios":[{"dia":"QUI","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI836","nome":"Economia da Empresa","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":8,"prereq":["EEI533"],
+      "turmas":[{"turma":"11075","nome":"ECONOMIA DA EMPRESA EP1","prof":"Klitia Valeska Bicalho de Sá","horarios":[{"dia":"SEG","ini":"11:00","fim":"13:00"},{"dia":"QUA","ini":"11:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI837","nome":"Custos Industriais","creditos":2,"ch":30,"categoria":"OBRIGATORIA","periodoGrade":8,"prereq":["EEI735"],
+      "turmas":[{"turma":"11072","nome":"CUSTOS INDUSTRIAIS EP1","prof":"Klitia Valeska Bicalho de Sá","horarios":[{"dia":"SEG","ini":"09:00","fim":"11:00"}]}] },
+
+    { "codigo":"EEI845","nome":"Simulação","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":8,"prereq":["EEI541"],
+      "turmas":[{"turma":"11152","nome":"SIMULAÇÃO EP1 I-105-A","prof":"Lino Guimarães Marujo","horarios":[{"dia":"SEG","ini":"15:00","fim":"19:00"}]}] },
+
+    { "codigo":"EEI855","nome":"Gerência de Qualidade","creditos":3,"ch":45,"categoria":"OBRIGATORIA","periodoGrade":8,"prereq":["EEI753"],
+      "turmas":[{"turma":"10700","nome":"GERENCIA DA QUALIDADE EP1","prof":"Amarildo da Cruz Fernandes","horarios":[{"dia":"TER","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI856","nome":"Planejamento e Controle da Produção I","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":8,"prereq":["EEI643","EEI744","EEI754"],
+      "turmas":[{"turma":"13509","nome":"PCP I","prof":"Leonardo de Aragão Guimarães","horarios":[{"dia":"QUA","ini":"09:00","fim":"11:00"},{"dia":"SEX","ini":"10:00","fim":"12:00"}]}] },
+
+    { "codigo":"EEWX00","nome":"Projeto de Graduação (TCC)","creditos":4,"ch":180,"categoria":"OBRIGATORIA","periodoGrade":8,"prereq":[],
+      "turmas":[{"turma":"—","nome":"sem horário fixo","horarios":[]}],
+      "obs":"Gabriel fará no 9º ou 10º. Bloco sem horário — não ocupa slot no calendário." },
+
+    { "codigo":"EEI957","nome":"Planejamento e Controle da Produção II","creditos":4,"ch":60,"categoria":"OBRIGATORIA","periodoGrade":9,"prereq":["EEI856"],
+      "turmas":[{"turma":"11110","nome":"PLANEJ.E CONT.PRODUÇÃO II EP1","prof":"Leonardo Luiz Lima Navarro","horarios":[{"dia":"TER","ini":"10:00","fim":"12:00"},{"dia":"QUI","ini":"10:00","fim":"12:00"}]}] },
+
+    { "codigo":"EEWU00","nome":"Estágio Obrigatório","creditos":2,"ch":160,"categoria":"OBRIGATORIA","periodoGrade":9,"prereq":[],
+      "turmas":[{"turma":"—","nome":"sem horário fixo","horarios":[]}],
+      "obs":"Bloco sem horário. Não ocupa slot no calendário." },
+
+    { "codigo":"EEI933","nome":"Economia Brasileira","creditos":3,"ch":45,"categoria":"ENFASE_ECONOMICA","prereq":[],
+      "turmas":[{"turma":"13719","nome":"ECONOMIA BRASILEIRA EP1","prof":"Ricardo Ferreira de Mello","horarios":[{"dia":"SEX","ini":"07:00","fim":"10:00"}]}] },
+
+    { "codigo":"EEI934","nome":"Marketing","creditos":3,"ch":45,"categoria":"ENFASE_ECONOMICA","prereq":[],
+      "turmas":[{"turma":"13572","nome":"MARKETING EP1","prof":"Maria Alice Ferruccio da Rocha","horarios":[{"dia":"TER","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI034","nome":"Análise de Riscos de Investimentos","creditos":3,"ch":45,"categoria":"ENFASE_ECONOMICA","prereq":[],
+      "turmas":[{"turma":"10768","nome":"ANALISE DE RISCO DE INVEST. EP1","prof":"Armando Celestino Gonçalves Neto","horarios":[{"dia":"QUI","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI031","nome":"Análise de Investimentos","creditos":3,"ch":45,"categoria":"ENFASE_ECONOMICA","prereq":[],
+      "turmas":[{"turma":"10772","nome":"ANALISE DE INVESTIMENTOS EP1","prof":"Armando Celestino Gonçalves Neto","horarios":[{"dia":"TER","ini":"13:00","fim":"16:00"}]}] },
+
+    { "codigo":"EEI931","nome":"Macroeconomia","creditos":3,"ch":45,"categoria":"ENFASE_ECONOMICA","prereq":[],
+      "turmas":[{"turma":"15222","nome":"MACROECONOMIA","prof":"Roberto Ivo da Rocha Lima Filho","horarios":[{"dia":"QUA","ini":"13:00","fim":"16:00"}]}] },
+
+    { "codigo":"EEI032","nome":"Projetos Industriais","creditos":3,"ch":45,"categoria":"ENFASE_ECONOMICA","prereq":[],
+      "turmas":[{"turma":"10758","nome":"PROJ. INDUSTRIAIS EP1","prof":"Bruno Cabral Muniz Freire","horarios":[{"dia":"SEX","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI021","nome":"Gerência de Recursos Humanos","creditos":3,"ch":45,"categoria":"ENFASE_GERENCIA","prereq":[],
+      "turmas":[{"turma":"13556","nome":"GER. DE RECURSOS HUMANOS EP1","prof":"Maria Alice Ferruccio da Rocha","horarios":[{"dia":"TER","ini":"07:00","fim":"10:00"}]}] },
+
+    { "codigo":"EEI052","nome":"Engenharia de Processos de Negócios","creditos":3,"ch":45,"categoria":"ENFASE_GERENCIA","prereq":[],
+      "turmas":[{"turma":"13695","nome":"ENG. DE PROCESSOS DE NEGOCIOS I-105A EP1","prof":"Renato Florido Cameira","horarios":[{"dia":"SEG","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI050","nome":"Planejamento Estratégico","creditos":3,"ch":45,"categoria":"ENFASE_GERENCIA","prereq":[],
+      "turmas":[{"turma":"10667","nome":"PLANEJAMENTO ESTRATEGICO EP1","prof":"Adriano Proença","horarios":[{"dia":"QUA","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI958","nome":"Logística","creditos":3,"ch":45,"categoria":"ENFASE_GERENCIA","prereq":[],
+      "turmas":[{"turma":"11148","nome":"LOGISTICA EP1 I-105 A","prof":"Lino Guimarães Marujo","horarios":[{"dia":"QUA","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI054","nome":"Gerência de Projetos e Engenharia Simultânea","creditos":3,"ch":45,"categoria":"ENFASE_GERENCIA","prereq":[],
+      "turmas":[{"turma":"13721","nome":"GER. DE PROJ. E ENG. SIMULTANEA","prof":"Ricardo Ferreira de Mello","horarios":[{"dia":"SEX","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEWX02","nome":"Projeto de Extensão em Empreendedorismo e Novos Negócios","creditos":4,"ch":60,"categoria":"CONDICIONADA","prereq":[],
+      "turmas":[
+        {"turma":"16985","nome":"L.E","prof":"Maria Alice Ferruccio da Rocha","horarios":[{"dia":"SEG","ini":"10:00","fim":"13:00"}]},
+        {"turma":"4016","nome":"S/D-105","prof":"Maria Alice Ferruccio da Rocha","horarios":[{"dia":"SEG","ini":"10:00","fim":"13:00"}]}
+      ] },
+
+    { "codigo":"EEI053","nome":"Gerência da Inovação e Criação de Emp. de Base Tecnológica","creditos":3,"ch":45,"categoria":"CONDICIONADA","prereq":[],
+      "turmas":[{"turma":"10665","nome":"SALA L.E","prof":"Adriano Proença","horarios":[{"dia":"SEG","ini":"10:00","fim":"13:00"}]}] },
+
+    { "codigo":"EEI948","nome":"Métodos Quantitativos Aplicados a Finanças","creditos":3,"ch":45,"categoria":"CONDICIONADA","prereq":[],
+      "turmas":[{"turma":"10717","nome":"L.E","prof":"André Assis de Salles","horarios":[{"dia":"QUA","ini":"10:00","fim":"13:00"}]}],
+      "obs":"BOA marca INSCRIÇÃO VEDADA — verificar pré-requisito antes de planejar." },
+
+    { "codigo":"EEI005","nome":"Inteligência Artificial Aplicada à Gestão da Produção","creditos":2,"ch":30,"categoria":"CONDICIONADA","prereq":[],
+      "turmas":[{"turma":"13629","nome":"S/F-116","prof":"Maria Alice Ferruccio da Rocha","horarios":[{"dia":"SEG","ini":"13:00","fim":"15:00"}]}] },
+
+    { "codigo":"EEI051","nome":"Análise Sistêmica de Empresas e Produtividade","creditos":3,"ch":45,"categoria":"CONDICIONADA","prereq":[],
+      "turmas":[{"turma":"10705","nome":"L.E","prof":"Amarildo da Cruz Fernandes","horarios":[{"dia":"TER","ini":"15:00","fim":"17:00"}]}] },
+
+    { "codigo":"EEI202","nome":"Humanidades e Ciências Sociais","creditos":2,"ch":30,"categoria":"HUMANAS","prereq":[],
+      "turmas":[{"turma":"10868","nome":"ET1+ER1 S/F222","prof":"José Augusto Nogueira Kamel","horarios":[{"dia":"TER","ini":"08:00","fim":"10:00"}]}] },
+
+    { "codigo":"EEI206","nome":"História da Tecnologia","creditos":2,"ch":30,"categoria":"HUMANAS","prereq":[],
+      "turmas":[{"turma":"10822","nome":"EP1-S/I-105A","prof":"Fabio Luiz Pires Moraes","horarios":[{"dia":"TER","ini":"10:00","fim":"12:00"}]}] },
+
+    { "codigo":"EEI922","nome":"Ética e Engenharia de Produção","creditos":3,"ch":45,"categoria":"HUMANAS","prereq":[],
+      "turmas":[{"turma":"11080","nome":"S/F-225","prof":"Klitia Valeska Bicalho de Sá","horarios":[{"dia":"QUA","ini":"13:00","fim":"16:00"}]}] },
+
+    { "codigo":"EEL191","nome":"Engenharia e Sociedade","creditos":4,"ch":60,"categoria":"HUMANAS","prereq":[],
+      "turmas":[{"turma":"15715","nome":"EL1+EP1 SF-115","prof":"Roberto Ivo da Rocha Lima Filho","horarios":[{"dia":"SEG","ini":"13:00","fim":"17:00"}]}] },
+
+    { "codigo":"EEW602","nome":"Evolução da Ciência e Engenharia","creditos":4,"ch":60,"categoria":"HUMANAS","prereq":[],
+      "turmas":[{"turma":"5794","nome":"—","prof":"Luiz Eduardo Azambuja Sauerbronn","horarios":[{"dia":"TER","ini":"15:00","fim":"19:00"}]}] }
+  ],
+
+  "outrasTurmasOfertadas_naoNecessarias": [
+    { "codigo":"EEG507","nome":"Modelo Digital da Edificação BIM","turma":"6382","horarios":[{"dia":"TER","ini":"08:00","fim":"10:00"},{"dia":"QUI","ini":"08:00","fim":"10:00"}] },
+    { "codigo":"MAE013","nome":"Introdução à Análise Topológica de Dados","turma":"16341","horarios":[{"dia":"QUA","ini":"17:00","fim":"18:30"}],"obs":"tem também um bloco na SEG, horário cortado" },
+    { "codigo":"MAE014","nome":"Tóp. Ciência de Dados: Estrutura de Dados","turma":"16351","horarios":[{"dia":"TER","ini":"15:00","fim":"17:00"},{"dia":"QUI","ini":"15:00","fim":"17:00"}] },
+    { "codigo":"EET100","nome":"Tecnologia e Desenvolvimento Social","turma":"6848","horarios":[{"dia":"SEX","ini":"08:00","fim":"10:00"}] }
+  ]
+};
+/* =====================================================================
+   MOTOR — funções puras (sem DOM). Testáveis fora do navegador.
+   ===================================================================== */
+const DIAS = ["SEG","TER","QUA","QUI","SEX"];
+const DIA_NOME = {SEG:"Segunda",TER:"Terça",QUA:"Quarta",QUI:"Quinta",SEX:"Sexta"};
+const PERIODOS = [6,7,8,9,10];
+const SEMESTRES = {6:"2026/2",7:"2027/1",8:"2027/2",9:"2028/1",10:"2028/2"};
+const TETO = DADOS._meta.tetoCreditosPorPeriodo;
+const MANHA = [420,780];   /* 07:00–13:00 */
+const TARDE = [780,1140];  /* 13:00–19:00 */
+const CATS = [
+  {id:"OBRIGATORIA",      nome:"Obrigatórias"},
+  {id:"ENFASE_ECONOMICA", nome:"Ênfase Eng. Econômica"},
+  {id:"ENFASE_GERENCIA",  nome:"Contra-ênfase Gerência"},
+  {id:"CONDICIONADA",     nome:"Escolha condicionada"},
+  {id:"HUMANAS",          nome:"Grupo Humanas"}
+];
+/* falta por categoria depois do histórico (antes do 6º) — o 6º alocado abate daqui */
+const FALTA_HIST = {OBRIGATORIA:83, ENFASE_ECONOMICA:15, ENFASE_GERENCIA:9, CONDICIONADA:6, HUMANAS:4};
+const EQUIV = {EEI201:["MAD201"], EEA212:["EEN212"], EEI426:["EEI323","EEI324"], EEI735:["EEI423"], EEE390:["EEE385"]};
+
+const REF_PLAN = {
+  6:[{cod:"EEI613"},{cod:"EEI621"},{cod:"EEI634"},{cod:"EEI642"},{cod:"EEI643"},{cod:"EEK355"},{cod:"EEN344"},{cod:"EEI652"},{cod:"FIN241"}],
+  7:[{cod:"EEI714"},{cod:"EEI845"},{cod:"EEI754"},{cod:"EEI744"},{cod:"EEI753"},{cod:"EQW471"}],
+  8:[{cod:"EEI837"},{cod:"EEI836"},{cod:"EEI021"},{cod:"EEI855"},{cod:"EEI856"},{cod:"EEI815"},{cod:"EEE390",turma:"16450"}],
+  9:[{cod:"EEI052"},{cod:"EEI202"},{cod:"EEI934"},{cod:"EEI050"},{cod:"EEI034"},{cod:"EEI933"},{cod:"EEI032"},{cod:"EEWX00"}],
+  10:[{cod:"EEI957"},{cod:"EEWU00"}]
+};
+
+const toMin  = h => { const p=h.split(":"); return (+p[0])*60 + (+p[1]||0); };
+const hShort = h => h.endsWith(":00") ? String(+h.slice(0,2)) : h;           /* "13:00"→"13" */
+const rngShort = o => hShort(o.ini)+"–"+hShort(o.fim);                        /* "13–15" */
+/* Sobreposição estrita: intervalos que só se tocam (fim === início) NÃO conflitam */
+const overlaps = (aIni,aFim,bIni,bFim) => aIni < bFim && bIni < aFim;
+
+const findDisc = (db,cod) => db.find(d=>d.codigo===cod);
+const getTurma = (disc,turmaId) => (disc.turmas||[]).find(t=>t.turma===turmaId) || (disc.turmas||[])[0] || null;
+const horariosDe = (disc,turmaId) => { const t=getTurma(disc,turmaId); return t ? (t.horarios||[]) : []; };
+const turmaLabel = t => (t && t.nome && t.nome.length<=8 && t.nome!=="—") ? t.nome : (t ? "T"+t.turma : "");
+
+/* Selo de turno: 🌅 manhã / 🌆 tarde / 🔀 os dois — null p/ sem horário */
+function turnoDe(disc, turmaId){
+  const hs = horariosDe(disc,turmaId);
+  if(!hs.length) return null;
+  const allM = hs.every(h=>toMin(h.fim)<=MANHA[1]);
+  const allT = hs.every(h=>toMin(h.ini)>=TARDE[0]);
+  return allM ? "manha" : (allT ? "tarde" : "ambos");
+}
+
+function periodOf(plan, cod){
+  for(const p of PERIODOS) if((plan[p]||[]).some(e=>e.cod===cod)) return p;
+  return null;
+}
+function entryOf(plan, cod){
+  for(const p of PERIODOS){ const e=(plan[p]||[]).find(x=>x.cod===cod); if(e) return {periodo:p, entry:e}; }
+  return null;
+}
+
+function computeCredits(entries, db){
+  return (entries||[]).reduce((s,e)=>{ const d=findDisc(db,e.cod); return s + (d?d.creditos:0); },0);
+}
+
+/* Conflitos: pares de blocos que se sobrepõem no mesmo dia (turma selecionada) */
+function computeConflicts(entries, db){
+  const blocks=[];
+  for(const e of (entries||[])){
+    const d=findDisc(db,e.cod); if(!d) continue;
+    for(const h of horariosDe(d,e.turma))
+      blocks.push({cod:d.codigo, dia:h.dia, ini:toMin(h.ini), fim:toMin(h.fim), hIni:h.ini, hFim:h.fim});
+  }
+  const out=[];
+  for(let i=0;i<blocks.length;i++) for(let j=i+1;j<blocks.length;j++){
+    const a=blocks[i], b=blocks[j];
+    if(a.cod!==b.cod && a.dia===b.dia && overlaps(a.ini,a.fim,b.ini,b.fim)){
+      out.push({a:a.cod, b:b.cod, dia:a.dia,
+        ini:Math.max(a.ini,b.ini), fim:Math.min(a.fim,b.fim)});
+    }
+  }
+  return out;
+}
+const conflictCods = confs => { const s=new Set(); confs.forEach(c=>{s.add(c.a);s.add(c.b);}); return s; };
+
+/* Estágio: dia aproveitável = manhã 07–13 OU tarde 13–19 100% livre */
+function computeEstagio(entries, db){
+  const dias={};
+  for(const dia of DIAS) dias[dia]={manha:[], tarde:[]};
+  for(const e of (entries||[])){
+    const d=findDisc(db,e.cod); if(!d) continue;
+    for(const h of horariosDe(d,e.turma)){
+      if(!dias[h.dia]) continue;
+      const ini=toMin(h.ini), fim=toMin(h.fim);
+      if(overlaps(ini,fim,MANHA[0],MANHA[1])) dias[h.dia].manha.push({cod:d.codigo,h});
+      if(overlaps(ini,fim,TARDE[0],TARDE[1])) dias[h.dia].tarde.push({cod:d.codigo,h});
+    }
+  }
+  let score=0; const msgs=[]; const res={};
+  for(const dia of DIAS){
+    const m=dias[dia].manha, t=dias[dia].tarde;
+    const manhaLivre=!m.length, tardeLivre=!t.length;
+    const ok=manhaLivre||tardeLivre;
+    if(ok) score++;
+    else{
+      /* aponta o turno "mais barato" de liberar (menos matérias; empate → tarde) */
+      const alvoTarde = t.length<=m.length;
+      const culps = alvoTarde? t : m;
+      const uniq=[]; const seen=new Set();
+      for(const c of culps) if(!seen.has(c.cod)){ seen.add(c.cod); uniq.push(c); }
+      const lista = uniq.map(c=>c.cod+" ("+rngShort(c.h)+")").join(" e ");
+      msgs.push({dia, txt:DIA_NOME[dia]+" perdeu a "+(alvoTarde?"tarde":"manhã")+" por causa de "+lista});
+    }
+    res[dia]={manhaLivre,tardeLivre,ok};
+  }
+  return {dias:res, score, msgs};
+}
+
+/* Pré-requisitos — validação cumulativa dentro do plano */
+function buildDoneSet(state){
+  const s=new Set(state.concluidas);
+  state.doneExtra.forEach(c=>s.add(c));
+  for(const src of Object.keys(EQUIV)) if(s.has(src)) EQUIV[src].forEach(eq=>s.add(eq));
+  return s;
+}
+/* estado do semáforo da disciplina `cod` se alocada no período `periodo` */
+function prereqInfo(db, plan, doneSet, cod, periodo){
+  const d=findDisc(db,cod);
+  if(!d || !(d.prereq||[]).length) return {state:"verde", faltando:[], viaPlan:[]};
+  const antes=new Set();
+  for(const p of PERIODOS) if(p<periodo) (plan[p]||[]).forEach(e=>{
+    antes.add(e.cod);
+    if(EQUIV[e.cod]) EQUIV[e.cod].forEach(eq=>antes.add(eq));
+  });
+  const faltando=[], viaPlan=[];
+  for(const pr of d.prereq){
+    if(doneSet.has(pr)) continue;
+    if(antes.has(pr)) viaPlan.push(pr);
+    else faltando.push(pr);
+  }
+  if(faltando.length) return {state:"vermelho", faltando, viaPlan};
+  return {state: viaPlan.length ? "amarelo" : "verde", faltando:[], viaPlan};
+}
+/* violações de pré-requisito das disciplinas já alocadas */
+function planViolations(db, plan, doneSet){
+  const out=[];
+  for(const p of PERIODOS) for(const e of (plan[p]||[])){
+    const info=prereqInfo(db, plan, doneSet, e.cod, p);
+    if(info.state==="vermelho") out.push({cod:e.cod, periodo:p, faltando:info.faltando});
+  }
+  return out;
+}
+
+/* Progresso por categoria: alvo = falta pós-histórico − o que está alocado no 6º */
+function categoriaProgress(db, plan, doneExtra){
+  const cred=(cods)=>{ const m={}; CATS.forEach(c=>m[c.id]=0);
+    for(const {cod} of cods){ const d=findDisc(db,cod); if(d && m[d.categoria]!=null) m[d.categoria]+=d.creditos; }
+    return m; };
+  const em6 = cred(plan[6]||[]);
+  const rest=[];
+  for(const p of [7,8,9,10]) (plan[p]||[]).forEach(e=>rest.push(e));
+  const alocado = cred(rest);
+  const extra = cred((doneExtra||[]).map(c=>({cod:c})));
+  const out={}; let faltamTotal=0, alocadoTotal=0, alvoTotal=0;
+  for(const c of CATS){
+    const alvo=Math.max(0, FALTA_HIST[c.id]-em6[c.id]-extra[c.id]);
+    const feito=alocado[c.id];
+    out[c.id]={alvo, feito, faltam:Math.max(0,alvo-feito), excesso:Math.max(0,feito-alvo)};
+    faltamTotal+=out[c.id].faltam; alocadoTotal+=Math.min(feito,alvo); alvoTotal+=alvo;
+  }
+  return {porCat:out, faltamTotal, alocadoTotal, alvoTotal};
+}
+
+/* Cadeia crítica: EEI744+EEI754 → EEI856 → EEI957  e  EEI642 → EEI753 → EEI855 */
+function criticalChain(db, plan, doneSet){
+  const P=c=>periodOf(plan,c);
+  const done=c=>doneSet.has(c);
+  const p744=P("EEI744"), p754=P("EEI754"), p856=P("EEI856"), p957=P("EEI957");
+  const problems=[];
+  if(p856==null || p856>9)
+    problems.push("EEI856 (PCP I) precisa estar alocada até o 9º período — sem ela, EEI957 não cabe no 10º e a formatura em 10 períodos QUEBRA.");
+  if(p856!=null){
+    if(!done("EEI744") && (p744==null || p744>=p856)) problems.push("EEI744 precisa vir num período ANTES de EEI856.");
+    if(!done("EEI754") && (p754==null || p754>=p856)) problems.push("EEI754 precisa vir num período ANTES de EEI856.");
+  }
+  if(p957==null) problems.push("EEI957 (PCP II) está sem período — ela precisa caber até o 10º.");
+  else if(p856!=null && p957<=p856) problems.push("EEI957 precisa vir num período DEPOIS de EEI856.");
+  const node=c=>{ const p=P(c); const okBase=p!=null||done(c);
+    return {cod:c, periodo:p, done:done(c), ok:okBase}; };
+  const nodes1=[node("EEI744"),node("EEI754"),node("EEI856"),node("EEI957")];
+  if(p856==null||p856>9){ nodes1[2].ok=false; nodes1[3].ok=false; }
+  const nodes2=[node("EEI642"),node("EEI753"),node("EEI855")];
+  const p642=P("EEI642"), p753=P("EEI753"), p855=P("EEI855");
+  if(!done("EEI753") && p855!=null && (p753==null||p753>=p855)) nodes2[2].ok=false;
+  if(!done("EEI642") && p753!=null && (p642==null||p642>=p753)) nodes2[1].ok=false;
+  return {nodes1, nodes2, problems};
+}
+
+function estagioTotal(db, plan){
+  let s=0;
+  for(const p of [7,8,9,10]) s+=computeEstagio(plan[p]||[], db).score;
+  return {score:s, max:20};
+}
+
+/* =====================================================================
+   ESTADO + persistência
+   ===================================================================== */
+const LS_KEY="planejador-grade-ufrj-v1";
+const clone = o => JSON.parse(JSON.stringify(o));
+function defaultState(){
+  return {
+    v:1,
+    db: clone(DADOS.disciplinas),
+    concluidas: DADOS.concluidas.slice(),
+    doneExtra: [],
+    plan: clone(REF_PLAN),
+    activeTab: 6
+  };
+}
+function loadState(){
+  if(typeof localStorage==="undefined") return defaultState();
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(!raw) return defaultState();
+    const s=JSON.parse(raw);
+    if(!s || !s.db || !s.plan) return defaultState();
+    PERIODOS.forEach(p=>{ if(!Array.isArray(s.plan[p])) s.plan[p]=[]; });
+    if(!Array.isArray(s.doneExtra)) s.doneExtra=[];
+    if(!Array.isArray(s.concluidas)) s.concluidas=DADOS.concluidas.slice();
+    if(!PERIODOS.includes(s.activeTab)) s.activeTab=6;
+    return s;
+  }catch(err){ return defaultState(); }
+}
+function saveState(){
+  if(typeof localStorage==="undefined") return;
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(err){}
+}
+
+/* exposto p/ testes automatizados (Node) e depuração no console */
+const __engine = {toMin, overlaps, computeCredits, computeConflicts, computeEstagio,
+  buildDoneSet, prereqInfo, planViolations, categoriaProgress, criticalChain,
+  estagioTotal, turnoDe, findDisc, getTurma, REF_PLAN, DADOS, defaultState, PERIODOS};
+if(typeof window!=="undefined") window.__engine=__engine;
+if(typeof module!=="undefined" && module.exports) module.exports=__engine;
+
+/* =====================================================================
+   UI — só roda no navegador
+   ===================================================================== */
+if(typeof document!=="undefined"){ (function(){
+
+let state = loadState();
+const ui = {search:"", cat:"", turno:""};
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const catStyle = cat => `--c-cat:var(--c-${cat});--t-cat:var(--t-${cat});--d-cat:var(--d-${cat})`;
+const catNome = id => (CATS.find(c=>c.id===id)||{nome:id}).nome;
+const SELO = {manha:"🌅", tarde:"🌆", ambos:"🔀"};
+const SEMF = {verde:"🟢", amarelo:"🟡", vermelho:"🔴"};
+const HOUR = 46, H0 = 360; /* grade começa às 06:00 */
+
+function toast(html){
+  const t=document.createElement("div"); t.className="toast"; t.innerHTML=html;
+  $("toasts").appendChild(t);
+  setTimeout(()=>{ t.style.transition="opacity .4s"; t.style.opacity="0"; setTimeout(()=>t.remove(),420); }, 3600);
+}
+
+function turmaConflita(db, entries, cod, turmaId){
+  const test = entries.filter(e=>e.cod!==cod).concat([{cod, turma:turmaId}]);
+  const confs = computeConflicts(test, db).filter(c=>c.a===cod||c.b===cod);
+  const s=new Set(); confs.forEach(c=>s.add(c.a===cod?c.b:c.a));
+  return [...s];
+}
+
+/* ---------- header ---------- */
+function renderHeader(){
+  const prog = categoriaProgress(state.db, state.plan, state.doneExtra);
+  const est  = estagioTotal(state.db, state.plan);
+  const chain= criticalChain(state.db, state.plan, buildDoneSet(state));
+  const viavel = prog.faltamTotal===0 && !chain.problems.length;
+  $("hdStatus").innerHTML =
+    `<span class="chip ${viavel?"ok":"bad"}">${viavel?"✅ Formatura no 10º viável":"⚠ faltam "+prog.faltamTotal+" cr sem período"}</span>`+
+    `<span class="chip">Estágio 7º–10º: ${est.score}/${est.max} dias</span>`+
+    `<span class="chip">CR ${DADOS._meta.crAcumulado} · ${DADOS._meta.creditosObtidos} cr obtidos</span>`;
+}
+
+/* ---------- abas ---------- */
+function renderTabs(){
+  $("tabs").innerHTML = PERIODOS.map(p=>{
+    const cred = computeCredits(state.plan[p], state.db);
+    const nConf = computeConflicts(state.plan[p], state.db).length;
+    return `<button class="tab ${p===state.activeTab?"active":""}" data-p="${p}">
+      ${cred>TETO?`<span class="t-flag">${cred} cr</span>`:""}
+      <span class="t-num">${p}º${nConf?" ⚠":""}</span>
+      <span class="t-sem">${SEMESTRES[p]}</span>
+      <span class="t-cred">${cred} cr</span>
+      ${p===6?`<span class="t-badge">MATRICULADO</span>`:""}
+    </button>`;
+  }).join("");
+  $("tabs").querySelectorAll(".tab").forEach(b=>b.onclick=()=>{ state.activeTab=+b.dataset.p; saveState(); renderAll(); });
+}
+
+function renderPeriodStats(){
+  const p=state.activeTab;
+  const cred=computeCredits(state.plan[p], state.db);
+  const est=computeEstagio(state.plan[p], state.db);
+  const nConf=computeConflicts(state.plan[p], state.db).length;
+  $("periodStats").innerHTML =
+    `<div class="pstat"><span class="lb">Créditos no ${p}º</span><span class="vl ${cred>TETO?"over":""}">${cred}<small style="font-size:12px;color:var(--muted)"> / ${TETO}</small></span>${cred>TETO?`<span class="lb" style="color:var(--crit);font-weight:600">acima do teto!</span>`:""}</div>`+
+    `<div class="pstat"><span class="lb">Estágio</span><span class="vl ${est.score===5?"okc":""}">${est.score}/5</span></div>`+
+    `<div class="pstat"><span class="lb">Conflitos</span><span class="vl ${nConf?"over":""}">${nConf}</span></div>`+
+    (p===6?`<div class="pstat"><span class="lb">CRID 2026/2 — já matriculado; EEI652 é a única candidata a sair</span></div>`:"");
+}
+
+/* ---------- calendário ---------- */
+function renderCalendar(){
+  const p=state.activeTab;
+  const entries=state.plan[p]||[];
+  const confSet=conflictCods(computeConflicts(entries, state.db));
+  const doneSet=buildDoneSet(state);
+
+  $("calHead").innerHTML = `<div></div>`+DIAS.map(d=>`<div class="dh">${d}</div>`).join("");
+
+  let times=`<div class="cal-times">`;
+  for(let h=6;h<=20;h++){
+    const strong=(h===7||h===13||h===19)?" strong":"";
+    times+=`<span class="s${strong}" style="top:${(h*60-H0)/60*HOUR}px">${String(h).padStart(2,"0")}:00</span>`;
+  }
+  times+=`</div>`;
+
+  const cols = DIAS.map(dia=>{
+    const blocks=[];
+    for(const e of entries){
+      const d=findDisc(state.db,e.cod); if(!d) continue;
+      const t=getTurma(d,e.turma);
+      for(const h of horariosDe(d,e.turma)){
+        if(h.dia!==dia) continue;
+        blocks.push({cod:d.codigo, d, t, ini:toMin(h.ini), fim:toMin(h.fim), h});
+      }
+    }
+    blocks.sort((a,b)=>a.ini-b.ini||a.fim-b.fim);
+    /* clusters de sobreposição → colunas lado a lado */
+    let i=0;
+    while(i<blocks.length){
+      let j=i, maxFim=blocks[i].fim;
+      while(j+1<blocks.length && blocks[j+1].ini<maxFim){ j++; maxFim=Math.max(maxFim,blocks[j].fim); }
+      const cluster=blocks.slice(i,j+1), colsEnd=[];
+      for(const b of cluster){
+        let c=colsEnd.findIndex(f=>f<=b.ini);
+        if(c===-1){ c=colsEnd.length; colsEnd.push(b.fim); } else colsEnd[c]=b.fim;
+        b.col=c;
+      }
+      cluster.forEach(b=>b.ncols=colsEnd.length);
+      i=j+1;
+    }
+    const html=blocks.map(b=>{
+      const conf=confSet.has(b.cod);
+      const info=prereqInfo(state.db,state.plan,doneSet,b.cod,p);
+      const viol=info.state==="vermelho";
+      const top=(b.ini-H0)/60*HOUR, hgt=(b.fim-b.ini)/60*HOUR-3;
+      const w=100/b.ncols, l=b.col*w;
+      const showT=b.d.turmas.length>1;
+      const title=esc(b.d.nome)+" — "+b.h.ini+"–"+b.h.fim+(b.t&&b.t.prof?" · "+esc(b.t.prof):"")+
+        (conf?" · ⚠ CONFLITO de horário":"")+(viol?" · 🔴 pré-requisito faltando: "+info.faltando.join(", "):"");
+      return `<div class="blk ${conf?"conflict":""} ${viol?"viol":""} ${p===6?"matric":""}" data-cod="${b.cod}"
+        style="${catStyle(b.d.categoria)};top:${top}px;height:${hgt}px;left:calc(${l}% + 2px);width:calc(${w}% - 4px)" title="${title}">
+        <div class="b-cod">${b.cod}${showT?` <span class="b-tur">${esc(turmaLabel(b.t))}</span>`:""}</div>
+        <div class="b-nom">${esc(b.d.nome)}</div>
+        <div class="b-hor">${rngShort(b.h)}h</div>
+      </div>`;
+    }).join("");
+    return `<div class="cal-day" data-dia="${dia}">${html}</div>`;
+  });
+
+  $("calBody").innerHTML = times + cols.join("");
+  $("calBody").querySelectorAll(".blk").forEach(b=>b.onclick=()=>openDiscModal(b.dataset.cod));
+
+  /* sem horário fixo */
+  const ns=entries.map(e=>findDisc(state.db,e.cod)).filter(d=>d && !horariosDe(d, (entries.find(e=>e.cod===d.codigo)||{}).turma).length);
+  $("noSched").innerHTML = ns.length ?
+    `<p class="ns-lbl">Sem horário fixo — contam créditos, não ocupam o calendário:</p><div class="ns-row">`+
+    ns.map(d=>`<span class="ns-chip" data-cod="${d.codigo}" style="${catStyle(d.categoria)}"><span class="b-cod">${d.codigo}</span> ${esc(d.nome)} · ${d.creditos} cr</span>`).join("")+`</div>` : "";
+  $("noSched").querySelectorAll(".ns-chip").forEach(c=>c.onclick=()=>openDiscModal(c.dataset.cod));
+}
+
+/* ---------- avisos do período ---------- */
+function renderWarnings(){
+  const p=state.activeTab;
+  const entries=state.plan[p]||[];
+  const doneSet=buildDoneSet(state);
+  const confs=computeConflicts(entries, state.db);
+  const cred=computeCredits(entries, state.db);
+  const out=[];
+  if(cred>TETO) out.push(`<div class="warn-item"><b>${cred} créditos</b> — acima do teto de ${TETO} por período.</div>`);
+  for(const c of confs){
+    const d1=findDisc(state.db,c.a), d2=findDisc(state.db,c.b);
+    const minShort=m=>m%60? Math.floor(m/60)+":"+String(m%60).padStart(2,"0") : String(Math.floor(m/60));
+    out.push(`<div class="warn-item">Conflito de horário: <b>${c.a}</b> (${esc(d1?d1.nome:"")}) × <b>${c.b}</b> (${esc(d2?d2.nome:"")}) — ${DIA_NOME[c.dia]}, ${minShort(c.ini)}–${minShort(c.fim)}h.
+      ${(d1&&d1.turmas.length>1)||(d2&&d2.turmas.length>1)?"Há outra turma disponível — clique no bloco para trocar.":""}</div>`);
+  }
+  for(const v of planViolations(state.db,state.plan,doneSet).filter(v=>v.periodo===p)){
+    out.push(`<div class="warn-item yellow">🔴 <b>${v.cod}</b> está no ${v.periodo}º sem pré-requisito: falta <b>${v.faltando.join(", ")}</b>.</div>`);
+  }
+  $("warnBox").innerHTML=out.join("");
+}
+
+/* ---------- estágio ---------- */
+function renderEstagio(){
+  const p=state.activeTab;
+  const est=computeEstagio(state.plan[p]||[], state.db);
+  const days=DIAS.map(dia=>{
+    const d=est.dias[dia];
+    return `<div class="est-day ${d.ok?"":"dead"}">
+      <div class="ed-nm">${dia}</div>
+      <div class="ed-st">${d.ok?"✅":"✖"}</div>
+      <div class="turnos">
+        <span class="turno ${d.manhaLivre?"free":""}">🌅 ${d.manhaLivre?"livre":"ocupada"}</span>
+        <span class="turno ${d.tardeLivre?"free":""}">🌆 ${d.tardeLivre?"livre":"ocupada"}</span>
+      </div>
+    </div>`;
+  }).join("");
+  const msgs=est.msgs.map(m=>`<div class="est-msg">${m.txt.replace(/([A-Z]{2,3}[A-Z0-9]{3,4})/g,"<b>$1</b>")}</div>`).join("");
+  $("estWrap").innerHTML=`
+    <div class="est-hero ${est.score===5?"full":""}">
+      <div class="eh-lb">dias aproveitáveis no ${p}º</div>
+      <div class="eh-vl">${est.score}<small>/5</small></div>
+    </div>
+    <div class="est-days">${days}</div>
+    ${msgs?`<div class="est-msgs">${msgs}</div>`:""}`;
+}
+
+/* ---------- cadeia crítica ---------- */
+function renderChain(){
+  const ch=criticalChain(state.db, state.plan, buildDoneSet(state));
+  const node=n=>`<div class="ch-node ${n.ok?"ok":"bad"}" title="${n.cod}">
+    <div class="cn-cod">${n.cod}</div>
+    <div class="cn-p">${n.done?"concluída":(n.periodo?n.periodo+"º":"sem período")}</div></div>`;
+  $("chainBox").innerHTML=
+    node(ch.nodes1[0])+`<span class="ch-plus">+</span>`+node(ch.nodes1[1])+
+    `<span class="ch-arrow">→</span>`+node(ch.nodes1[2])+`<span class="ch-arrow">→</span>`+node(ch.nodes1[3])+
+    `<span style="flex-basis:100%;height:2px"></span>`+
+    node(ch.nodes2[0])+`<span class="ch-arrow">→</span>`+node(ch.nodes2[1])+`<span class="ch-arrow">→</span>`+node(ch.nodes2[2]);
+  $("chainAlert").innerHTML=ch.problems.length?
+    `<div class="chain-alert">⚠ ${ch.problems.map(esc).join("<br>⚠ ")}</div>`:"";
+}
+
+/* ---------- progresso / formatura ---------- */
+function renderProgress(){
+  const prog=categoriaProgress(state.db, state.plan, state.doneExtra);
+  const chain=criticalChain(state.db, state.plan, buildDoneSet(state));
+  const viavel=prog.faltamTotal===0 && !chain.problems.length;
+  $("statusLine").innerHTML = viavel ?
+    `<div class="status-line ok">✅ Formatura no 10º período viável</div>` :
+    `<div class="status-line pend">⚠️ Faltam ${prog.faltamTotal} créditos sem período alocado</div>`;
+  $("progList").innerHTML = CATS.map(c=>{
+    const pc=prog.porCat[c.id];
+    const pct=pc.alvo? Math.min(100, Math.round(pc.feito/pc.alvo*100)) : 100;
+    return `<div class="prog-item">
+      <div class="pi-top"><span class="pi-nm">${c.nome}</span>
+        <span class="pi-vl"><b>${Math.min(pc.feito,pc.alvo)}</b> / ${pc.alvo} cr${pc.excesso?` <span style="color:var(--muted)">(+${pc.excesso} além)</span>`:""}</span></div>
+      <div class="meter" style="--tr:var(--t-${c.id});--fl:var(--c-${c.id})"><i style="width:${pct}%"></i></div>
+    </div>`;
+  }).join("");
+  const est=estagioTotal(state.db, state.plan);
+  let aloc=0; [7,8,9,10].forEach(p=>aloc+=computeCredits(state.plan[p],state.db));
+  $("sideStats").innerHTML=
+    `<div class="sstat"><div class="lb">Alocado 7º–10º</div><div class="vl">${aloc} cr</div></div>`+
+    `<div class="sstat"><div class="lb">Sem período</div><div class="vl" style="color:${prog.faltamTotal?"var(--crit)":"var(--good-text)"}">${prog.faltamTotal} cr</div></div>`+
+    `<div class="sstat"><div class="lb">Estágio 7º–10º</div><div class="vl ${est.score===est.max?"okc":""}">${est.score}/${est.max}</div></div>`;
+}
+
+/* ---------- pool de pendentes ---------- */
+function renderPoolTools(){
+  const cats=[["","Todas"],["OBRIGATORIA","Obrig."],["ENFASE_ECONOMICA","Ênf. Econ."],["ENFASE_GERENCIA","Contra-ênf."],["CONDICIONADA","Condic."],["HUMANAS","Humanas"]];
+  $("fchipsCat").innerHTML=cats.map(([id,nm])=>`<button class="fchip ${ui.cat===id?"on":""}" data-cat="${id}">${nm}</button>`).join("");
+  $("fchipsCat").querySelectorAll(".fchip").forEach(b=>b.onclick=()=>{ ui.cat=b.dataset.cat; renderPoolTools(); renderPool(); });
+  const turnos=[["","Todos"],["manha","🌅 Manhã"],["tarde","🌆 Tarde"],["ambos","🔀 Mistas"]];
+  $("fchipsTurno").innerHTML=turnos.map(([id,nm])=>`<button class="fchip ${ui.turno===id?"on":""}" data-turno="${id}">${nm}</button>`).join("");
+  $("fchipsTurno").querySelectorAll(".fchip").forEach(b=>b.onclick=()=>{ ui.turno=b.dataset.turno; renderPoolTools(); renderPool(); });
+}
+
+function renderPool(){
+  const doneSet=buildDoneSet(state);
+  const q=ui.search.trim().toLowerCase();
+  const cursando=new Set((state.plan[6]||[]).map(e=>e.cod));
+  const pend=state.db.filter(d=>
+    !state.concluidas.includes(d.codigo) && !state.doneExtra.includes(d.codigo));
+  const grupos=CATS.map(c=>{
+    const items=pend.filter(d=>d.categoria===c.id)
+      .filter(d=>!q || d.codigo.toLowerCase().includes(q) || d.nome.toLowerCase().includes(q))
+      .filter(d=>!ui.cat || d.categoria===ui.cat)
+      .filter(d=>{
+        if(!ui.turno) return true;
+        const ent=entryOf(state.plan,d.codigo);
+        return turnoDe(d, ent?ent.entry.turma:undefined)===ui.turno;
+      })
+      .sort((a,b)=>a.codigo.localeCompare(b.codigo));
+    if(!items.length) return "";
+    const prog=categoriaProgress(state.db,state.plan,state.doneExtra).porCat[c.id];
+    const rows=items.map(d=>{
+      const ent=entryOf(state.plan,d.codigo);
+      const noAtivo=ent && ent.periodo===state.activeTab;
+      const evalP=ent?ent.periodo:state.activeTab;
+      const info=prereqInfo(state.db,state.plan,doneSet,d.codigo,evalP);
+      const selo=turnoDe(d, ent?ent.entry.turma:undefined);
+      let tip=esc(d.nome)+" · "+d.creditos+" cr";
+      if(info.state==="vermelho") tip+=" — 🔴 pré-requisito faltando: "+info.faltando.join(", ");
+      else if(info.state==="amarelo") tip+=" — 🟡 depende de cumprir no plano: "+info.viaPlan.join(", ");
+      else tip+=" — 🟢 liberada";
+      if(d.obs) tip+=" · "+esc(d.obs);
+      return `<div class="pitem ${ent?"alloc":""}" data-cod="${d.codigo}" title="${tip}">
+        <span class="sem">${SEMF[info.state]}</span>
+        <div class="pi-main">
+          <div class="pi-l1"><span class="pi-cod">${d.codigo}</span><span class="pi-cr">${d.creditos} cr</span>
+            ${d.turmas.length>1?`<span class="pi-cr">${d.turmas.length} turmas</span>`:""}</div>
+          <div class="pi-nome">${esc(d.nome)}</div>
+        </div>
+        <span class="selo">${selo?SELO[selo]:""}</span>
+        ${ent?`<span class="pi-alloc">${noAtivo?"✓ ":""}${ent.periodo}º</span>`:""}
+        <button class="pi-edit" data-edit="${d.codigo}" title="Editar dados">✎</button>
+      </div>`;
+    }).join("");
+    return `<div class="pool-grp" style="${catStyle(c.id)}">
+      <div class="pg-hd"><span class="pg-nm">${c.nome}</span>
+        <span class="pg-meta">meta ${prog.alvo} cr · alocado ${prog.feito}</span></div>
+      ${rows}</div>`;
+  }).join("");
+
+  const doneRows=state.doneExtra.map(cod=>{
+    const d=findDisc(state.db,cod); if(!d) return "";
+    return `<div class="pitem" style="opacity:.6" data-undone="${cod}" title="Clique para desfazer">
+      <span class="sem">✔</span>
+      <div class="pi-main"><div class="pi-l1"><span class="pi-cod">${cod}</span><span class="pi-cr">${d.creditos} cr</span></div>
+      <div class="pi-nome">${esc(d.nome)} — marcada como concluída</div></div><span class="selo">↩</span></div>`;
+  }).join("");
+
+  $("pool").innerHTML = grupos +
+    (doneRows?`<div class="pool-grp"><div class="pg-hd" style="border-left-color:var(--baseline);background:#f0f0ed"><span class="pg-nm" style="color:var(--ink-2)">Concluídas manualmente</span></div>${doneRows}</div>`:"") +
+    `<button class="pool-add" id="btnAddDisc">+ Nova disciplina (Humanas de outro instituto, etc.)</button>`;
+
+  $("pool").querySelectorAll(".pitem[data-cod]").forEach(it=>{
+    it.onclick=ev=>{ if(ev.target.closest(".pi-edit")) return; toggleAlloc(it.dataset.cod); };
+  });
+  $("pool").querySelectorAll(".pi-edit").forEach(b=>b.onclick=ev=>{ ev.stopPropagation(); openEditModal(b.dataset.edit); });
+  $("pool").querySelectorAll(".pitem[data-undone]").forEach(it=>{
+    it.onclick=()=>{ state.doneExtra=state.doneExtra.filter(c=>c!==it.dataset.undone);
+      toast(`<b>${it.dataset.undone}</b> voltou para as pendentes.`); saveState(); renderAll(); };
+  });
+  $("btnAddDisc").onclick=()=>openEditModal(null);
+}
+
+/* ---------- ações ---------- */
+function toggleAlloc(cod){
+  const p=state.activeTab;
+  const ent=entryOf(state.plan,cod);
+  const d=findDisc(state.db,cod);
+  if(ent && ent.periodo===p){
+    state.plan[p]=state.plan[p].filter(e=>e.cod!==cod);
+    toast(`<b>${cod}</b> removida do ${p}º período.`);
+  } else if(ent){
+    state.plan[ent.periodo]=state.plan[ent.periodo].filter(e=>e.cod!==cod);
+    state.plan[p].push(ent.entry);
+    toast(`<b>${cod}</b> movida do ${ent.periodo}º para o ${p}º.`);
+  } else {
+    state.plan[p].push({cod});
+    const info=prereqInfo(state.db,state.plan,buildDoneSet(state),cod,p);
+    const confs=turmaConflita(state.db,state.plan[p],cod,undefined);
+    let msg=`<b>${cod}</b> adicionada ao ${p}º período.`;
+    if(info.state==="vermelho") msg+=` 🔴 Pré-requisito faltando: <b>${info.faltando.join(", ")}</b>.`;
+    if(confs.length) msg+=` ⚠ Conflita com <b>${confs.join(", ")}</b>.`;
+    toast(msg);
+  }
+  saveState(); renderAll();
+}
+
+/* ---------- modal: detalhe / turma ---------- */
+function closeModal(){ $("modalRoot").innerHTML=""; }
+function modal(html){
+  $("modalRoot").innerHTML=`<div class="overlay" id="ovl"><div class="modal">${html}</div></div>`;
+  $("ovl").addEventListener("click",ev=>{ if(ev.target.id==="ovl") closeModal(); });
+}
+
+function openDiscModal(cod){
+  const d=findDisc(state.db,cod); if(!d) return;
+  const ent=entryOf(state.plan,cod);
+  const alvoP=ent?ent.periodo:state.activeTab;
+  const entries=state.plan[alvoP]||[];
+  const doneSet=buildDoneSet(state);
+  const info=prereqInfo(state.db,state.plan,doneSet,cod,alvoP);
+  const selTurma=ent&&ent.entry.turma ? ent.entry.turma : (d.turmas[0]&&d.turmas[0].turma);
+  const turmasHtml = d.turmas.length>1 ? `<p class="mut" style="margin-bottom:4px">Turmas — a marcação indica qual evita conflito no ${alvoP}º:</p><div class="tsel">`+
+    d.turmas.map(t=>{
+      const confs=turmaConflita(state.db, entries, cod, t.turma);
+      const hs=(t.horarios||[]).map(h=>h.dia+" "+rngShort(h)+"h").join(" · ")||"sem horário";
+      return `<button class="topt ${t.turma===selTurma?"sel":""}" data-turma="${t.turma}">
+        <b>${esc(t.nome&&t.nome!=="—"?t.nome:"T"+t.turma)}</b> <span class="mut">${hs}${t.prof?" · "+esc(t.prof):""}</span>
+        ${confs.length?`<span class="tt-bad">⚠ conflita com ${confs.join(", ")}</span>`:`<span class="tt-ok">✓ sem conflito</span>`}
+      </button>`;
+    }).join("")+`</div>` : "";
+  const hs=horariosDe(d,selTurma).map(h=>DIA_NOME[h.dia]+" "+h.ini+"–"+h.fim).join(" · ")||"sem horário fixo";
+  const t0=getTurma(d,selTurma);
+  modal(`
+    <div class="m-hd"><h3><span>${cod}</span> ${esc(d.nome)}</h3><button class="m-x" id="mx">×</button></div>
+    <div class="m-bd">
+      <div class="det-info">
+        ${catNome(d.categoria)} · <b>${d.creditos} cr</b> · CH ${d.ch||"—"}h${t0&&t0.prof?` · ${esc(t0.prof)}`:""}<br>
+        ${esc(hs)}<br>
+        ${SEMF[info.state]} ${info.state==="vermelho"?"Pré-requisito faltando: <b>"+info.faltando.join(", ")+"</b>":
+          info.state==="amarelo"?"Depende de cumprir no plano: <b>"+info.viaPlan.join(", ")+"</b>":"Pré-requisitos OK"}
+        ${d.obs?`<br><span class="mut">Obs: ${esc(d.obs)}</span>`:""}
+      </div>
+      ${turmasHtml}
+    </div>
+    <div class="m-ft">
+      <button class="btn" id="mEdit">✎ Editar dados</button>
+      <button class="btn" id="mDone">Marcar concluída</button>
+      ${ent?`<button class="btn danger" id="mRem">Remover do ${ent.periodo}º</button>`
+           :`<button class="btn primary" id="mAdd">Adicionar ao ${state.activeTab}º</button>`}
+    </div>`);
+  $("mx").onclick=closeModal;
+  $("mEdit").onclick=()=>{ closeModal(); openEditModal(cod); };
+  $("mDone").onclick=()=>{
+    for(const p of PERIODOS) state.plan[p]=state.plan[p].filter(e=>e.cod!==cod);
+    if(!state.doneExtra.includes(cod)) state.doneExtra.push(cod);
+    toast(`<b>${cod}</b> marcada como concluída.`); saveState(); closeModal(); renderAll();
+  };
+  const act=$("mRem")||$("mAdd");
+  act.onclick=()=>{ closeModal(); toggleAlloc(cod); };
+  $("modalRoot").querySelectorAll(".topt").forEach(b=>b.onclick=()=>{
+    const tid=b.dataset.turma;
+    if(ent){ ent.entry.turma=tid; saveState(); renderAll(); openDiscModal(cod); }
+    else { const e={cod,turma:tid}; state.plan[state.activeTab].push(e); saveState(); closeModal(); renderAll();
+      toast(`<b>${cod}</b> adicionada ao ${state.activeTab}º (turma ${tid}).`); }
+  });
+}
+
+/* ---------- modal: editar / nova disciplina ---------- */
+function openEditModal(cod){
+  const d=cod?findDisc(state.db,cod):null;
+  const novo=!d;
+  const data=d?clone(d):{codigo:"",nome:"",creditos:2,ch:30,categoria:"HUMANAS",prereq:[],turmas:[{turma:"NOVA",nome:"",horarios:[{dia:"SEG",ini:"08:00",fim:"10:00"}]}]};
+  const horRow=(ti,hi,h)=>`<div class="hor-row" data-ti="${ti}" data-hi="${hi}">
+    <select class="e-dia">${DIAS.map(x=>`<option ${x===h.dia?"selected":""}>${x}</option>`).join("")}</select>
+    <input class="e-ini" type="time" step="1800" value="${h.ini}">
+    <span class="mut">até</span>
+    <input class="e-fim" type="time" step="1800" value="${h.fim}">
+    <button class="btn sm e-delh" title="Remover horário">×</button>
+  </div>`;
+  const turmaBox=(t,ti)=>`<div class="turma-box" data-ti="${ti}">
+    <div class="tb-hd"><span class="mut">Turma</span>
+      <input class="e-tid" value="${esc(t.turma)}" style="max-width:90px" title="Código da turma">
+      <input class="e-tnome" value="${esc(t.nome||"")}" placeholder="nome/sala">
+      <input class="e-tprof" value="${esc(t.prof||"")}" placeholder="professor(a)">
+      ${data.turmas.length>1?`<button class="btn sm danger e-delt">excluir</button>`:""}
+    </div>
+    <div class="hors">${(t.horarios||[]).map((h,hi)=>horRow(ti,hi,h)).join("")}</div>
+    <button class="btn sm e-addh">+ horário</button>
+  </div>`;
+  modal(`
+    <div class="m-hd"><h3>${novo?"Nova disciplina":`Editar <span>${esc(data.codigo)}</span>`}</h3><button class="m-x" id="mx">×</button></div>
+    <div class="m-bd" id="editBody">
+      <div class="frow"><label>Código</label><input id="eCod" value="${esc(data.codigo)}" ${novo?"":"disabled"} placeholder="ex.: FCA123"></div>
+      <div class="frow"><label>Nome</label><input id="eNome" value="${esc(data.nome)}"></div>
+      <div class="frow"><label>Créditos</label><input id="eCred" type="number" min="0" max="12" value="${data.creditos}"></div>
+      <div class="frow"><label>Categoria</label><select id="eCat">${CATS.map(c=>`<option value="${c.id}" ${c.id===data.categoria?"selected":""}>${c.nome}</option>`).join("")}</select></div>
+      <div class="frow"><label>Pré-requisitos</label><input id="ePre" value="${esc((data.prereq||[]).join(", "))}" placeholder="códigos separados por vírgula"></div>
+      <div id="turmas">${data.turmas.map((t,ti)=>turmaBox(t,ti)).join("")}</div>
+      <button class="btn sm" id="eAddT">+ turma</button>
+      <div style="margin-top:10px"><label style="font-size:12.5px"><input type="checkbox" id="eDone" ${state.doneExtra.includes(data.codigo)?"checked":""}> já concluí esta disciplina</label></div>
+    </div>
+    <div class="m-ft">
+      ${!novo?`<button class="btn danger" id="eDel" style="margin-right:auto">Excluir disciplina</button>`:""}
+      <button class="btn" id="eCancel">Cancelar</button>
+      <button class="btn primary" id="eSave">Salvar</button>
+    </div>`);
+  $("mx").onclick=closeModal; $("eCancel").onclick=closeModal;
+
+  const readTurmas=()=>[...$("turmas").querySelectorAll(".turma-box")].map(tb=>({
+    turma:tb.querySelector(".e-tid").value.trim()||"—",
+    nome:tb.querySelector(".e-tnome").value.trim(),
+    prof:tb.querySelector(".e-tprof").value.trim()||undefined,
+    horarios:[...tb.querySelectorAll(".hor-row")].map(hr=>({
+      dia:hr.querySelector(".e-dia").value,
+      ini:hr.querySelector(".e-ini").value||"08:00",
+      fim:hr.querySelector(".e-fim").value||"10:00"
+    })).filter(h=>toMin(h.fim)>toMin(h.ini))
+  }));
+  const rebind=()=>{
+    $("turmas").querySelectorAll(".e-addh").forEach(b=>b.onclick=()=>{
+      data.turmas=readTurmas();
+      data.turmas[+b.closest(".turma-box").dataset.ti].horarios.push({dia:"SEG",ini:"08:00",fim:"10:00"});
+      $("turmas").innerHTML=data.turmas.map((t,ti)=>turmaBox(t,ti)).join(""); rebind();
+    });
+    $("turmas").querySelectorAll(".e-delh").forEach(b=>b.onclick=()=>{
+      data.turmas=readTurmas();
+      const tb=b.closest(".turma-box"), hr=b.closest(".hor-row");
+      data.turmas[+tb.dataset.ti].horarios.splice(+hr.dataset.hi,1);
+      $("turmas").innerHTML=data.turmas.map((t,ti)=>turmaBox(t,ti)).join(""); rebind();
+    });
+    $("turmas").querySelectorAll(".e-delt").forEach(b=>b.onclick=()=>{
+      data.turmas=readTurmas();
+      data.turmas.splice(+b.closest(".turma-box").dataset.ti,1);
+      $("turmas").innerHTML=data.turmas.map((t,ti)=>turmaBox(t,ti)).join(""); rebind();
+    });
+  };
+  rebind();
+  $("eAddT").onclick=()=>{
+    data.turmas=readTurmas();
+    data.turmas.push({turma:"T"+(data.turmas.length+1),nome:"",horarios:[]});
+    $("turmas").innerHTML=data.turmas.map((t,ti)=>turmaBox(t,ti)).join(""); rebind();
+  };
+  if($("eDel")) $("eDel").onclick=()=>{
+    if(!confirm("Excluir "+data.codigo+" da base? Ela sai de todos os períodos.")) return;
+    state.db=state.db.filter(x=>x.codigo!==data.codigo);
+    for(const p of PERIODOS) state.plan[p]=state.plan[p].filter(e=>e.cod!==data.codigo);
+    toast(`<b>${data.codigo}</b> excluída da base.`); saveState(); closeModal(); renderAll();
+  };
+  $("eSave").onclick=()=>{
+    const codV=novo?$("eCod").value.trim().toUpperCase():data.codigo;
+    if(!codV){ alert("Informe o código."); return; }
+    if(novo && findDisc(state.db,codV)){ alert("Já existe disciplina com esse código."); return; }
+    const nd={
+      codigo:codV,
+      nome:$("eNome").value.trim()||codV,
+      creditos:+$("eCred").value||0,
+      ch:(d&&d.ch)||undefined,
+      categoria:$("eCat").value,
+      prereq:$("ePre").value.split(",").map(s=>s.trim().toUpperCase()).filter(Boolean),
+      turmas:readTurmas(),
+      obs:d&&d.obs||undefined
+    };
+    if(!nd.turmas.length) nd.turmas=[{turma:"—",nome:"sem horário fixo",horarios:[]}];
+    if(novo) state.db.push(nd);
+    else { const i=state.db.findIndex(x=>x.codigo===codV); state.db[i]=nd; }
+    if($("eDone").checked){ if(!state.doneExtra.includes(codV)) state.doneExtra.push(codV);
+      for(const p of PERIODOS) state.plan[p]=state.plan[p].filter(e=>e.cod!==codV); }
+    else state.doneExtra=state.doneExtra.filter(c=>c!==codV);
+    toast(`<b>${codV}</b> ${novo?"criada":"atualizada"}.`);
+    saveState(); closeModal(); renderAll();
+  };
+}
+
+/* ---------- exportar / importar / restaurar ---------- */
+function bindHeader(){
+  $("btnExport").onclick=()=>{
+    const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="planejador-grade-export.json";
+    a.click(); URL.revokeObjectURL(a.href);
+    toast("Plano exportado como JSON.");
+  };
+  $("btnImport").onclick=()=>$("fileImport").click();
+  $("fileImport").onchange=ev=>{
+    const f=ev.target.files[0]; if(!f) return;
+    const r=new FileReader();
+    r.onload=()=>{
+      try{
+        const s=JSON.parse(r.result);
+        if(!s||!s.plan||!s.db) throw new Error("estrutura inválida");
+        PERIODOS.forEach(p=>{ if(!Array.isArray(s.plan[p])) s.plan[p]=[]; });
+        state=s; if(!PERIODOS.includes(state.activeTab)) state.activeTab=6;
+        if(!Array.isArray(state.doneExtra)) state.doneExtra=[];
+        if(!Array.isArray(state.concluidas)) state.concluidas=DADOS.concluidas.slice();
+        saveState(); renderAll(); toast("JSON importado com sucesso.");
+      }catch(err){ alert("Arquivo inválido: "+err.message); }
+      ev.target.value="";
+    };
+    r.readAsText(f);
+  };
+  $("btnReset").onclick=()=>{
+    if(!confirm("Restaurar o plano de referência? Disciplinas e horários editados na base também voltam ao original.")) return;
+    state=defaultState(); saveState(); renderAll();
+    toast("Plano de referência restaurado.");
+  };
+  $("poolSearch").oninput=ev=>{ ui.search=ev.target.value; renderPool(); };
+  document.addEventListener("keydown",ev=>{ if(ev.key==="Escape") closeModal(); });
+}
+
+function renderAll(){
+  renderHeader(); renderTabs(); renderPeriodStats(); renderCalendar();
+  renderWarnings(); renderEstagio(); renderChain(); renderProgress(); renderPool();
+}
+
+bindHeader(); renderPoolTools(); renderAll();
+
+})(); }
+</script>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Detalhe da Disciplina - Pesquisa Operacional I</title>
+<!-- Fonts: Inter (Design System) and Roboto Condensed (as requested for technical data) -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Quicksand:wght@700&amp;family=Roboto+Condensed:wght@400;500;600&amp;family=Roboto+Flex:opsz,wght@8..144,400&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration (Design System) -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed-variant": "#004c6c",
+                        "secondary-fixed-dim": "#d3c4ba",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#003852",
+                        "primary-fixed-dim": "#ffb68d",
+                        "on-primary-container": "#592500",
+                        "surface-container-highest": "#f4ded4",
+                        "outline-variant": "#dec1b1",
+                        "background": "#fff8f6",
+                        "on-background": "#241913",
+                        "inverse-surface": "#3a2e27",
+                        "inverse-on-surface": "#ffede5",
+                        "on-primary-fixed": "#321200",
+                        "on-surface": "#241913",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#00658f",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#fff8f6",
+                        "on-primary-fixed-variant": "#763400",
+                        "tertiary-container": "#00a7e9",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#ebd6cc",
+                        "primary-container": "#f47b25",
+                        "surface": "#fff8f6",
+                        "secondary-container": "#edddd3",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#221a14",
+                        "tertiary-fixed-dim": "#85cfff",
+                        "surface-container-high": "#fae4d9",
+                        "surface-variant": "#f4ded4",
+                        "on-secondary-container": "#6c6059",
+                        "surface-container": "#ffeae0",
+                        "surface-container-low": "#fff1eb",
+                        "outline": "#8b7265",
+                        "tertiary-fixed": "#c7e7ff",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#ffb68d",
+                        "secondary": "#675c55",
+                        "on-tertiary-fixed": "#001e2e",
+                        "on-secondary-fixed-variant": "#4f453e",
+                        "surface-tint": "#9a4600",
+                        "primary": "#9a4600",
+                        "primary-fixed": "#ffdbc9",
+                        "secondary-fixed": "#efdfd6",
+                        "on-surface-variant": "#574237"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "stack_sm": "8px",
+                        "stack_lg": "24px",
+                        "stack_md": "16px",
+                        "page_padding": "32px",
+                        "card_padding": "24px",
+                        "gutter": "24px"
+                    },
+                    fontFamily: {
+                        "label-caps": ["Inter"],
+                        "wordmark": ["Quicksand"],
+                        "page-title": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "section-title": ["Inter"],
+                        "body-md": ["Inter"],
+                        "data-display": ["Roboto Flex"],
+                        "technical": ["Roboto Condensed"] /* Added for technical data as requested */
+                    },
+                    fontSize: {
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600" }],
+                        "wordmark": ["22px", { "lineHeight": "auto", "fontWeight": "700" }],
+                        "page-title": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "section-title": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "data-display": ["14px", { "lineHeight": "14px", "fontWeight": "400" }]
+                    },
+                    boxShadow: {
+                        'resting': '0 1px 2px rgba(93,64,55,0.05), 0 4px 12px rgba(93,64,55,0.05)',
+                        'floating': '0 12px 32px rgba(93,64,55,0.14)'
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom scrollbar for the planner feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #dec1b1; /* outline-variant */
+            border-radius: 10px;
+        }
+        .slide-in-right {
+            animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md h-screen w-screen overflow-hidden flex relative">
+<!-- Background Screen Context (Dimmed SCREEN_4 Placeholder) -->
+<div class="absolute inset-0 w-full h-full">
+<!-- Assuming SCREEN_4 is an iframe or image placeholder, we'll represent it as a styled div to provide context -->
+<div class="w-full h-full bg-surface-container-low flex items-center justify-center relative overflow-hidden">
+<!-- Placeholder for underlying screen content -->
+<div class="absolute top-0 left-0 w-full h-20 bg-surface border-b border-outline-variant px-page_padding flex items-center">
+<span class="font-wordmark text-wordmark text-primary">Lumina Academy</span>
+</div>
+<div class="p-8 grid grid-cols-3 gap-6 w-full max-w-6xl mt-20 opacity-40">
+<div class="h-64 bg-surface rounded-xl shadow-resting"></div>
+<div class="h-64 bg-surface rounded-xl shadow-resting"></div>
+<div class="h-64 bg-surface rounded-xl shadow-resting"></div>
+<div class="col-span-2 h-40 bg-surface rounded-xl shadow-resting"></div>
+</div>
+</div>
+<!-- Dimming Overlay -->
+<div class="absolute inset-0 bg-[#3a2e27]/40 backdrop-blur-sm fade-in z-40" id="overlay"></div>
+</div>
+<!-- Right-Hand Slide-Over Panel -->
+<aside class="fixed top-0 right-0 h-full w-[440px] bg-surface shadow-floating z-50 flex flex-col slide-in-right border-l border-outline-variant">
+<!-- Header -->
+<header class="px-card_padding py-stack_lg border-b border-outline-variant flex items-start justify-between bg-surface sticky top-0 z-10 shrink-0">
+<div>
+<span class="font-label-caps text-label-caps text-primary tracking-wider uppercase mb-1 block">EEI643</span>
+<h2 class="font-page-title text-page-title text-on-surface">Pesquisa Operacional I</h2>
+<div class="flex items-center gap-2 mt-2 text-on-surface-variant font-technical text-[13px]">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 0;">schedule</span> 60h</span>
+<span class="text-outline-variant">•</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 0;">school</span> 4 Créditos</span>
+</div>
+</div>
+<button aria-label="Close panel" class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</header>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto px-card_padding py-stack_lg space-y-8 pb-32">
+<!-- Section: Turmas disponíveis -->
+<section>
+<h3 class="font-section-title text-section-title text-on-surface mb-stack_md flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">groups</span>
+                    Turmas disponíveis
+                </h3>
+<div class="space-y-stack_sm">
+<!-- Class Card: Selected State -->
+<div class="relative bg-surface rounded-xl border-2 border-primary shadow-resting p-4 cursor-pointer overflow-hidden group transition-all">
+<!-- Selection Indicator -->
+<div class="absolute top-0 right-0 w-8 h-8 bg-primary rounded-bl-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-[16px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="flex justify-between items-start mb-2 pr-6">
+<div>
+<span class="font-bold text-on-surface">Turma A</span>
+<p class="text-on-surface-variant text-sm font-technical mt-0.5">Prof. João Silva</p>
+</div>
+<div class="text-right font-technical text-sm text-on-surface-variant">
+<div>Seg 10h - 12h</div>
+<div>Qua 14h - 16h</div>
+</div>
+</div>
+<div class="flex gap-2 mt-3">
+<span class="px-2 py-1 bg-surface-container-low text-on-surface-variant font-label-caps text-label-caps rounded-full border border-outline-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span> Sala 204
+                            </span>
+<span class="px-2 py-1 bg-surface-container-low text-on-surface-variant font-label-caps text-label-caps rounded-full border border-outline-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">info</span> Presencial
+                            </span>
+</div>
+</div>
+<!-- Class Card: Conflict State (Soft Red Wash) -->
+<div class="bg-error-container/30 border border-error/30 rounded-xl p-4 cursor-not-allowed opacity-90 relative overflow-hidden">
+<!-- Subtle conflict pattern overlay could go here -->
+<div class="flex justify-between items-start mb-2">
+<div>
+<span class="font-bold text-on-error-container">Turma B</span>
+<p class="text-on-surface-variant text-sm font-technical mt-0.5">Prof. Maria Fernandes</p>
+</div>
+<div class="text-right font-technical text-sm text-on-surface-variant line-through opacity-70">
+<div>Ter 08h - 10h</div>
+<div>Qui 08h - 10h</div>
+</div>
+</div>
+<div class="mt-3 bg-error-container text-on-error-container p-2 rounded-lg flex items-start gap-2 border border-error/20">
+<span class="material-symbols-outlined text-[18px] shrink-0 mt-0.5">warning</span>
+<div class="font-body-sm text-body-sm leading-tight">
+<strong>Conflito de horário</strong> com <em>Cálculo III (MAT301)</em> na Terça-feira.
+                            </div>
+</div>
+</div>
+<!-- Class Card: Available / Normal State -->
+<div class="bg-surface rounded-xl border border-outline-variant shadow-resting p-4 cursor-pointer hover:bg-surface-container transition-colors group">
+<div class="flex justify-between items-start mb-2">
+<div>
+<span class="font-bold text-on-surface group-hover:text-primary transition-colors">Turma C</span>
+<p class="text-on-surface-variant text-sm font-technical mt-0.5">Prof. Carlos Gomes</p>
+</div>
+<div class="text-right font-technical text-sm text-on-surface-variant">
+<div>Seg 18h - 20h</div>
+<div>Sex 18h - 20h</div>
+</div>
+</div>
+<div class="flex gap-2 mt-3">
+<span class="px-2 py-1 bg-surface-container-low text-on-surface-variant font-label-caps text-label-caps rounded-full border border-outline-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span> Lab 3
+                            </span>
+<span class="px-2 py-1 bg-surface-container-low text-on-surface-variant font-label-caps text-label-caps rounded-full border border-outline-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">info</span> Híbrido
+                            </span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Pré-requisitos (Timeline Flow) -->
+<section>
+<h3 class="font-section-title text-section-title text-on-surface mb-stack_md flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">account_tree</span>
+                    Pré-requisitos
+                </h3>
+<div class="relative pl-3">
+<!-- Vertical Line -->
+<div class="absolute left-[15px] top-4 bottom-4 w-0.5 bg-outline-variant"></div>
+<ul class="space-y-4">
+<!-- Finished Prereq -->
+<li class="relative flex items-start gap-4">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center shrink-0 z-10 border-2 border-surface">
+<span class="material-symbols-outlined text-[14px] text-on-primary" style="font-variation-settings: 'FILL' 1;">done</span>
+</div>
+<div class="pt-0.5">
+<span class="font-label-caps text-label-caps text-primary tracking-wider uppercase">Concluído</span>
+<div class="font-medium text-on-surface mt-0.5">Álgebra Linear (MAT202)</div>
+</div>
+</li>
+<!-- Finished Prereq -->
+<li class="relative flex items-start gap-4">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center shrink-0 z-10 border-2 border-surface">
+<span class="material-symbols-outlined text-[14px] text-on-primary" style="font-variation-settings: 'FILL' 1;">done</span>
+</div>
+<div class="pt-0.5">
+<span class="font-label-caps text-label-caps text-primary tracking-wider uppercase">Concluído</span>
+<div class="font-medium text-on-surface mt-0.5">Probabilidade e Estatística (EST101)</div>
+</div>
+</li>
+<!-- Current Subject (Planned) -->
+<li class="relative flex items-start gap-4">
+<div class="w-6 h-6 rounded-full bg-surface border-2 border-primary flex items-center justify-center shrink-0 z-10">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+<div class="pt-0.5">
+<span class="font-label-caps text-label-caps text-on-surface-variant tracking-wider uppercase">Disciplina Atual</span>
+<div class="font-medium text-on-surface mt-0.5">Pesquisa Operacional I (EEI643)</div>
+</div>
+</li>
+</ul>
+</div>
+</section>
+<!-- Section: Impacto (Destrava) -->
+<section>
+<h3 class="font-section-title text-section-title text-on-surface mb-stack_md flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">route</span>
+                    Impacto no Curso
+                </h3>
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-4 shadow-resting">
+<div class="flex items-center gap-2 mb-3 pb-3 border-b border-outline-variant/50">
+<span class="material-symbols-outlined text-primary">key</span>
+<span class="font-bold text-on-surface">Destrava (Libera)</span>
+</div>
+<ul class="space-y-3">
+<li class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface flex items-center justify-center border border-outline-variant shrink-0">
+<span class="font-technical text-[12px] font-bold text-on-surface-variant">EEI</span>
+</div>
+<div>
+<div class="font-medium text-on-surface text-sm">Pesquisa Operacional II</div>
+<div class="font-technical text-xs text-on-surface-variant">Obrigatória • 7º Período</div>
+</div>
+</li>
+<li class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface flex items-center justify-center border border-outline-variant shrink-0">
+<span class="font-technical text-[12px] font-bold text-on-surface-variant">EEI</span>
+</div>
+<div>
+<div class="font-medium text-on-surface text-sm">Logística e Cadeia de Suprimentos</div>
+<div class="font-technical text-xs text-on-surface-variant">Optativa</div>
+</div>
+</li>
+</ul>
+</div>
+</section>
+</div>
+<!-- Fixed Footer Actions -->
+<footer class="absolute bottom-0 left-0 right-0 p-card_padding bg-surface border-t border-outline-variant shadow-[0_-4px_12px_rgba(93,64,55,0.05)] flex gap-3 z-20">
+<button class="flex-1 px-4 py-2.5 rounded-[10px] border border-outline-variant bg-surface text-on-surface font-medium hover:bg-surface-container transition-colors focus:ring-2 focus:ring-primary focus:outline-none">
+                Cancelar
+            </button>
+<button class="flex-[2] px-4 py-2.5 rounded-[10px] bg-primary text-on-primary font-medium shadow-resting hover:bg-primary/90 transition-colors focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface focus:outline-none flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                Matricular na Turma A
+            </button>
+</footer>
+</aside>
+</body></html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumina Academy - Planejador</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600&amp;family=Roboto+Flex:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#675c55",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#fff1eb",
+                        "secondary-container": "#edddd3",
+                        "surface-tint": "#9a4600",
+                        "surface-bright": "#fff8f6",
+                        "primary-container": "#f47b25",
+                        "background": "#fff8f6",
+                        "inverse-primary": "#ffb68d",
+                        "on-tertiary-container": "#003852",
+                        "secondary-fixed-dim": "#d3c4ba",
+                        "on-primary-fixed-variant": "#763400",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-surface": "#241913",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#c7e7ff",
+                        "surface-container": "#ffeae0",
+                        "outline-variant": "#dec1b1",
+                        "on-primary-fixed": "#321200",
+                        "tertiary-fixed-dim": "#85cfff",
+                        "surface-container-highest": "#f4ded4",
+                        "on-tertiary-fixed-variant": "#004c6c",
+                        "on-primary-container": "#592500",
+                        "primary-fixed": "#ffdbc9",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "outline": "#8b7265",
+                        "tertiary-container": "#00a7e9",
+                        "inverse-surface": "#3a2e27",
+                        "surface-container-high": "#fae4d9",
+                        "on-secondary-container": "#6c6059",
+                        "surface-dim": "#ebd6cc",
+                        "on-secondary-fixed": "#221a14",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#ffede5",
+                        "on-secondary-fixed-variant": "#4f453e",
+                        "on-background": "#241913",
+                        "secondary-fixed": "#efdfd6",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#001e2e",
+                        "surface-variant": "#f4ded4",
+                        "primary-fixed-dim": "#ffb68d",
+                        "tertiary": "#00658f",
+                        "primary": "#9a4600",
+                        "surface": "#fff8f6",
+                        "on-surface-variant": "#574237",
+                        "canvas": "#FFF8DC",
+                        "recess": "#F6EFDA",
+                        "surface-card": "#FFFCF4",
+                        "raised": "#FFFFFF",
+                        "accent": "#9a4600",
+                        "accent-ring": "rgba(154, 70, 0, 0.4)"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "page_padding": "32px",
+                        "stack_md": "16px",
+                        "stack_sm": "8px",
+                        "gutter": "24px",
+                        "card_padding": "24px",
+                        "stack_lg": "24px"
+                    },
+                    "fontFamily": {
+                        "data-display": ["Roboto Flex"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Inter"],
+                        "wordmark": ["Quicksand"],
+                        "body-sm": ["Inter"],
+                        "section-title": ["Inter"],
+                        "page-title": ["Inter"],
+                        "condensed": ["Roboto Condensed"]
+                    },
+                    "fontSize": {
+                        "data-display": ["14px", {"lineHeight": "14px", "fontWeight": "400"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "wordmark": ["22px", {"lineHeight": "auto", "fontWeight": "700"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "section-title": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "page-title": ["26px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "stats": ["13px", {"lineHeight": "16px", "fontWeight": "500"}]
+                    },
+                    "boxShadow": {
+                        "resting": "0 1px 2px rgba(93,64,55,0.05), 0 4px 12px rgba(93,64,55,0.05)",
+                        "floating": "0 12px 32px rgba(93,64,55,0.14)"
+                    },
+                    backgroundImage: {
+                        'hatch-pattern': 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(93,64,55,0.1) 4px, rgba(93,64,55,0.1) 8px)'
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.canvas'); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .time-grid {
+            background-image: linear-gradient(to bottom, rgba(93,64,55,0.12) 1px, transparent 1px);
+            background-size: 100% 60px; /* 60px per hour */
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased h-screen overflow-hidden flex selection:bg-primary-container selection:text-on-primary-container">
+<!-- App Shell: SideNavBar -->
+<nav class="flex flex-col h-full py-stack_lg px-stack_md bg-surface dark:bg-surface text-primary dark:text-primary-fixed-dim font-body-md text-body-md h-screen w-64 border-r border-outline-variant dark:border-outline bg-surface dark:bg-surface flat no shadows z-20 shrink-0">
+<div class="mb-8 px-4 flex flex-col gap-2">
+<span class="font-wordmark text-wordmark text-primary dark:text-primary-fixed-dim">Lumina Academy</span>
+<span class="text-body-sm text-on-surface-variant">Fall Semester 2024</span>
+</div>
+<button class="mb-8 mx-4 bg-primary text-on-primary rounded-lg py-2 px-4 font-section-title text-section-title shadow-resting hover:shadow-floating transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add</span>
+            Add New Task
+        </button>
+<ul class="flex flex-col gap-2 flex-grow">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-semibold border-r-4 border-primary bg-primary-container/10 hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">calendar_view_week</span>
+                    Timetable
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">assignment</span>
+                    Tasks
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">library_books</span>
+                    Courses
+                </a>
+</li>
+</ul>
+<div class="mt-auto flex flex-col gap-2 border-t border-outline-variant pt-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant hover:bg-surface-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">help</span>
+                Support
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full bg-canvas relative">
+<!-- Top App Bar (Hidden on desktop per SideNav usage, but if needed for mobile responsive) -->
+<header class="hidden md:flex justify-between items-center w-full px-page_padding h-20 bg-surface dark:bg-surface text-primary dark:text-primary-fixed-dim font-page-title text-page-title text-on-surface dark:text-on-surface font-wordmark text-wordmark text-primary dark:text-primary-fixed-dim docked full-width top-0 bg-surface dark:bg-surface flat no shadows z-10 border-b border-outline-variant/30 hidden">
+<span>Lumina Academy</span>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<button class="hover:bg-surface-container-low transition-colors cursor-pointer active:opacity-80 p-2 rounded-full"><span class="material-symbols-outlined">notifications</span></button>
+<button class="hover:bg-surface-container-low transition-colors cursor-pointer active:opacity-80 p-2 rounded-full"><span class="material-symbols-outlined">search</span></button>
+<div class="w-8 h-8 rounded-full bg-secondary-container overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A detailed 50-100 word prompt..." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGOTq-xg-zqiCcbY7oLxX-BbMYxF-eR9iRLLDblZFy5Vk4k6pnwp0unbx5j9Dm5IjlH1Eqz-zSH9-a9j71uidb6AYgFmH9AEzEM8sevGODH6G_GZGdEkZPHEbZRTXUK7wW7r7dfq19SCgA39Eqs4-yeMaVC_pHet8coV8d6QBdZ6Ah91YmEKtfq2l3tI2LvYwHCJkAMmeku_ONX5b0KOUrYZWW_wbXKnAgJWpTZrvbNqMHWIAri94"/>
+</div>
+</div>
+</header>
+<!-- Horizontal Period Rail -->
+<div class="h-20 px-page_padding py-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-bright shrink-0">
+<div class="flex items-center gap-4 overflow-x-auto scrollbar-hide w-full">
+<!-- 1-5 Small Solid (Expanded view logic) -->
+<div class="flex items-center gap-2 text-on-surface-variant">
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+</div>
+<!-- 6 Solid (Past) -->
+<div class="w-3 h-3 rounded-full bg-outline"></div>
+<!-- 7 Selected -->
+<div class="flex items-center gap-4 bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant shadow-resting">
+<div class="relative flex items-center justify-center">
+<div class="w-4 h-4 rounded-full bg-accent absolute"></div>
+<div class="w-6 h-6 rounded-full border-2 border-accent/40 absolute"></div>
+</div>
+<span class="font-section-title text-section-title ml-4">7º período · 2027/1</span>
+<div class="flex items-center gap-3 border-l border-outline-variant pl-4 font-condensed text-[13px] font-medium text-on-surface-variant">
+<span>24 créditos</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>4 dias na faculdade</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>3h de janela</span>
+</div>
+</div>
+<!-- 8-10 Future (Dashed) -->
+<div class="w-3 h-3 rounded-full border border-dashed border-outline-variant bg-transparent"></div>
+<div class="w-3 h-3 rounded-full border border-dashed border-outline-variant bg-transparent"></div>
+<div class="w-3 h-3 rounded-full border border-dashed border-outline-variant bg-transparent"></div>
+</div>
+<button class="ml-4 shrink-0 px-4 py-2 border border-outline-variant rounded-lg text-body-sm text-secondary hover:bg-surface-container-low transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+                Configurar
+            </button>
+</div>
+<!-- Main Body Area -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Left: Timetable Area (72%) -->
+<div class="w-[72%] h-full flex flex-col border-r border-outline-variant/30 relative bg-surface-card z-0">
+<!-- Days Header -->
+<div class="flex border-b border-outline-variant/30 h-12 bg-recess sticky top-0 z-20">
+<div class="w-[56px] border-r border-outline-variant/30 shrink-0"></div> <!-- Time Col Header -->
+<div class="flex-1 grid grid-cols-5 divide-x divide-outline-variant/30 text-center text-body-sm text-on-surface-variant font-medium">
+<div class="py-3">Seg</div>
+<div class="py-3">Ter</div>
+<div class="py-3">Qua</div>
+<div class="py-3">Qui</div>
+<div class="py-3">Sex</div>
+</div>
+</div>
+<!-- Scrollable Timetable Canvas -->
+<div class="flex-1 overflow-y-auto relative bg-canvas scrollbar-hide">
+<div class="flex relative min-h-[840px]"> <!-- 14 hours * 60px -->
+<!-- Hour Column -->
+<div class="w-[56px] shrink-0 bg-recess border-r border-outline-variant/30 flex flex-col z-10">
+<!-- JS will populate hours from 07:00 to 21:00 -->
+<script>
+                                for(let i=7; i<=21; i++) {
+                                    document.write(`<div class="h-[60px] flex items-start justify-center pt-1"><span class="text-[11px] text-on-surface-variant/70 font-condensed tracking-wide">${i.toString().padStart(2, '0')}:00</span></div>`);
+                                }
+                            </script>
+</div>
+<!-- Grid Area -->
+<div class="flex-1 grid grid-cols-5 divide-x divide-outline-variant/30 relative time-grid">
+<!-- Seg --> <div class="relative"></div>
+<!-- Ter -->
+<div class="relative">
+<!-- Block 1 & 2 Overlapping (09:00 - 11:00) => Top 120px (7:00 to 9:00 = 2h*60), Height 120px (2h) -->
+<!-- Drop Target (visible at Tue 09:00) -->
+<div class="absolute top-[120px] left-1 right-1 h-[120px] border-2 border-dashed border-accent/40 bg-accent/5 rounded-[6px] flex items-center justify-center z-0">
+<span class="text-accent/50 text-body-sm font-medium">Soltar aqui</span>
+</div>
+<!-- Block 1 (Red Warning) -->
+<div class="absolute top-[120px] left-1 w-[calc(50%-4px)] h-[120px] rounded-[6px] border-l-[3px] border-[#C4443A] bg-[#C4443A]/10 shadow-resting p-2 z-10 flex flex-col gap-1 overflow-hidden cursor-pointer hover:shadow-floating transition-shadow bg-surface-container-lowest/80 backdrop-blur-sm">
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-on-surface-variant">MAT101</span>
+<span class="material-symbols-outlined text-[#C4443A] text-[16px]">warning</span>
+</div>
+<span class="text-body-sm font-medium leading-tight">Cálculo I</span>
+<span class="text-[11px] text-on-surface-variant mt-auto truncate flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">location_on</span> Sala 402</span>
+</div>
+<!-- Block 2 (Red Warning) -->
+<div class="absolute top-[120px] left-[50%] right-1 h-[120px] rounded-[6px] border-l-[3px] border-[#C4443A] bg-[#C4443A]/10 shadow-resting p-2 z-10 flex flex-col gap-1 overflow-hidden cursor-pointer hover:shadow-floating transition-shadow bg-surface-container-lowest/80 backdrop-blur-sm">
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-on-surface-variant">FIS101</span>
+<span class="material-symbols-outlined text-[#C4443A] text-[16px]">warning</span>
+</div>
+<span class="text-body-sm font-medium leading-tight">Física I</span>
+<span class="text-[11px] text-on-surface-variant mt-auto truncate flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">location_on</span> Lab 2</span>
+</div>
+</div>
+<!-- Qua -->
+<div class="relative">
+<!-- Block 3 Regular (10:00 - 12:00) => Top 180px, Height 120px -->
+<div class="absolute top-[180px] left-2 right-2 h-[120px] rounded-[6px] border-l-[3px] border-tertiary bg-tertiary/10 shadow-resting p-3 z-10 flex flex-col gap-1 overflow-hidden cursor-pointer hover:shadow-floating transition-shadow bg-surface-container-lowest/90">
+<span class="font-label-caps text-on-surface-variant">QMC201</span>
+<span class="text-body-sm font-medium leading-tight">Química Orgânica Avançada</span>
+<div class="mt-auto flex flex-col gap-0.5">
+<span class="text-[11px] text-on-surface-variant truncate flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">person</span> Dr. Silva</span>
+<span class="text-[11px] text-on-surface-variant truncate flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">location_on</span> Auditório C</span>
+</div>
+</div>
+</div>
+<!-- Qui -->
+<div class="relative">
+<!-- Personal Block (14:00 - 18:00) => Top 420px, Height 240px -->
+<div class="absolute top-[420px] left-2 right-2 h-[240px] rounded-[6px] border border-dashed border-outline-variant bg-hatch-pattern shadow-sm p-3 z-10 flex flex-col gap-1 justify-center items-center text-center cursor-pointer hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-outline text-[24px] mb-1">work</span>
+<span class="text-body-sm font-medium text-secondary">Estágio Supervisionado</span>
+<span class="text-[11px] text-on-surface-variant">14:00 - 18:00</span>
+</div>
+</div>
+<!-- Sex --> <div class="relative"></div>
+</div>
+</div>
+</div>
+<!-- Bottom Collapsible Strip -->
+<div class="border-t border-outline-variant/30 bg-surface z-20">
+<button class="w-full px-4 py-2 flex items-center justify-between text-body-sm font-medium hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#C4443A]"></span>
+<span class="w-2 h-2 rounded-full bg-[#D97706]"></span>
+<span>2 avisos importantes</span>
+</div>
+<span class="material-symbols-outlined text-[18px]">expand_less</span>
+</button>
+<!-- Expanded content logic would go here, currently hidden for precise initial state -->
+</div>
+</div>
+<!-- Right Sidebar: Pendências (28%) -->
+<div class="w-[28%] h-full bg-surface-card flex flex-col shadow-[-4px_0_12px_rgba(93,64,55,0.02)] z-10 relative">
+<div class="p-6 border-b border-outline-variant/30 bg-surface sticky top-0 z-10">
+<h2 class="font-section-title text-section-title mb-4">Disciplinas pendentes</h2>
+<!-- Search -->
+<div class="relative mb-4">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[18px]">search</span>
+<input class="w-full pl-9 pr-3 py-2 bg-raised border border-outline-variant/50 rounded-lg text-body-sm text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-accent focus:border-accent shadow-sm" placeholder="Buscar por código ou nome..." type="text"/>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-2 flex-wrap">
+<button class="px-3 py-1 rounded-full bg-recess text-[12px] font-medium text-secondary hover:bg-surface-container transition-colors">Obrigatórias</button>
+<button class="px-3 py-1 rounded-full bg-accent text-[12px] font-medium text-on-primary shadow-sm">7º Período</button>
+<button class="px-3 py-1 rounded-full bg-recess text-[12px] font-medium text-secondary hover:bg-surface-container transition-colors flex items-center gap-1">
+                            Filtros <span class="material-symbols-outlined text-[14px]">tune</span>
+</button>
+</div>
+</div>
+<!-- List Area -->
+<div class="flex-1 overflow-y-auto p-4 flex flex-col gap-2 scrollbar-hide bg-canvas/30">
+<!-- Row 1 (Mid-Drag Lifted) -->
+<div class="h-[48px] rounded-lg border-l-[3px] border-primary-container bg-raised shadow-floating flex items-center px-3 cursor-grab relative z-20 scale-[1.02] -rotate-1 ring-1 ring-outline-variant/20">
+<span class="material-symbols-outlined text-outline-variant cursor-grab mr-2 text-[18px]">drag_indicator</span>
+<div class="flex-1 flex items-center gap-3 min-w-0">
+<span class="font-label-caps text-on-surface-variant w-[50px] shrink-0">COMP302</span>
+<span class="text-body-sm font-medium truncate text-on-surface">Banco de Dados Relacionais</span>
+</div>
+<span class="text-[12px] text-on-surface-variant font-condensed ml-2 shrink-0">4 cr</span>
+</div>
+<!-- Row 2 -->
+<div class="h-[48px] rounded-lg border border-outline-variant/30 border-l-[3px] border-l-tertiary-container bg-surface flex items-center px-3 hover:bg-surface-container-low transition-colors cursor-grab shadow-resting">
+<span class="material-symbols-outlined text-outline-variant cursor-grab mr-2 text-[18px]">drag_indicator</span>
+<div class="flex-1 flex items-center gap-3 min-w-0">
+<span class="font-label-caps text-on-surface-variant w-[50px] shrink-0">ENG401</span>
+<span class="text-body-sm font-medium truncate text-on-surface">Engenharia de Software</span>
+</div>
+<span class="text-[12px] text-on-surface-variant font-condensed ml-2 shrink-0">6 cr</span>
+</div>
+<!-- Row 3 (Locked / Opacity) -->
+<div class="h-[48px] rounded-lg border border-outline-variant/20 border-l-[3px] border-l-outline bg-surface/50 flex items-center px-3 opacity-45 cursor-not-allowed">
+<span class="material-symbols-outlined text-outline-variant mr-2 text-[18px]">lock</span>
+<div class="flex-1 flex items-center gap-3 min-w-0">
+<span class="font-label-caps text-on-surface-variant w-[50px] shrink-0">TCC100</span>
+<span class="text-body-sm font-medium truncate text-on-surface">Projeto Final I</span>
+</div>
+<span class="text-[12px] text-on-surface-variant font-condensed ml-2 shrink-0">Pré-req</span>
+</div>
+<!-- Row 4 -->
+<div class="h-[48px] rounded-lg border border-outline-variant/30 border-l-[3px] border-l-[#C4443A] bg-surface flex items-center px-3 hover:bg-surface-container-low transition-colors cursor-grab shadow-resting">
+<span class="material-symbols-outlined text-outline-variant cursor-grab mr-2 text-[18px]">drag_indicator</span>
+<div class="flex-1 flex items-center gap-3 min-w-0">
+<span class="font-label-caps text-on-surface-variant w-[50px] shrink-0">MAT101</span>
+<span class="text-body-sm font-medium truncate text-on-surface">Cálculo I</span>
+</div>
+<span class="text-[12px] text-[#C4443A] font-condensed ml-2 shrink-0 font-medium">Reprovação</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

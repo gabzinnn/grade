@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #fff8dc;
+  --color-surface: #fffcf4;
+  --color-raised: #ffffff;
+  --color-recess: #f6efda;
+
+  --color-ink: #241c16;
+  --color-ink-2: #5d4037;
+  --color-ink-3: #9e6b47;
+
+  --color-hairline: rgba(93, 64, 55, 0.12);
+
+  --color-primary: #f47b25;
+  --color-success: #50b87a;
+  --color-warn: #e0a32a;
+  --color-danger: #c4443a;
+
+  --color-cat-1: #2f6f8f;
+  --color-cat-2: #2e8b6a;
+  --color-cat-3: #5b53a6;
+  --color-cat-4: #9b3f73;
+  --color-cat-5: #6e7b3f;
+  --color-cat-6: #7a7367;
+
+  --shadow-resting: 0 1px 2px rgba(93, 64, 55, 0.05), 0 4px 12px rgba(93, 64, 55, 0.05);
+  --shadow-floating: 0 12px 32px rgba(93, 64, 55, 0.14);
+
+  --radius-chip: 9999px;
+  --radius-control: 10px;
+  --radius-block: 8px;
+  --radius-card: 16px;
+  --radius-dialog: 20px;
+
+  --font-sans: var(--font-inter);
+  --font-data: var(--font-roboto-condensed);
+  --font-wordmark: var(--font-quicksand);
+
+  --text-title: 26px;
+  --text-body: 16px;
+  --text-body-sm: 14px;
+  --text-label: 13px;
+  --text-caps: 11px;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans), sans-serif;
+  font-variant-numeric: tabular-nums;
+}
