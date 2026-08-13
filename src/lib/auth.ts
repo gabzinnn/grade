@@ -26,6 +26,10 @@ export async function getSupabaseServerClient() {
 }
 
 export async function getSessionPerfilId(): Promise<string> {
+  // ponytail: sem tela de login ainda — atalho de dev pra testar localmente
+  // com os perfis do seed. Só ativa se a env var existir; nunca em produção.
+  if (process.env.DEV_MOCK_PERFIL_ID) return process.env.DEV_MOCK_PERFIL_ID;
+
   const supabase = await getSupabaseServerClient();
   const {
     data: { user },
@@ -37,7 +41,7 @@ export async function getSessionPerfilId(): Promise<string> {
 /// Autorização real de escrita. RLS no Supabase é defesa em profundidade —
 /// o Prisma conecta com service_role e ignora RLS, então esta checagem
 /// é o que de fato impede um perfil de editar o plano de outro.
-export async function assertPodeEditar(planoId: string): Promise<void> {
+export async function assertPodeEditar(planoId: number): Promise<void> {
   const perfilId = await getSessionPerfilId();
   const plano = await db.plano.findUnique({
     where: { id: planoId },

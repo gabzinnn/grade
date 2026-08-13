@@ -70,7 +70,7 @@ async function main() {
     create: { versaoCurricularId: versao.id, papel: "CONTRA", creditosExigidos: 9 },
   });
 
-  const categoriaPorChave = new Map<string, string>();
+  const categoriaPorChave = new Map<string, number>();
   for (const cat of CATEGORIAS) {
     const row = await db.categoria.upsert({
       where: { versaoCurricularId_chave: { versaoCurricularId: versao.id, chave: cat.chave } },
@@ -104,8 +104,11 @@ async function main() {
   }
   const SEMESTRE_ATUAL_ORDEM = dados._meta.periodoAtual; // 6
 
-  const disciplinaIdPorCodigo = new Map<string, string>();
-  async function getOrStubDisciplina(codigo: string, nome = codigo, creditos = 0, cargaHoraria = 0) {
+  const disciplinaIdPorCodigo = new Map<string, number>();
+  // ponytail: histórico não tem nome/créditos na fonte de dados — placeholder
+  // explícito em vez de duplicar o código como se fosse nome. Corrigir via
+  // dados-fonte.json + novo seed quando o nome real estiver disponível.
+  async function getOrStubDisciplina(codigo: string, nome = "(nome não disponível)", creditos = 0, cargaHoraria = 0) {
     if (disciplinaIdPorCodigo.has(codigo)) return disciplinaIdPorCodigo.get(codigo)!;
     const row = await db.disciplina.upsert({
       where: { instituicaoId_codigo: { instituicaoId: instituicao.id, codigo } },
@@ -234,7 +237,7 @@ async function main() {
     "6": dados.cursandoAtualmente_2026_2.map((cod) => ({ cod })),
   };
 
-  async function seedPerfil(id: string, nome: string, apelido: string, dre: string) {
+  async function seedPerfil(id: string, nome: string, apelido: string, dre: string, comGrade: boolean) {
     await db.perfil.upsert({
       where: { id },
       update: { nome, apelido, dre, versaoCurricularId: versao.id, semestreIngressoId: semestrePorOrdem.get(1) },
@@ -248,6 +251,28 @@ async function main() {
       },
     });
 
+    const plano = await db.plano.upsert({
+      where: { donoId_nome: { donoId: id, nome: "Plano principal" } },
+      update: {},
+      create: {
+        donoId: id,
+        versaoCurricularId: versao.id,
+        nome: "Plano principal",
+        principal: true,
+      },
+    });
+
+    // ponytail: só temos dado real de grade de uma pessoa — o segundo perfil
+    // existe apenas para exercitar compartilhamento/Nossa semana, sem histórico
+    // ou plano fabricados por cima do dele. Limpa o que uma seed antiga (antes
+    // dessa flag existir) possa ter criado, já que upsert não some com o que
+    // não é mais desejado.
+    if (!comGrade) {
+      await db.planoPeriodo.deleteMany({ where: { planoId: plano.id } });
+      await db.historicoItem.deleteMany({ where: { perfilId: id } });
+      return plano;
+    }
+
     for (const codigo of dados.concluidas) {
       const disciplinaId = disciplinaIdPorCodigo.get(codigo)!;
       const existing = await db.historicoItem.findFirst({
@@ -259,17 +284,6 @@ async function main() {
         });
       }
     }
-
-    const plano = await db.plano.upsert({
-      where: { donoId_nome: { donoId: id, nome: "Plano principal" } },
-      update: {},
-      create: {
-        donoId: id,
-        versaoCurricularId: versao.id,
-        nome: "Plano principal",
-        principal: true,
-      },
-    });
 
     for (const [ordemStr, itens] of Object.entries(planoPorPeriodo)) {
       const ordem = Number(ordemStr);
@@ -283,7 +297,7 @@ async function main() {
       for (const item of itens) {
         const disciplinaId = disciplinaIdPorCodigo.get(item.cod);
         if (!disciplinaId) continue;
-        let turmaId: string | null = null;
+        let turmaId: number | null = null;
         if (item.turma) {
           const t = await db.turma.findFirst({ where: { disciplinaId, codigo: item.turma } });
           turmaId = t?.id ?? null;
@@ -302,10 +316,8 @@ async function main() {
     return plano;
   }
 
-  const planoA = await seedPerfil(PERFIL_A_ID, dados._meta.aluno, "Gabriel", dados._meta.dre);
-  // ponytail: segundo perfil sintético só para exercitar compartilhamento/Nossa semana —
-  // reaproveita o mesmo plano-base de Gabriel (não temos dados reais de uma segunda pessoa)
-  const planoB = await seedPerfil(PERFIL_B_ID, "Ana Clara Silva", "Ana", "000000000");
+  const planoA = await seedPerfil(PERFIL_A_ID, dados._meta.aluno, "JuuJ", dados._meta.dre, true);
+  const planoB = await seedPerfil(PERFIL_B_ID, "Ana Clara Silva", "Ana", "000000000", false);
 
   await db.planoAcesso.upsert({
     where: { planoId_perfilId: { planoId: planoA.id, perfilId: PERFIL_B_ID } },

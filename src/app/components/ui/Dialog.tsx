@@ -5,10 +5,11 @@ import { ReactNode, useEffect, useRef } from "react";
 interface DialogProps {
   open: boolean;
   onClose: () => void;
+  className?: string;
   children: ReactNode;
 }
 
-export function Dialog({ open, onClose, children }: DialogProps) {
+export function Dialog({ open, onClose, className = "max-w-lg", children }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -26,7 +27,7 @@ export function Dialog({ open, onClose, children }: DialogProps) {
       onClick={(e) => {
         if (e.target === ref.current) onClose();
       }}
-      className="rounded-dialog shadow-floating bg-surface p-6 backdrop:bg-ink/40 max-w-lg w-full"
+      className={`fixed inset-0 m-auto max-h-[88vh] w-full overflow-y-auto rounded-dialog bg-surface p-6 shadow-floating backdrop:bg-ink/40 ${className}`}
     >
       {children}
     </dialog>

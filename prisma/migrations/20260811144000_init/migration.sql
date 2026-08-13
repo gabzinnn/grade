@@ -1,6 +1,3 @@
--- CreateSchema
-CREATE SCHEMA IF NOT EXISTS "public";
-
 -- CreateEnum
 CREATE TYPE "StatusHistorico" AS ENUM ('CONCLUIDA', 'CURSANDO', 'REPROVADA', 'TRANCADA', 'DISPENSADA');
 
@@ -18,7 +15,7 @@ CREATE TYPE "TipoBloco" AS ENUM ('ESTAGIO', 'TRABALHO', 'PESSOAL', 'DESLOCAMENTO
 
 -- CreateTable
 CREATE TABLE "Instituicao" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "sigla" TEXT NOT NULL,
     "nome" TEXT NOT NULL,
 
@@ -27,8 +24,8 @@ CREATE TABLE "Instituicao" (
 
 -- CreateTable
 CREATE TABLE "Curso" (
-    "id" TEXT NOT NULL,
-    "instituicaoId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "instituicaoId" INTEGER NOT NULL,
     "codigo" TEXT NOT NULL,
     "nome" TEXT NOT NULL,
 
@@ -37,8 +34,8 @@ CREATE TABLE "Curso" (
 
 -- CreateTable
 CREATE TABLE "VersaoCurricular" (
-    "id" TEXT NOT NULL,
-    "cursoId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "cursoId" INTEGER NOT NULL,
     "codigo" TEXT NOT NULL,
     "tetoCreditosPadrao" INTEGER NOT NULL,
     "prazoMaximoPeriodos" INTEGER NOT NULL,
@@ -48,8 +45,8 @@ CREATE TABLE "VersaoCurricular" (
 
 -- CreateTable
 CREATE TABLE "Categoria" (
-    "id" TEXT NOT NULL,
-    "versaoCurricularId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "versaoCurricularId" INTEGER NOT NULL,
     "chave" TEXT NOT NULL,
     "nome" TEXT NOT NULL,
     "corHex" TEXT NOT NULL,
@@ -63,7 +60,7 @@ CREATE TABLE "Categoria" (
 
 -- CreateTable
 CREATE TABLE "RegraEnfase" (
-    "versaoCurricularId" TEXT NOT NULL,
+    "versaoCurricularId" INTEGER NOT NULL,
     "papel" "PapelEnfase" NOT NULL,
     "creditosExigidos" DECIMAL(5,1) NOT NULL,
 
@@ -72,8 +69,8 @@ CREATE TABLE "RegraEnfase" (
 
 -- CreateTable
 CREATE TABLE "Disciplina" (
-    "id" TEXT NOT NULL,
-    "instituicaoId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "instituicaoId" INTEGER NOT NULL,
     "codigo" TEXT NOT NULL,
     "nome" TEXT NOT NULL,
     "creditos" DECIMAL(4,1) NOT NULL,
@@ -84,10 +81,10 @@ CREATE TABLE "Disciplina" (
 
 -- CreateTable
 CREATE TABLE "DisciplinaVersao" (
-    "id" TEXT NOT NULL,
-    "versaoCurricularId" TEXT NOT NULL,
-    "disciplinaId" TEXT NOT NULL,
-    "categoriaId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "versaoCurricularId" INTEGER NOT NULL,
+    "disciplinaId" INTEGER NOT NULL,
+    "categoriaId" INTEGER NOT NULL,
     "periodoSugerido" INTEGER,
 
     CONSTRAINT "DisciplinaVersao_pkey" PRIMARY KEY ("id")
@@ -95,9 +92,9 @@ CREATE TABLE "DisciplinaVersao" (
 
 -- CreateTable
 CREATE TABLE "Requisito" (
-    "id" TEXT NOT NULL,
-    "disciplinaVersaoId" TEXT NOT NULL,
-    "disciplinaExigidaId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "disciplinaVersaoId" INTEGER NOT NULL,
+    "disciplinaExigidaId" INTEGER NOT NULL,
     "tipo" "TipoRequisito" NOT NULL DEFAULT 'PRE',
 
     CONSTRAINT "Requisito_pkey" PRIMARY KEY ("id")
@@ -105,9 +102,9 @@ CREATE TABLE "Requisito" (
 
 -- CreateTable
 CREATE TABLE "Equivalencia" (
-    "versaoCurricularId" TEXT NOT NULL,
-    "cursadaId" TEXT NOT NULL,
-    "satisfazId" TEXT NOT NULL,
+    "versaoCurricularId" INTEGER NOT NULL,
+    "cursadaId" INTEGER NOT NULL,
+    "satisfazId" INTEGER NOT NULL,
 
     CONSTRAINT "Equivalencia_pkey" PRIMARY KEY ("versaoCurricularId","cursadaId","satisfazId")
 );
@@ -125,8 +122,8 @@ CREATE TABLE "Semestre" (
 
 -- CreateTable
 CREATE TABLE "Professor" (
-    "id" TEXT NOT NULL,
-    "instituicaoId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "instituicaoId" INTEGER NOT NULL,
     "nome" TEXT NOT NULL,
 
     CONSTRAINT "Professor_pkey" PRIMARY KEY ("id")
@@ -134,8 +131,8 @@ CREATE TABLE "Professor" (
 
 -- CreateTable
 CREATE TABLE "Local" (
-    "id" TEXT NOT NULL,
-    "instituicaoId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "instituicaoId" INTEGER NOT NULL,
     "predio" TEXT NOT NULL,
     "sala" TEXT NOT NULL,
 
@@ -144,8 +141,8 @@ CREATE TABLE "Local" (
 
 -- CreateTable
 CREATE TABLE "Turma" (
-    "id" TEXT NOT NULL,
-    "disciplinaId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "disciplinaId" INTEGER NOT NULL,
     "semestreId" INTEGER NOT NULL,
     "codigo" TEXT NOT NULL,
     "nome" TEXT,
@@ -156,20 +153,20 @@ CREATE TABLE "Turma" (
 
 -- CreateTable
 CREATE TABLE "TurmaProfessor" (
-    "turmaId" TEXT NOT NULL,
-    "professorId" TEXT NOT NULL,
+    "turmaId" INTEGER NOT NULL,
+    "professorId" INTEGER NOT NULL,
 
     CONSTRAINT "TurmaProfessor_pkey" PRIMARY KEY ("turmaId","professorId")
 );
 
 -- CreateTable
 CREATE TABLE "HorarioTurma" (
-    "id" TEXT NOT NULL,
-    "turmaId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "turmaId" INTEGER NOT NULL,
     "diaSemana" INTEGER NOT NULL,
     "inicioMin" INTEGER NOT NULL,
     "fimMin" INTEGER NOT NULL,
-    "localId" TEXT,
+    "localId" INTEGER,
 
     CONSTRAINT "HorarioTurma_pkey" PRIMARY KEY ("id")
 );
@@ -180,7 +177,7 @@ CREATE TABLE "Perfil" (
     "nome" TEXT NOT NULL,
     "apelido" TEXT,
     "dre" TEXT,
-    "versaoCurricularId" TEXT,
+    "versaoCurricularId" INTEGER,
     "semestreIngressoId" INTEGER,
     "criadoEm" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -200,9 +197,9 @@ CREATE TABLE "Preferencia" (
 
 -- CreateTable
 CREATE TABLE "HistoricoItem" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "perfilId" UUID NOT NULL,
-    "disciplinaId" TEXT NOT NULL,
+    "disciplinaId" INTEGER NOT NULL,
     "semestreId" INTEGER,
     "status" "StatusHistorico" NOT NULL,
     "nota" DECIMAL(3,1),
@@ -212,14 +209,14 @@ CREATE TABLE "HistoricoItem" (
 
 -- CreateTable
 CREATE TABLE "Plano" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "donoId" UUID NOT NULL,
-    "versaoCurricularId" TEXT NOT NULL,
+    "versaoCurricularId" INTEGER NOT NULL,
     "nome" TEXT NOT NULL,
     "principal" BOOLEAN NOT NULL DEFAULT false,
     "arquivado" BOOLEAN NOT NULL DEFAULT false,
-    "enfasePrincipalId" TEXT,
-    "contraEnfaseId" TEXT,
+    "enfasePrincipalId" INTEGER,
+    "contraEnfaseId" INTEGER,
     "criadoEm" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "atualizadoEm" TIMESTAMP(3) NOT NULL,
 
@@ -228,7 +225,7 @@ CREATE TABLE "Plano" (
 
 -- CreateTable
 CREATE TABLE "PlanoAcesso" (
-    "planoId" TEXT NOT NULL,
+    "planoId" INTEGER NOT NULL,
     "perfilId" UUID NOT NULL,
     "papel" "PapelAcesso" NOT NULL,
     "criadoEm" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -238,8 +235,8 @@ CREATE TABLE "PlanoAcesso" (
 
 -- CreateTable
 CREATE TABLE "PlanoPeriodo" (
-    "id" TEXT NOT NULL,
-    "planoId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "planoId" INTEGER NOT NULL,
     "ordem" INTEGER NOT NULL,
     "semestreId" INTEGER,
     "tetoCreditos" INTEGER,
@@ -251,10 +248,10 @@ CREATE TABLE "PlanoPeriodo" (
 
 -- CreateTable
 CREATE TABLE "PlanoItem" (
-    "id" TEXT NOT NULL,
-    "planoPeriodoId" TEXT NOT NULL,
-    "disciplinaId" TEXT NOT NULL,
-    "turmaId" TEXT,
+    "id" SERIAL NOT NULL,
+    "planoPeriodoId" INTEGER NOT NULL,
+    "disciplinaId" INTEGER NOT NULL,
+    "turmaId" INTEGER,
     "fixado" BOOLEAN NOT NULL DEFAULT false,
     "observacao" TEXT,
 
@@ -263,8 +260,8 @@ CREATE TABLE "PlanoItem" (
 
 -- CreateTable
 CREATE TABLE "PlanoItemHorario" (
-    "id" TEXT NOT NULL,
-    "planoItemId" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "planoItemId" INTEGER NOT NULL,
     "diaSemana" INTEGER NOT NULL,
     "inicioMin" INTEGER NOT NULL,
     "fimMin" INTEGER NOT NULL,
@@ -274,7 +271,7 @@ CREATE TABLE "PlanoItemHorario" (
 
 -- CreateTable
 CREATE TABLE "BlocoIndisponibilidade" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "perfilId" UUID NOT NULL,
     "semestreId" INTEGER,
     "titulo" TEXT NOT NULL,
@@ -489,4 +486,3 @@ ALTER TABLE "BlocoIndisponibilidade" ADD CONSTRAINT "BlocoIndisponibilidade_perf
 
 -- AddForeignKey
 ALTER TABLE "BlocoIndisponibilidade" ADD CONSTRAINT "BlocoIndisponibilidade_semestreId_fkey" FOREIGN KEY ("semestreId") REFERENCES "Semestre"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-

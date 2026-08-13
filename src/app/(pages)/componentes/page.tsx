@@ -78,10 +78,10 @@ export default function ComponentesPage() {
         <Card>
           <h2 className="mb-4 text-body font-semibold text-ink">Estados de CourseBlock</h2>
           <div className="grid grid-cols-3 gap-3">
-            <CourseBlock codigo="EEI541" nome="Pesquisa Operacional I" corCategoria="#2F6F8F" estado="CONCLUIDO" nota={8.2} />
-            <CourseBlock codigo="MAT101" nome="Cálculo I" corCategoria="#C4443A" estado="CONCLUIDO" nota={3.5} reprovada />
-            <CourseBlock codigo="EEI643" nome="Pesquisa Operacional I" corCategoria="#5B53A6" estado="ATUAL" sala="Sala 204" />
-            <CourseBlock codigo="EEI714" nome="Simulação Discreta" corCategoria="#2E8B6A" estado="FUTURO" />
+            <CourseBlock codigo="EEI541" nome="Pesquisa Operacional I" corCategoria="#2F6F8F" corDisciplina="#3E7CB1" estado="CONCLUIDO" nota={8.2} />
+            <CourseBlock codigo="MAT101" nome="Cálculo I" corCategoria="#C4443A" corDisciplina="#C4443A" estado="CONCLUIDO" nota={3.5} reprovada />
+            <CourseBlock codigo="EEI643" nome="Pesquisa Operacional I" corCategoria="#5B53A6" corDisciplina="#B15BA6" estado="ATUAL" sala="Sala 204" />
+            <CourseBlock codigo="EEI714" nome="Simulação Discreta" corCategoria="#2E8B6A" corDisciplina="#8AA63E" estado="FUTURO" />
           </div>
         </Card>
       </div>

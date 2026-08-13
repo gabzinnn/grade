@@ -123,3 +123,45 @@ export const IconSearch = (p: IconProps) =>
     </>,
     p,
   );
+
+export const IconTrash = (p: IconProps) =>
+  base(
+    <>
+      <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" />
+      <path d="M10 11v6M14 11v6" />
+    </>,
+    p,
+  );
+
+export const IconMenu = (p: IconProps) =>
+  base(
+    <>
+      <path d="M4 6h16M4 12h16M4 18h16" />
+    </>,
+    p,
+  );
+
+export const IconX = (p: IconProps) =>
+  base(
+    <>
+      <path d="M6 6l12 12M18 6L6 18" />
+    </>,
+    p,
+  );
+
+export const IconEdit = (p: IconProps) =>
+  base(
+    <>
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
+    </>,
+    p,
+  );
+
+export const IconCheck = (p: IconProps) =>
+  base(
+    <>
+      <path d="M5 13l4 4L19 7" />
+    </>,
+    p,
+  );

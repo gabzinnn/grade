@@ -41,7 +41,7 @@ enum TipoBloco {
 // ─────────────────────────── catálogo institucional
 
 model Instituicao {
-  id          String       @id @default(cuid())
+  id          Int          @id @default(autoincrement())
   sigla       String       @unique
   nome        String
   cursos      Curso[]
@@ -51,8 +51,8 @@ model Instituicao {
 }
 
 model Curso {
-  id            String             @id @default(cuid())
-  instituicaoId String
+  id            Int                @id @default(autoincrement())
+  instituicaoId Int
   codigo        String // "14352"
   nome          String
   instituicao   Instituicao        @relation(fields: [instituicaoId], references: [id], onDelete: Cascade)
@@ -62,8 +62,8 @@ model Curso {
 }
 
 model VersaoCurricular {
-  id                  String             @id @default(cuid())
-  cursoId             String
+  id                  Int                @id @default(autoincrement())
+  cursoId             Int
   codigo              String // "2015/1"
   tetoCreditosPadrao  Int
   prazoMaximoPeriodos Int
@@ -81,8 +81,8 @@ model VersaoCurricular {
 /// Categoria pertence à versão curricular: "Ênfase em Engenharia Econômica"
 /// só existe em Eng. de Produção 2015/1.
 model Categoria {
-  id                  String             @id @default(cuid())
-  versaoCurricularId  String
+  id                  Int                @id @default(autoincrement())
+  versaoCurricularId  Int
   chave               String // OBRIGATORIA, ENFASE_ECONOMICA...
   nome                String
   corHex              String
@@ -102,7 +102,7 @@ model Categoria {
 /// Não cabe em Categoria porque o valor depende do PAPEL que o aluno dá a ela
 /// (15 se for a principal, 9 se for a contra), não da categoria em si.
 model RegraEnfase {
-  versaoCurricularId String
+  versaoCurricularId Int
   papel              PapelEnfase
   creditosExigidos   Decimal          @db.Decimal(5, 1)
   versaoCurricular   VersaoCurricular @relation(fields: [versaoCurricularId], references: [id], onDelete: Cascade)
@@ -111,8 +111,8 @@ model RegraEnfase {
 }
 
 model Disciplina {
-  id            String             @id @default(cuid())
-  instituicaoId String
+  id            Int                @id @default(autoincrement())
+  instituicaoId Int
   codigo        String // "EEI643"
   nome          String
   creditos      Decimal            @db.Decimal(4, 1)
@@ -132,10 +132,10 @@ model Disciplina {
 /// A ponte que resolve a dependência transitiva: categoria e período sugerido
 /// são propriedades do par (disciplina, versão curricular), não da disciplina.
 model DisciplinaVersao {
-  id                 String           @id @default(cuid())
-  versaoCurricularId String
-  disciplinaId       String
-  categoriaId        String
+  id                 Int              @id @default(autoincrement())
+  versaoCurricularId Int
+  disciplinaId       Int
+  categoriaId        Int
   periodoSugerido    Int?
   versaoCurricular   VersaoCurricular @relation(fields: [versaoCurricularId], references: [id], onDelete: Cascade)
   disciplina         Disciplina       @relation(fields: [disciplinaId], references: [id], onDelete: Cascade)
@@ -147,9 +147,9 @@ model DisciplinaVersao {
 }
 
 model Requisito {
-  id                  String           @id @default(cuid())
-  disciplinaVersaoId  String // quem exige
-  disciplinaExigidaId String // o que é exigido
+  id                  Int              @id @default(autoincrement())
+  disciplinaVersaoId  Int // quem exige
+  disciplinaExigidaId Int // o que é exigido
   tipo                TipoRequisito    @default(PRE)
   disciplinaVersao    DisciplinaVersao @relation(fields: [disciplinaVersaoId], references: [id], onDelete: Cascade)
   disciplinaExigida   Disciplina       @relation("DisciplinaExigida", fields: [disciplinaExigidaId], references: [id])
@@ -160,9 +160,9 @@ model Requisito {
 
 /// "EEI426 satisfaz EEI323 e EEI324" — vale por versão curricular.
 model Equivalencia {
-  versaoCurricularId String
-  cursadaId          String
-  satisfazId         String
+  versaoCurricularId Int
+  cursadaId          Int
+  satisfazId         Int
   versaoCurricular   VersaoCurricular @relation(fields: [versaoCurricularId], references: [id], onDelete: Cascade)
   cursada            Disciplina       @relation("Cursada", fields: [cursadaId], references: [id])
   satisfaz           Disciplina       @relation("Satisfaz", fields: [satisfazId], references: [id])
@@ -188,8 +188,8 @@ model Semestre {
 }
 
 model Professor {
-  id            String           @id @default(cuid())
-  instituicaoId String
+  id            Int              @id @default(autoincrement())
+  instituicaoId Int
   nome          String
   instituicao   Instituicao      @relation(fields: [instituicaoId], references: [id], onDelete: Cascade)
   turmas        TurmaProfessor[]
@@ -198,8 +198,8 @@ model Professor {
 }
 
 model Local {
-  id            String         @id @default(cuid())
-  instituicaoId String
+  id            Int            @id @default(autoincrement())
+  instituicaoId Int
   predio        String
   sala          String
   instituicao   Instituicao    @relation(fields: [instituicaoId], references: [id], onDelete: Cascade)
@@ -209,8 +209,8 @@ model Local {
 }
 
 model Turma {
-  id           String           @id @default(cuid())
-  disciplinaId String
+  id           Int              @id @default(autoincrement())
+  disciplinaId Int
   semestreId   Int
   codigo       String // "15229"
   nome         String?
@@ -222,14 +222,14 @@ model Turma {
   planoItens   PlanoItem[]
 
   @@unique([disciplinaId, semestreId, codigo])
-  /// existe só para permitir a FK composta em PlanoItem (ver 4.3)
+  /// existe só para permitir a FK composta em PlanoItem (ver seção 4.3 do prompt)
   @@unique([id, disciplinaId])
   @@index([semestreId])
 }
 
 model TurmaProfessor {
-  turmaId     String
-  professorId String
+  turmaId     Int
+  professorId Int
   turma       Turma     @relation(fields: [turmaId], references: [id], onDelete: Cascade)
   professor   Professor @relation(fields: [professorId], references: [id], onDelete: Cascade)
 
@@ -237,12 +237,12 @@ model TurmaProfessor {
 }
 
 model HorarioTurma {
-  id        String  @id @default(cuid())
-  turmaId   String
+  id        Int     @id @default(autoincrement())
+  turmaId   Int
   diaSemana Int // 1 = segunda ... 7 = domingo (ISO)
   inicioMin Int // minutos desde 00:00 — 420 = 07:00
   fimMin    Int
-  localId   String?
+  localId   Int?
   turma     Turma   @relation(fields: [turmaId], references: [id], onDelete: Cascade)
   local     Local?  @relation(fields: [localId], references: [id])
 
@@ -257,7 +257,7 @@ model Perfil {
   nome               String
   apelido            String?
   dre                String?
-  versaoCurricularId String?
+  versaoCurricularId Int?
   semestreIngressoId Int? // âncora: ordem 1 ↔ 2023/1
   criadoEm           DateTime                 @default(now())
   versaoCurricular   VersaoCurricular?        @relation(fields: [versaoCurricularId], references: [id])
@@ -281,9 +281,9 @@ model Preferencia {
 /// Fonte única da verdade sobre o que a pessoa já cursou.
 /// "Concluída" nunca é flag na disciplina — é um fato do par (perfil, disciplina).
 model HistoricoItem {
-  id           String          @id @default(cuid())
+  id           Int             @id @default(autoincrement())
   perfilId     String          @db.Uuid
-  disciplinaId String
+  disciplinaId Int
   semestreId   Int?
   status       StatusHistorico
   nota         Decimal?        @db.Decimal(3, 1)
@@ -298,14 +298,14 @@ model HistoricoItem {
 // ─────────────────────────── planejamento
 
 model Plano {
-  id                 String           @id @default(cuid())
+  id                 Int              @id @default(autoincrement())
   donoId             String           @db.Uuid
-  versaoCurricularId String
+  versaoCurricularId Int
   nome               String // "Plano A", "Sem estágio"
   principal          Boolean          @default(false)
   arquivado          Boolean          @default(false)
-  enfasePrincipalId  String?
-  contraEnfaseId     String?
+  enfasePrincipalId  Int?
+  contraEnfaseId     Int?
   criadoEm           DateTime         @default(now())
   atualizadoEm       DateTime         @updatedAt
   dono               Perfil           @relation(fields: [donoId], references: [id], onDelete: Cascade)
@@ -321,7 +321,7 @@ model Plano {
 
 /// Compartilhamento — é isto que faz o app servir a duas (ou N) pessoas.
 model PlanoAcesso {
-  planoId  String
+  planoId  Int
   perfilId String      @db.Uuid
   papel    PapelAcesso
   criadoEm DateTime    @default(now())
@@ -333,8 +333,8 @@ model PlanoAcesso {
 }
 
 model PlanoPeriodo {
-  id           String      @id @default(cuid())
-  planoId      String
+  id           Int         @id @default(autoincrement())
+  planoId      Int
   ordem        Int // 1, 2, 3... até o último
   semestreId   Int?
   tetoCreditos Int? // null = usa o padrão da versão curricular
@@ -348,10 +348,10 @@ model PlanoPeriodo {
 }
 
 model PlanoItem {
-  id             String             @id @default(cuid())
-  planoPeriodoId String
-  disciplinaId   String
-  turmaId        String? // null enquanto a oferta não existir
+  id             Int                @id @default(autoincrement())
+  planoPeriodoId Int
+  disciplinaId   Int
+  turmaId        Int? // null enquanto a oferta não existir
   fixado         Boolean            @default(false)
   observacao     String?
   planoPeriodo   PlanoPeriodo       @relation(fields: [planoPeriodoId], references: [id], onDelete: Cascade)
@@ -366,8 +366,8 @@ model PlanoItem {
 /// Só existe quando a pessoa sobrescreve o horário (turma sem horário no sistema,
 /// ou período futuro sem oferta). Vazio = usar HorarioTurma.
 model PlanoItemHorario {
-  id          String    @id @default(cuid())
-  planoItemId String
+  id          Int       @id @default(autoincrement())
+  planoItemId Int
   diaSemana   Int
   inicioMin   Int
   fimMin      Int
@@ -377,7 +377,7 @@ model PlanoItemHorario {
 }
 
 model BlocoIndisponibilidade {
-  id         String    @id @default(cuid())
+  id         Int       @id @default(autoincrement())
   perfilId   String    @db.Uuid
   semestreId Int? // null = vale para todos
   titulo     String

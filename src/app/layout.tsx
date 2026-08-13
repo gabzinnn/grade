@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Roboto_Condensed, Quicksand } from "next/font/google";
+import { QueryProvider } from "@/app/components/QueryProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -28,7 +29,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-BR"
       className={`${inter.variable} ${robotoCondensed.variable} ${quicksand.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="h-full overflow-hidden">
+        <QueryProvider>{children}</QueryProvider>
+      </body>
     </html>
   );
 }
