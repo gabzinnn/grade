@@ -100,15 +100,19 @@ export function construirTrilha(plano: TrilhaPlano, historico: TrilhaHistorico) 
           eletivas: progresso.filter((p) => p.categoriaChave !== "OBRIGATORIA").reduce((s, p) => s + p.obtidos, 0),
         }
       : { ordem: 0, obrigatorias: 0, eletivas: 0 },
-    ...plano.periodos.map((p) => ({
-      ordem: p.ordem,
-      obrigatorias: p.itens
-        .filter((i) => categoriaPorDisciplina.get(i.disciplinaId)?.chave === "OBRIGATORIA")
-        .reduce((s, i) => s + Number(i.disciplina.creditos), 0),
-      eletivas: p.itens
-        .filter((i) => categoriaPorDisciplina.get(i.disciplinaId)?.chave !== "OBRIGATORIA")
-        .reduce((s, i) => s + Number(i.disciplina.creditos), 0),
-    })),
+    // `passado` já resume 1..ateOrdem num único ponto — sem esse filtro um
+    // período fechado (ex.: o 5º) aparecia de novo aqui, duplicando a key.
+    ...plano.periodos
+      .filter((p) => p.ordem > (passado?.ateOrdem ?? 0))
+      .map((p) => ({
+        ordem: p.ordem,
+        obrigatorias: p.itens
+          .filter((i) => categoriaPorDisciplina.get(i.disciplinaId)?.chave === "OBRIGATORIA")
+          .reduce((s, i) => s + Number(i.disciplina.creditos), 0),
+        eletivas: p.itens
+          .filter((i) => categoriaPorDisciplina.get(i.disciplinaId)?.chave !== "OBRIGATORIA")
+          .reduce((s, i) => s + Number(i.disciplina.creditos), 0),
+      })),
   ]);
   const metaGrafico = Math.max(totalMeta, ...pontosChart.map((p) => p.obrigatoriasAcumuladas + p.eletivasAcumuladas));
 

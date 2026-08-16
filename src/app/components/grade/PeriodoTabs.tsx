@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { LinkPendingOverlay } from "@/app/components/ui/LinkPendingOverlay";
 
 export interface PeriodoTabData {
   ordem: number;
@@ -30,22 +29,28 @@ export function PeriodoTabs({ periodos, ordemAtiva }: PeriodoTabsProps) {
               ativo ? "border-primary bg-primary text-raised" : "border-hairline bg-recess text-ink-2 hover:bg-hairline/40"
             }`}
           >
-            {acimaDoTeto && (
-              <span className="absolute -top-2 right-1 rounded-chip bg-danger px-1.5 py-0.5 text-caps font-semibold text-raised">
-                {p.creditos} cr
-              </span>
-            )}
             <span className={`flex items-center gap-1 font-data text-body-sm font-semibold ${ativo ? "text-raised" : "text-ink"}`}>
               {p.ordem}º{p.temChoque && <span title="Choque de horário">⚠</span>}
             </span>
             {p.semestreLabel && (
               <span className={`text-caps ${ativo ? "text-raised/80" : "text-ink-3"}`}>{p.semestreLabel}</span>
             )}
-            <span className={`text-caps ${ativo ? "text-raised/90" : "text-ink-2"}`}>{p.creditos} cr</span>
+            {/* Acima do teto vira chip no próprio número — antes era um badge
+                absoluto com -top-2, que o overflow-x-auto do container cortava
+                e ainda repetia o valor logo abaixo. */}
+            {acimaDoTeto ? (
+              <span
+                className="rounded-chip bg-danger px-1.5 py-0.5 text-caps font-semibold text-raised"
+                title={`Acima do teto de ${p.tetoCreditos} créditos`}
+              >
+                {p.creditos}/{p.tetoCreditos} cr
+              </span>
+            ) : (
+              <span className={`text-caps ${ativo ? "text-raised/90" : "text-ink-2"}`}>{p.creditos} cr</span>
+            )}
             {p.encerrado && (
               <span className={`text-caps uppercase tracking-wide ${ativo ? "text-raised/70" : "text-ink-3"}`}>Encerrado</span>
             )}
-            <LinkPendingOverlay />
           </Link>
         );
       })}

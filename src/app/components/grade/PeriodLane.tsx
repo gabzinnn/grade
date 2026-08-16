@@ -2,7 +2,6 @@ import Link from "next/link";
 import { CourseBlock } from "@/app/components/grade/CourseBlock";
 import { IconGrid } from "@/app/components/ui/icons";
 import { DisciplinaPrefetchLink } from "@/app/components/grade/DisciplinaPrefetchLink";
-import { LinkPendingOverlay } from "@/app/components/ui/LinkPendingOverlay";
 import { FecharPeriodoButton } from "@/app/components/grade/FecharPeriodoButton";
 
 export type EstadoPeriodo = "CONCLUIDO" | "ATUAL" | "FUTURO";
@@ -84,7 +83,6 @@ export function PeriodLane({ id, ordem, label, creditos, tetoCreditos, estado, i
           >
             <IconGrid className="h-4 w-4" />
             <span className="text-caps">Alocar créditos</span>
-            <LinkPendingOverlay />
           </Link>
         )}
       </div>

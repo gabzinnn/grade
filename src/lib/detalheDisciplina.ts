@@ -64,20 +64,32 @@ export async function construirDetalheDisciplina(
   });
   if (!periodo) return null;
 
+  // Nem toda disciplina do plano está na versão curricular (ex.: ACE, disciplina
+  // criada à mão sem categoria). Sem a versão a gente perde requisitos/destrava,
+  // mas o resto do detalhe (turmas, matrícula) continua válido — devolver `null`
+  // aqui virava spinner eterno no painel.
   const disciplinaVersao = await db.disciplinaVersao.findUnique({
     where: {
       versaoCurricularId_disciplinaId: { versaoCurricularId: periodo.plano.versaoCurricularId, disciplinaId },
     },
     include: { disciplina: true, requisitos: { include: { disciplinaExigida: true } } },
   });
-  if (!disciplinaVersao) return null;
+  const disciplina = disciplinaVersao?.disciplina ?? (await db.disciplina.findUnique({ where: { id: disciplinaId } }));
+  if (!disciplina) return null;
+
+  // Período sem semestre não tem oferta pra mostrar. Antes isso virava
+  // `semestreId: undefined`, que no Prisma quer dizer "sem filtro" — listava as
+  // turmas de todos os semestres.
+  const semestreId = periodo.semestreId;
 
   const [turmas, destravaVersoes, historico, itemExistente] = await Promise.all([
-    db.turma.findMany({
-      where: { disciplinaId, semestreId: periodo.semestreId ?? undefined },
-      include: { horarios: { include: { local: true } }, professores: { include: { professor: true } } },
-      orderBy: { codigo: "asc" },
-    }),
+    semestreId === null
+      ? []
+      : db.turma.findMany({
+          where: { disciplinaId, semestreId },
+          include: { horarios: { include: { local: true } }, professores: { include: { professor: true } } },
+          orderBy: { codigo: "asc" },
+        }),
     db.disciplinaVersao.findMany({
       where: {
         versaoCurricularId: periodo.plano.versaoCurricularId,
@@ -120,7 +132,7 @@ export async function construirDetalheDisciplina(
     };
   });
 
-  const prerequisitos: PrereqNode[] = disciplinaVersao.requisitos
+  const prerequisitos: PrereqNode[] = (disciplinaVersao?.requisitos ?? [])
     .filter((r) => r.tipo === "PRE")
     .map((r) => ({
       disciplinaId: r.disciplinaExigidaId,
@@ -140,10 +152,10 @@ export async function construirDetalheDisciplina(
   return {
     disciplinaId,
     planoPeriodoId,
-    codigo: disciplinaVersao.disciplina.codigo,
-    nome: disciplinaVersao.disciplina.nome,
-    creditos: Number(disciplinaVersao.disciplina.creditos),
-    cargaHoraria: disciplinaVersao.disciplina.cargaHoraria,
+    codigo: disciplina.codigo,
+    nome: disciplina.nome,
+    creditos: Number(disciplina.creditos),
+    cargaHoraria: disciplina.cargaHoraria,
     turmas: turmaOpcoes,
     turmaSelecionadaId: itemExistente?.turmaId ?? turmaOpcoes.find((t) => !t.conflito)?.id ?? null,
     planoItemId: itemExistente?.id ?? null,

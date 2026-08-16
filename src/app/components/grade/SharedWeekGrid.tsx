@@ -1,4 +1,6 @@
-import { Pessoa, JanelaComum } from "@/lib/nossaSemana";
+import { CourseBlock } from "@/app/components/grade/CourseBlock";
+import { corPorDisciplina } from "@/lib/cor";
+import { Pessoa, BlocoPessoa, JanelaComum } from "@/lib/nossaSemana";
 
 const DIAS = [
   { diaSemana: 1, label: "Seg" },
@@ -11,6 +13,11 @@ const DIAS = [
 const HORA_INICIO = 7;
 const HORA_FIM = 21;
 
+/** Cor de cada pessoa — fica na borda do bloco, já que o fundo agora é a cor da
+ * disciplina. A legenda em nossa-semana/page.tsx usa as mesmas constantes. */
+export const COR_EU = "#2F6F8F";
+export const COR_COLEGA = "#9B3F73";
+
 interface SharedWeekGridProps {
   eu: Pessoa;
   colega: Pessoa;
@@ -18,27 +25,48 @@ interface SharedWeekGridProps {
   soLivres: boolean;
 }
 
+/** Mesma linguagem visual do Planejador: cor própria por disciplina no fundo
+ * (corPorDisciplina + tint) e a cor da pessoa na borda, que é o que diz de quem
+ * é o bloco. Compromisso pessoal não tem disciplina, então fica neutro. */
 function Bloco({
-  titulo,
+  bloco,
   top,
   height,
-  cor,
+  corPessoa,
   lado,
 }: {
-  titulo: string;
+  bloco: BlocoPessoa;
   top: number;
   height: number;
-  cor: string;
+  corPessoa: string;
   lado: "left" | "right";
 }) {
+  const posicao = `absolute z-[5] w-[calc(50%-4px)] ${lado === "left" ? "left-1" : "right-1"}`;
+
+  if (!bloco.codigo) {
+    return (
+      <div
+        className={`${posicao} overflow-hidden rounded-block bg-raised px-2 py-1.5 shadow-resting`}
+        style={{ top, height, borderLeft: `3px solid ${corPessoa}` }}
+      >
+        <p className="line-clamp-2 text-caps text-ink-2">{bloco.titulo}</p>
+      </div>
+    );
+  }
+
   return (
     <div
-      className={`absolute z-[5] w-[calc(50%-4px)] overflow-hidden rounded-block bg-raised px-2 py-1.5 shadow-resting ${
-        lado === "left" ? "left-1" : "right-1"
-      }`}
-      style={{ top, height, borderLeft: `3px solid ${cor}` }}
+      className={`${posicao} overflow-hidden rounded-block shadow-resting`}
+      style={{ top, height, borderLeft: `3px solid ${corPessoa}` }}
     >
-      <p className="truncate text-caps text-ink-2">{titulo}</p>
+      <CourseBlock
+        codigo={bloco.codigo}
+        nome={bloco.titulo}
+        corCategoria={corPessoa}
+        corDisciplina={corPorDisciplina(String(bloco.disciplinaId))}
+        estado="FUTURO"
+        className="h-full rounded-none border-0"
+      />
     </div>
   );
 }
@@ -95,10 +123,10 @@ export function SharedWeekGrid({ eu, colega, janelasComuns, soLivres }: SharedWe
                     <Bloco
                       key={`eu-${i}`}
                       lado="left"
-                      titulo={b.titulo}
+                      bloco={b}
                       top={b.inicioMin - HORA_INICIO * 60}
                       height={b.fimMin - b.inicioMin}
-                      cor="#2F6F8F"
+                      corPessoa={COR_EU}
                     />
                   ))}
               {!soLivres &&
@@ -108,10 +136,10 @@ export function SharedWeekGrid({ eu, colega, janelasComuns, soLivres }: SharedWe
                     <Bloco
                       key={`colega-${i}`}
                       lado="right"
-                      titulo={b.titulo}
+                      bloco={b}
                       top={b.inicioMin - HORA_INICIO * 60}
                       height={b.fimMin - b.inicioMin}
-                      cor="#9B3F73"
+                      corPessoa={COR_COLEGA}
                     />
                   ))}
             </div>

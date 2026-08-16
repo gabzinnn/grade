@@ -22,9 +22,21 @@ interface CatalogoTableProps {
   professores: string[];
   periodoAtualId: number | null;
   periodoAtualOrdem: number | null;
+  cursos: { id: number; nome: string }[];
+  cursoSelecionadoId: number | "all";
+  podeMatricular: boolean;
 }
 
-export function CatalogoTable({ disciplinas, categorias, professores, periodoAtualId, periodoAtualOrdem }: CatalogoTableProps) {
+export function CatalogoTable({
+  disciplinas,
+  categorias,
+  professores,
+  periodoAtualId,
+  periodoAtualOrdem,
+  cursos,
+  cursoSelecionadoId,
+  podeMatricular,
+}: CatalogoTableProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [adicionando, setAdicionando] = useState<number | null>(null);
@@ -79,44 +91,69 @@ export function CatalogoTable({ disciplinas, categorias, professores, periodoAtu
 
   return (
     <div className="flex flex-col gap-5">
-      <Card className="flex flex-wrap items-center gap-3">
-        <Input placeholder="Buscar disciplina..." className="min-w-[200px] flex-1" value={busca} onChange={(e) => setBusca(e.target.value)} />
-        <Select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
-          <option value="">Categoria</option>
-          {categorias.map((c) => (
-            <option key={c.chave} value={c.chave}>
-              {c.nome}
-            </option>
-          ))}
-        </Select>
-        <Select value={periodoSugerido} onChange={(e) => setPeriodoSugerido(e.target.value)}>
-          <option value="">Período sugerido</option>
-          {periodosSugeridos.map((p) => (
-            <option key={p} value={p}>
-              {p}º período
-            </option>
-          ))}
-        </Select>
-        <Select value={turno} onChange={(e) => setTurno(e.target.value)}>
-          <option value="">Turno</option>
-          <option value="manha">Manhã</option>
-          <option value="tarde">Tarde</option>
-          <option value="noite">Noite</option>
-        </Select>
-        <Select value={professor} onChange={(e) => setProfessor(e.target.value)}>
-          <option value="">Professor</option>
-          {professores.map((p) => (
-            <option key={p} value={p}>
-              {p}
-            </option>
-          ))}
-        </Select>
-        {(busca || categoria || periodoSugerido || turno || professor) && (
-          <button type="button" onClick={limparFiltros} className="text-body-sm text-ink-2 hover:text-primary">
-            Limpar filtros
-          </button>
-        )}
-        <span className="ml-auto font-data text-label text-ink-2">{filtradas.length} disciplinas</span>
+      <Card className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <label className="flex items-center gap-2 text-label text-ink-2">
+            Curso
+            <Select
+              className="min-w-[220px]"
+              value={cursoSelecionadoId}
+              onChange={(e) => router.push(`/catalogo?curso=${e.target.value}`)}
+            >
+              <option value="all">Todos os cursos</option>
+              {cursos.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome}
+                </option>
+              ))}
+            </Select>
+          </label>
+          <Input
+            placeholder="Buscar disciplina..."
+            className="min-w-[200px] flex-1"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+          />
+          <span className="font-data text-label text-ink-2">{filtradas.length} disciplinas</span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 border-t border-hairline pt-4">
+          <Select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
+            <option value="">Categoria</option>
+            {categorias.map((c) => (
+              <option key={c.chave} value={c.chave}>
+                {c.nome}
+              </option>
+            ))}
+          </Select>
+          <Select value={periodoSugerido} onChange={(e) => setPeriodoSugerido(e.target.value)}>
+            <option value="">Período sugerido</option>
+            {periodosSugeridos.map((p) => (
+              <option key={p} value={p}>
+                {p}º período
+              </option>
+            ))}
+          </Select>
+          <Select value={turno} onChange={(e) => setTurno(e.target.value)}>
+            <option value="">Turno</option>
+            <option value="manha">Manhã</option>
+            <option value="tarde">Tarde</option>
+            <option value="noite">Noite</option>
+          </Select>
+          <Select value={professor} onChange={(e) => setProfessor(e.target.value)}>
+            <option value="">Professor</option>
+            {professores.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </Select>
+          {(busca || categoria || periodoSugerido || turno || professor) && (
+            <button type="button" onClick={limparFiltros} className="ml-auto text-body-sm text-ink-2 hover:text-primary">
+              Limpar filtros
+            </button>
+          )}
+        </div>
       </Card>
 
       <Card className="overflow-x-auto p-0">
@@ -136,11 +173,11 @@ export function CatalogoTable({ disciplinas, categorias, professores, periodoAtu
           </thead>
           <tbody>
             {filtradas.map((d) => {
-              const expandida = expandidas.has(d.disciplinaId);
+              const expandida = expandidas.has(d.id);
               return (
-                <Fragment key={d.disciplinaId}>
+                <Fragment key={d.id}>
                   <tr
-                    onClick={() => alternarExpandida(d.disciplinaId)}
+                    onClick={() => alternarExpandida(d.id)}
                     className="cursor-pointer border-b border-hairline hover:bg-recess"
                   >
                     <td className="w-1 p-0" style={{ backgroundColor: d.categoriaCor }} />
@@ -194,7 +231,7 @@ export function CatalogoTable({ disciplinas, categorias, professores, periodoAtu
                                     )}
                                   </td>
                                   <td className="py-2 text-right">
-                                    {periodoAtualId && !t.conflito && (
+                                    {podeMatricular && periodoAtualId && !t.conflito && (
                                       <button
                                         type="button"
                                         disabled={pending && adicionando === t.id}

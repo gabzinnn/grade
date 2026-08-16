@@ -39,12 +39,52 @@
     }
   },
 
+  "_notaConcluidas": "Extraído de seed/boa.txt (BOA 10/08/2026), coluna \"Atividades Acadêmicas já aprovadas\". Soma = 122 créditos, batendo com o Resumo do BOA. EEK345 saiu da lista: no BOA está como Cursando, não aprovada.",
   "concluidas": [
-    "ICP114","MAC118","EEH210","FIS111","FIT112","EEI200","IQG111",
-    "ICP225","MAC128","FIS121","FIT122","EEI212","IQG112","EEG105",
-    "EEG301","EEI325","EEA212","EEI201","MAE125",
-    "EEI735","MAC238","ICP231","EEI426","FIN231","FIM230","EEI533","NCG011","EET310",
-    "MAC248","EEK345","EEI058","EEI541","FIM240","EEI551","EEI722","EEA338"
+    {"codigo":"EEH210","nome":"Engenharia e Meio Ambiente","creditos":2,"ch":30,"grau":9.5,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEI200","nome":"Introducao a Eng de Producao","creditos":2,"ch":30,"grau":10,"categoria":"OBRIGATORIA"},
+    {"codigo":"FIS111","nome":"Física Experimental I","creditos":1,"ch":30,"grau":9.2,"categoria":"OBRIGATORIA"},
+    {"codigo":"FIT112","nome":"Física I - a","creditos":4,"ch":60,"grau":7.2,"categoria":"OBRIGATORIA"},
+    {"codigo":"ICP114","nome":"Computação I Ep","creditos":4,"ch":60,"grau":9.6,"categoria":"OBRIGATORIA"},
+    {"codigo":"IQG111","nome":"Química Ee","creditos":4,"ch":60,"grau":7.5,"categoria":"OBRIGATORIA"},
+    {"codigo":"MAC118","nome":"Cálculo Difer e Integral I","creditos":6,"ch":90,"grau":7.9,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEG105","nome":"Sistemas Projetivos","creditos":4,"ch":60,"grau":9.4,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEI212","nome":"Metodologia de Pesquisa","creditos":2,"ch":30,"grau":8.9,"categoria":"OBRIGATORIA"},
+    {"codigo":"FIS121","nome":"Física Experimental II","creditos":1,"ch":30,"grau":8.8,"categoria":"OBRIGATORIA"},
+    {"codigo":"FIT122","nome":"Física II - a","creditos":4,"ch":60,"grau":6.9,"categoria":"OBRIGATORIA"},
+    {"codigo":"ICP225","nome":"Computação II Ep","creditos":4,"ch":60,"grau":10,"categoria":"OBRIGATORIA"},
+    {"codigo":"IQG112","nome":"Quimica Experimental EE","creditos":2,"ch":60,"grau":8.5,"categoria":"OBRIGATORIA"},
+    {"codigo":"MAC128","nome":"Cálculo Diferen e Integral II","creditos":4,"ch":60,"grau":7.6,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEA212","nome":"Mecanica I","creditos":4,"ch":60,"grau":7.3,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEG301","nome":"Desenho Computacional","creditos":2,"ch":30,"grau":9.4,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEI325","nome":"Engenharia de Metodos","creditos":4,"ch":60,"grau":8.6,"categoria":"OBRIGATORIA"},
+    {"codigo":"FIM230","nome":"Física III - a","creditos":4,"ch":60,"grau":6.5,"categoria":"OBRIGATORIA"},
+    {"codigo":"FIN231","nome":"Física Experimental III","creditos":1,"ch":30,"grau":6.6,"categoria":"OBRIGATORIA"},
+    {"codigo":"MAC238","nome":"Cálculo Diferen e Integral III","creditos":4,"ch":60,"grau":5.2,"categoria":"OBRIGATORIA"},
+    {"codigo":"MAE125","nome":"Álgebra Linear","creditos":4,"ch":60,"grau":9.3,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEI426","nome":"Engenharia do Trabalho","creditos":4,"ch":60,"grau":9.1,"categoria":"OBRIGATORIA"},
+    {"codigo":"EET310","nome":"Princ de Ciencia dos Materiais","creditos":4,"ch":75,"grau":9,"categoria":"OBRIGATORIA"},
+    {"codigo":"FIM240","nome":"Física IV - a","creditos":4,"ch":60,"grau":8.1,"categoria":"OBRIGATORIA"},
+    {"codigo":"ICP231","nome":"Cálculo Numérico","creditos":4,"ch":60,"grau":10,"categoria":"OBRIGATORIA"},
+    {"codigo":"MAC248","nome":"Cálculo Diferen e Integral IV","creditos":4,"ch":60,"grau":8.5,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEI201","nome":"Probabilidade e Estatistica","creditos":4,"ch":60,"grau":5.3,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEA338","nome":"Resistencia dos Materiais","creditos":4,"ch":60,"grau":9.2,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEI533","nome":"Introdução à Economia","creditos":4,"ch":60,"grau":8.4,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEI541","nome":"Estatistica Aplicada I","creditos":4,"ch":60,"grau":8.4,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEI551","nome":"Projeto do Produto","creditos":4,"ch":60,"grau":10,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEI722","nome":"Psicol e Sociologia Industrial","creditos":3,"ch":45,"grau":10,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEI735","nome":"Contabilidade Gerencial","creditos":3,"ch":45,"grau":10,"categoria":"OBRIGATORIA"},
+    {"codigo":"EEI058","nome":"Engenharia do Entretenimento","creditos":3,"ch":45,"grau":9.5,"categoria":"CONDICIONADA"},
+    {"codigo":"EEI206","nome":"Historia da Tecnologia","creditos":2,"ch":30,"grau":9.9,"categoria":"HUMANAS"},
+    {"codigo":"NCG011","nome":"Mapas","creditos":4,"ch":60,"grau":10,"categoria":"LIVRE_ESCOLHA"}
+  ],
+  "equivalencias": [
+    {"cursada":"EEI201","satisfaz":"MAD201"},
+    {"cursada":"EEA212","satisfaz":"EEN212"},
+    {"cursada":"EEI426","satisfaz":"EEI323"},
+    {"cursada":"EEI426","satisfaz":"EEI324"},
+    {"cursada":"EEI735","satisfaz":"EEI423"},
+    {"cursada":"EEE390","satisfaz":"EEE385"}
   ],
   "_notaEquivalencias": {
     "EEI201": "satisfaz MAD201 (Probabilidade e Estatística)",
@@ -55,7 +95,7 @@
   },
 
   "cursandoAtualmente_2026_2": [
-    "EEI613","EEI621","EEI634","EEI642","EEI643","EEK355","EEN344","EEI652","FIN241","EEWZ56"
+    "EEI613","EEI621","EEI634","EEI642","EEI643","EEK355","EEN344","EEK345","FIN241","EEWZ56"
   ],
 
   "disciplinas": [
@@ -88,6 +128,9 @@
     { "codigo":"EEI652","nome":"Engenharia da Informação","creditos":3,"ch":45,"categoria":"OBRIGATORIA","periodoGrade":5,"prereq":[],
       "turmas":[{"turma":"10781","nome":"ENG DA INFORMAÇÃO S/I-105 A","horarios":[{"dia":"TER","ini":"13:00","fim":"15:00"}]}],
       "obs":"No CRID 2026/2, mas Gabriel pode TIRAR se passar no estágio. Se tirar, reencaixar em período futuro." },
+
+    { "codigo":"EEK345","nome":"Eng de Processos Mecanicos","creditos":4,"ch":75,"categoria":"OBRIGATORIA","periodoGrade":5,"prereq":[],
+      "turmas":[{"turma":"HIST","nome":"Eng. de Processos Mecânicos","horarios":[{"dia":"QUA","ini":"13:00","fim":"15:00"},{"dia":"QUI","ini":"13:00","fim":"15:00"}]}] },
 
     { "codigo":"EEE390","nome":"Fundamentos de Eletricidade","creditos":4,"ch":75,"categoria":"OBRIGATORIA","periodoGrade":5,"prereq":[],
       "turmas":[

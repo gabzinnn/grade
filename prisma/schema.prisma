@@ -237,14 +237,14 @@ model TurmaProfessor {
 }
 
 model HorarioTurma {
-  id        Int     @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   turmaId   Int
   diaSemana Int // 1 = segunda ... 7 = domingo (ISO)
   inicioMin Int // minutos desde 00:00 — 420 = 07:00
   fimMin    Int
   localId   Int?
-  turma     Turma   @relation(fields: [turmaId], references: [id], onDelete: Cascade)
-  local     Local?  @relation(fields: [localId], references: [id])
+  turma     Turma  @relation(fields: [turmaId], references: [id], onDelete: Cascade)
+  local     Local? @relation(fields: [localId], references: [id])
 
   @@unique([turmaId, diaSemana, inicioMin])
   @@index([diaSemana, inicioMin])
@@ -256,6 +256,7 @@ model Perfil {
   id                 String                   @id @db.Uuid // = auth.users.id do Supabase
   nome               String
   apelido            String?
+  senhaHash          String? // bcrypt — null = acesso sem senha
   dre                String?
   versaoCurricularId Int?
   semestreIngressoId Int? // âncora: ordem 1 ↔ 2023/1

@@ -11,6 +11,7 @@ export interface CatalogoTurma {
 }
 
 export interface CatalogoDisciplina {
+  id: number;
   disciplinaId: number;
   codigo: string;
   nome: string;
@@ -22,7 +23,7 @@ export interface CatalogoDisciplina {
   turmas: CatalogoTurma[];
 }
 
-export async function construirCatalogo(perfilId: string) {
+export async function construirCatalogo(perfilId: string, cursoId?: number | "all") {
   const plano = await db.plano.findFirst({
     where: { principal: true, OR: [{ donoId: perfilId }, { acessos: { some: { perfilId } } }] },
     select: {
@@ -30,6 +31,7 @@ export async function construirCatalogo(perfilId: string) {
       nome: true,
       versaoCurricularId: true,
       dono: { select: { nome: true, apelido: true } },
+      versaoCurricular: { select: { curso: { select: { id: true, nome: true } } } },
       periodos: {
         where: { encerradoEm: null },
         orderBy: { ordem: "asc" },
@@ -45,11 +47,21 @@ export async function construirCatalogo(perfilId: string) {
   });
   if (!plano) return null;
 
+  const cursos = await db.curso.findMany({
+    select: { id: true, nome: true, versoes: { select: { id: true }, orderBy: { id: "desc" }, take: 1 } },
+    orderBy: { nome: "asc" },
+  });
+
+  const todas = cursoId === "all";
+  const cursoSelecionado = cursoId && !todas ? cursos.find((c) => c.id === cursoId) : null;
+  const versaoCurricularId = cursoSelecionado?.versoes[0]?.id ?? plano.versaoCurricularId;
+  const podeMatricular = !todas && versaoCurricularId === plano.versaoCurricularId;
+
   const periodoAtual = plano.periodos[0] ?? null;
   const semestreId = periodoAtual?.semestreId ?? -1; // -1: nenhuma turma bate, lista fica vazia
 
   const disciplinasVersao = await db.disciplinaVersao.findMany({
-    where: { versaoCurricularId: plano.versaoCurricularId },
+    where: todas ? {} : { versaoCurricularId },
     include: {
       disciplina: {
         include: {
@@ -87,6 +99,7 @@ export async function construirCatalogo(perfilId: string) {
     }));
 
     return {
+      id: dv.id,
       disciplinaId: dv.disciplinaId,
       codigo: dv.disciplina.codigo,
       nome: dv.disciplina.nome,
@@ -110,5 +123,8 @@ export async function construirCatalogo(perfilId: string) {
     disciplinas,
     categorias,
     professores,
+    cursos: cursos.map((c) => ({ id: c.id, nome: c.nome })),
+    cursoSelecionadoId: todas ? ("all" as const) : (cursoSelecionado?.id ?? plano.versaoCurricular.curso.id),
+    podeMatricular,
   };
 }

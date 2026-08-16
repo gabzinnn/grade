@@ -1,41 +1,34 @@
 import { cookies } from "next/headers";
-import { createServerClient } from "@supabase/ssr";
+import { redirect } from "next/navigation";
 import { db } from "./db";
 
-export async function getSupabaseServerClient() {
+export async function getSessionPerfilId(): Promise<string> {
   const cookieStore = await cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll(cookiesToSet) {
-          try {
-            for (const { name, value, options } of cookiesToSet) {
-              cookieStore.set(name, value, options);
-            }
-          } catch {
-            // chamado de um Server Component sem permissão de escrita de cookie;
-            // a sessão é refrescada pelo middleware nesse caso.
-          }
-        },
-      },
-    },
-  );
+  const perfilId = cookieStore.get("perfil_id")?.value;
+  if (!perfilId) redirect("/login");
+
+  // Cookie presente mas apontando pra um perfil que não existe mais
+  // (deletado, banco resetado etc.) — trata como não autenticado.
+  const existe = await db.perfil.findUnique({ where: { id: perfilId }, select: { id: true } });
+  if (!existe) {
+    cookieStore.delete("perfil_id");
+    redirect("/login");
+  }
+
+  return perfilId;
 }
 
-export async function getSessionPerfilId(): Promise<string> {
-  // ponytail: sem tela de login ainda — atalho de dev pra testar localmente
-  // com os perfis do seed. Só ativa se a env var existir; nunca em produção.
-  if (process.env.DEV_MOCK_PERFIL_ID) return process.env.DEV_MOCK_PERFIL_ID;
-
-  const supabase = await getSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error("Não autenticado");
-  return user.id;
+/// Mesma ideia do assertPodeEditar, mas pra leitura: qualquer papel serve.
+export async function assertPodeVer(planoId: number): Promise<void> {
+  const perfilId = await getSessionPerfilId();
+  const plano = await db.plano.findUnique({
+    where: { id: planoId },
+    select: { donoId: true, acessos: { where: { perfilId }, select: { perfilId: true } } },
+  });
+  if (!plano) throw new Error("Plano não encontrado");
+  if (plano.donoId === perfilId) return;
+  if (plano.acessos.length > 0) return;
+  throw new Error("Sem permissão para ver este plano");
 }
 
 /// Autorização real de escrita. RLS no Supabase é defesa em profundidade —

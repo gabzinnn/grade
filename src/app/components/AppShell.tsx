@@ -7,19 +7,14 @@ interface AppShellProps {
   title: string;
   subtitulo?: string;
   topBarRight?: ReactNode;
+  /** Ausentes durante o loading.tsx da rota — a sidebar mostra placeholder no
+   * lugar em vez de um nome chutado. */
   planoNome?: string;
   usuarioNome?: string;
   children: ReactNode;
 }
 
-export function AppShell({
-  title,
-  subtitulo,
-  topBarRight,
-  planoNome = "Plano principal",
-  usuarioNome = "Gabriel",
-  children,
-}: AppShellProps) {
+export function AppShell({ title, subtitulo, topBarRight, planoNome, usuarioNome, children }: AppShellProps) {
   return (
     <AppShellNavProvider>
       <div className="flex h-screen overflow-hidden bg-canvas">

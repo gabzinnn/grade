@@ -4,9 +4,14 @@ import { CatalogoTable } from "@/app/components/catalogo/CatalogoTable";
 import { getSessionPerfilId } from "@/lib/auth";
 import { construirCatalogo } from "@/lib/catalogo";
 
-export default async function CatalogoPage() {
+interface CatalogoPageProps {
+  searchParams: Promise<{ curso?: string }>;
+}
+
+export default async function CatalogoPage({ searchParams }: CatalogoPageProps) {
+  const { curso } = await searchParams;
   const perfilId = await getSessionPerfilId();
-  const dados = await construirCatalogo(perfilId);
+  const dados = await construirCatalogo(perfilId, curso === "all" ? "all" : curso ? Number(curso) : undefined);
   if (!dados) notFound();
 
   return (
@@ -22,6 +27,9 @@ export default async function CatalogoPage() {
         professores={dados.professores}
         periodoAtualId={dados.periodoAtualId}
         periodoAtualOrdem={dados.periodoAtualOrdem}
+        cursos={dados.cursos}
+        cursoSelecionadoId={dados.cursoSelecionadoId}
+        podeMatricular={dados.podeMatricular}
       />
     </AppShell>
   );

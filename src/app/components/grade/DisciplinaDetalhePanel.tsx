@@ -26,7 +26,13 @@ interface DisciplinaDetalhePanelProps {
 export function DisciplinaDetalhePanel({ periodoOrdem }: DisciplinaDetalhePanelProps) {
   const { alvo, fechar } = useDisciplinaDetalheContext();
   const queryClient = useQueryClient();
-  const { data: dados, isLoading } = useDisciplinaDetalhe(alvo?.planoPeriodoId ?? 0, alvo?.disciplinaId ?? null);
+  const {
+    data: dados,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useDisciplinaDetalhe(alvo?.planoPeriodoId ?? 0, alvo?.disciplinaId ?? null);
   const [pending, startTransition] = useTransition();
   const [removendo, startRemocao] = useTransition();
   const [editando, setEditando] = useState(false);
@@ -67,11 +73,38 @@ export function DisciplinaDetalhePanel({ periodoOrdem }: DisciplinaDetalhePanelP
   return (
     <>
     <Dialog open={alvo !== null} onClose={fechar} className="max-w-2xl">
-        {(isLoading || !dados) && (
+        {/* Três estados distintos — antes todos caíam no mesmo spinner, então
+            erro e "não encontrada" viravam carregamento infinito. */}
+        {alvo && isLoading && (
           <div className="flex min-h-[200px] items-center justify-center">
-            {alvo && (
-              <span className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-            )}
+            <span className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          </div>
+        )}
+
+        {alvo && isError && (
+          <div className="flex min-h-[200px] flex-col items-center justify-center gap-3 text-center">
+            <p className="text-body-sm font-medium text-ink">Não deu pra carregar esta disciplina.</p>
+            <p className="max-w-sm text-label text-ink-2">{(error as Error)?.message}</p>
+            <div className="flex gap-2">
+              <Button variant="secondary" onClick={fechar} type="button">
+                Fechar
+              </Button>
+              <Button onClick={() => refetch()} type="button">
+                Tentar de novo
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {alvo && !isLoading && !isError && dados === null && (
+          <div className="flex min-h-[200px] flex-col items-center justify-center gap-3 text-center">
+            <p className="text-body-sm font-medium text-ink">Disciplina não encontrada neste período.</p>
+            <p className="max-w-sm text-label text-ink-2">
+              Ela pode ter sido removida do plano ou não pertencer a esta versão curricular.
+            </p>
+            <Button variant="secondary" onClick={fechar} type="button">
+              Fechar
+            </Button>
           </div>
         )}
 

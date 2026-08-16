@@ -3,6 +3,9 @@ import { Intervalo, janelasEmComum } from "@/lib/schedule";
 
 export interface BlocoPessoa extends Intervalo {
   titulo: string;
+  /** Presentes só quando o bloco é aula — compromisso pessoal não tem disciplina. */
+  disciplinaId?: number;
+  codigo?: string;
 }
 
 export interface Pessoa {
@@ -37,7 +40,7 @@ async function carregarPessoa(donoId: string): Promise<Pessoa | null> {
       select: {
         itens: {
           select: {
-            disciplina: { select: { codigo: true, nome: true } },
+            disciplina: { select: { id: true, codigo: true, nome: true } },
             turma: { select: { horarios: { select: { diaSemana: true, inicioMin: true, fimMin: true } } } },
           },
         },
@@ -51,7 +54,9 @@ async function carregarPessoa(donoId: string): Promise<Pessoa | null> {
 
   const blocosAulas: BlocoPessoa[] = (periodoAtual?.itens ?? []).flatMap((item) =>
     (item.turma?.horarios ?? []).map((h) => ({
-      titulo: `${item.disciplina.codigo} · ${item.disciplina.nome}`,
+      titulo: item.disciplina.nome,
+      disciplinaId: item.disciplina.id,
+      codigo: item.disciplina.codigo,
       diaSemana: h.diaSemana,
       inicioMin: h.inicioMin,
       fimMin: h.fimMin,

@@ -5,13 +5,20 @@ import { createContext, ReactNode, useContext, useState } from "react";
 interface AppShellNavState {
   open: boolean;
   setOpen: (open: boolean) => void;
+  desktopOpen: boolean;
+  setDesktopOpen: (open: boolean) => void;
 }
 
 const AppShellNavContext = createContext<AppShellNavState | null>(null);
 
 export function AppShellNavProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
-  return <AppShellNavContext.Provider value={{ open, setOpen }}>{children}</AppShellNavContext.Provider>;
+  const [desktopOpen, setDesktopOpen] = useState(true);
+  return (
+    <AppShellNavContext.Provider value={{ open, setOpen, desktopOpen, setDesktopOpen }}>
+      {children}
+    </AppShellNavContext.Provider>
+  );
 }
 
 export function useAppShellNav(): AppShellNavState {

@@ -34,7 +34,13 @@ export function PlanejadorClient({ periodoOrdem, initialData, alvoInicial }: Pla
   });
 
   return (
-    <DisciplinaDetalheProvider inicial={alvoInicial}>
+    // `key` remonta o provider quando o `?disciplina=` da URL muda — sem isso o
+    // useState(inicial) só valeria na primeira montagem e navegar da Trilha pra
+    // uma segunda disciplina não abriria nada.
+    <DisciplinaDetalheProvider
+      key={alvoInicial ? `${alvoInicial.planoPeriodoId}:${alvoInicial.disciplinaId}` : "sem-alvo"}
+      inicial={alvoInicial}
+    >
       <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
         <div className="overflow-x-auto">
           <PeriodoTabs periodos={dados.periodos} ordemAtiva={dados.periodoAlvo.ordem} />

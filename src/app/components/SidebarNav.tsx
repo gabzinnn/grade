@@ -23,7 +23,7 @@ const ITENS = [
   { href: "/perfil", label: "Perfil", Icon: IconUser },
 ] as const;
 
-export function SidebarNav() {
+export function SidebarNav({ collapsed = false }: { collapsed?: boolean }) {
   const pathname = usePathname();
 
   return (
@@ -37,15 +37,16 @@ export function SidebarNav() {
           <Link
             key={item.href}
             href={item.href}
-            className={`relative flex items-center gap-3 h-10 px-3 rounded-[12px] text-body-sm transition-colors ${
-              ativo ? "bg-primary/12 text-ink" : "text-ink-2 hover:bg-recess"
-            }`}
+            title={collapsed ? item.label : undefined}
+            className={`relative flex items-center gap-3 h-10 rounded-[12px] text-body-sm transition-colors ${
+              collapsed ? "justify-center px-0" : "px-3"
+            } ${ativo ? "bg-primary/12 text-ink" : "text-ink-2 hover:bg-recess"}`}
           >
             {ativo && (
               <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-chip bg-primary" />
             )}
             <item.Icon className={ativo ? "text-primary" : "text-ink-2"} />
-            <span>{item.label}</span>
+            {!collapsed && <span>{item.label}</span>}
           </Link>
         );
       })}

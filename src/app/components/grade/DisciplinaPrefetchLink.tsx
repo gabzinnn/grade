@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { ReactNode } from "react";
-import { usePrefetchDisciplinaDetalhe } from "@/hooks/useDisciplinaDetalhe";
-import { LinkPendingOverlay } from "@/app/components/ui/LinkPendingOverlay";
+import { useHoverPrefetchDetalhe } from "@/hooks/useDisciplinaDetalhe";
 
 interface DisciplinaPrefetchLinkProps {
   href: string;
@@ -21,17 +20,15 @@ export function DisciplinaPrefetchLink({
   className = "",
   children,
 }: DisciplinaPrefetchLinkProps) {
-  const prefetch = usePrefetchDisciplinaDetalhe();
+  const hover = useHoverPrefetchDetalhe(planoPeriodoId, disciplinaId);
 
   return (
     <Link
       href={href}
-      onMouseEnter={() => prefetch(planoPeriodoId, disciplinaId)}
-      onFocus={() => prefetch(planoPeriodoId, disciplinaId)}
+      {...hover}
       className={`relative ${className}`}
     >
       {children}
-      <LinkPendingOverlay />
     </Link>
   );
 }

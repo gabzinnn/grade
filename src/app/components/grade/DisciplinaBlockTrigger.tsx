@@ -2,7 +2,7 @@
 
 import { CSSProperties, ReactNode } from "react";
 import { useDisciplinaDetalheContext } from "@/app/components/grade/DisciplinaDetalheContext";
-import { usePrefetchDisciplinaDetalhe } from "@/hooks/useDisciplinaDetalhe";
+import { useHoverPrefetchDetalhe } from "@/hooks/useDisciplinaDetalhe";
 
 interface DisciplinaBlockTriggerProps {
   disciplinaId: number;
@@ -15,14 +15,13 @@ interface DisciplinaBlockTriggerProps {
 /** Abre o slide-over de detalhe sem navegar — o dado já foi pré-carregado no hover. */
 export function DisciplinaBlockTrigger({ disciplinaId, planoPeriodoId, className = "", style, children }: DisciplinaBlockTriggerProps) {
   const { abrir } = useDisciplinaDetalheContext();
-  const prefetch = usePrefetchDisciplinaDetalhe();
+  const hover = useHoverPrefetchDetalhe(planoPeriodoId, disciplinaId);
 
   return (
     <button
       type="button"
       onClick={() => abrir({ disciplinaId, planoPeriodoId })}
-      onMouseEnter={() => prefetch(planoPeriodoId, disciplinaId)}
-      onFocus={() => prefetch(planoPeriodoId, disciplinaId)}
+      {...hover}
       className={`block w-full text-left ${className}`}
       style={style}
     >

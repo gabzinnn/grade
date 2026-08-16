@@ -18,8 +18,8 @@ export function PeriodRail({ passado, nos, formaturaLabel, limiteOrdem }: Period
       <div className="absolute left-0 right-0 top-1/2 z-0 h-px -translate-y-1/2 bg-hairline" />
 
       {passado && (
-        <div className="relative z-10 mr-8 flex h-8 items-center gap-2 rounded-r-full border border-hairline bg-recess py-1 pl-4 pr-3">
-          <div className="flex flex-col leading-none">
+        <div className="relative z-10 mr-8 flex shrink-0 items-center gap-2 whitespace-nowrap rounded-r-full border border-hairline bg-recess py-1.5 pl-4 pr-3">
+          <div className="flex flex-col gap-0.5 leading-none">
             <span className="font-data text-label text-ink">1º – {passado.ateOrdem}º</span>
             <span className="text-caps text-ink-2">
               {passado.creditos} créditos · {passado.disciplinas} disciplinas
