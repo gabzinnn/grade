@@ -28,8 +28,14 @@ export async function buscarPlanejador(periodoOrdem?: number): Promise<Planejado
       });
       if (!plano) return null;
 
-      const historico = await db.historicoItem.findMany({ where: { perfilId: plano.donoId } });
-      return construirPlanejador(plano, historico, ordem);
+      const [historico, blocos] = await Promise.all([
+        db.historicoItem.findMany({ where: { perfilId: plano.donoId } }),
+        db.blocoIndisponibilidade.findMany({
+          where: { perfilId: plano.donoId },
+          select: { id: true, titulo: true, diaSemana: true, inicioMin: true, fimMin: true, semestreId: true },
+        }),
+      ]);
+      return construirPlanejador(plano, historico, ordem, blocos);
     },
     ["planejador", perfilId],
     { tags: [planejadorCacheTag(perfilId), "planejador"], revalidate: 60 },

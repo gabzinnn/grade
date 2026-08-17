@@ -44,7 +44,21 @@ export function planejadorCacheTag(perfilId: string): string {
   return `planejador:${perfilId}`;
 }
 
-export function construirPlanejador(plano: PlanejadorPlano, historico: HistoricoItem[], ordemAlvo?: number) {
+export interface PlanejadorBloco {
+  id: number;
+  titulo: string;
+  diaSemana: number;
+  inicioMin: number;
+  fimMin: number;
+  semestreId: number | null;
+}
+
+export function construirPlanejador(
+  plano: PlanejadorPlano,
+  historico: HistoricoItem[],
+  ordemAlvo?: number,
+  blocos: PlanejadorBloco[] = [],
+) {
   const primeiroOrdemAberto = plano.periodos.find((p) => p.encerradoEm === null)?.ordem;
   const periodoAlvo =
     plano.periodos.find((p) => p.ordem === ordemAlvo) ??
@@ -113,6 +127,21 @@ export function construirPlanejador(plano: PlanejadorPlano, historico: Historico
     temChoque: intervalos.some((outro) => outro !== h && choque(h, outro)),
     estado: estadoPeriodoAlvo,
   }));
+
+  const blocosDoPeriodo: WeekGridItem[] = blocos
+    .filter((b) => b.semestreId === null || b.semestreId === periodoAlvo.semestreId)
+    .map((b) => ({
+      id: `bloco-${b.id}`,
+      diaSemana: b.diaSemana,
+      inicioMin: b.inicioMin,
+      fimMin: b.fimMin,
+      nome: b.titulo,
+      corCategoria: "#7A7367",
+      corDisciplina: "#7A7367",
+      temChoque: false,
+      estado: estadoPeriodoAlvo,
+    }));
+  gridItens.push(...blocosDoPeriodo);
 
   const semHorario = periodoAlvo.itens
     .filter((item) => !item.turma || item.turma.horarios.length === 0)

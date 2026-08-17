@@ -4,11 +4,11 @@ import { layoutColunas } from "@/lib/schedule";
 
 export interface WeekGridItem {
   id: string;
-  disciplinaId: number;
+  disciplinaId?: number;
   diaSemana: number;
   inicioMin: number;
   fimMin: number;
-  codigo: string;
+  codigo?: string;
   nome: string;
   corCategoria: string;
   corDisciplina: string;
@@ -75,24 +75,22 @@ export function WeekGrid({ itens, planoPeriodoId }: WeekGridProps) {
                       width: `calc(${100 / item.ncols}% - 8px)`,
                     }}
                   >
-                    {item.estado === "CONCLUIDO" ? (
-                      <CourseBlock
-                        codigo={item.codigo}
-                        nome={item.nome}
-                        corCategoria={item.temChoque ? "#C4443A" : item.corCategoria}
-                        corDisciplina={item.corDisciplina}
-                        estado={item.estado}
-                        sala={item.sala}
-                        className="h-full overflow-hidden shadow-resting"
-                      />
+                    {item.disciplinaId === undefined ? (
+                      <div
+                        className="h-full overflow-hidden rounded-block bg-raised px-2 py-1.5 shadow-resting"
+                        style={{ borderLeft: `3px solid ${item.corCategoria}` }}
+                      >
+                        <p className="line-clamp-2 text-caps text-ink-2">{item.nome}</p>
+                      </div>
                     ) : (
                       <DisciplinaBlockTrigger
                         disciplinaId={item.disciplinaId}
                         planoPeriodoId={planoPeriodoId}
+                        somenteLeitura={item.estado === "CONCLUIDO"}
                         className="h-full"
                       >
                         <CourseBlock
-                          codigo={item.codigo}
+                          codigo={item.codigo ?? ""}
                           nome={item.nome}
                           corCategoria={item.temChoque ? "#C4443A" : item.corCategoria}
                           corDisciplina={item.corDisciplina}

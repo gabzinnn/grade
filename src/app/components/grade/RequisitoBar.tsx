@@ -8,10 +8,9 @@ interface RequisitoBarProps {
 }
 
 export function RequisitoBar({ label, obtidos, planejados, meta, cor, unidade = "cr" }: RequisitoBarProps) {
-  const total = Math.max(meta, obtidos + planejados, 1);
+  const total = Math.max(meta, 1);
   const pctObtidos = Math.min(100, (obtidos / total) * 100);
   const pctPlanejados = Math.min(100 - pctObtidos, (planejados / total) * 100);
-  const pctMeta = Math.min(100, (meta / total) * 100);
 
   return (
     <div className="flex h-11 items-center gap-4">
@@ -22,9 +21,6 @@ export function RequisitoBar({ label, obtidos, planejados, meta, cor, unidade = 
           className="absolute top-0 h-full rounded-chip"
           style={{ left: `${pctObtidos}%`, width: `${pctPlanejados}%`, backgroundColor: `${cor}55` }}
         />
-        {meta > 0 && (
-          <div className="absolute -top-0.5 bottom-[-2px] w-[2px] bg-ink" style={{ left: `${pctMeta}%` }} />
-        )}
       </div>
       <div className="w-24 shrink-0 text-right font-data text-body-sm text-ink">
         <span className="font-medium">{obtidos}</span> / {meta} {unidade}

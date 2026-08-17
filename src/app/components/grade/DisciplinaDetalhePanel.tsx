@@ -69,6 +69,7 @@ export function DisciplinaDetalhePanel({ periodoOrdem }: DisciplinaDetalhePanelP
   const turmaSelecionada = dados?.turmas.find((t) => t.id === turmaId);
   const jaMatriculado = dados?.planoItemId !== null && dados?.planoItemId !== undefined;
   const turmaInalterada = jaMatriculado && turmaId === dados?.turmaSelecionadaId;
+  const somenteLeitura = alvo?.somenteLeitura ?? false;
 
   return (
     <>
@@ -119,6 +120,11 @@ export function DisciplinaDetalhePanel({ periodoOrdem }: DisciplinaDetalhePanelP
                   <span>·</span>
                   <span>{dados.creditos} créditos</span>
                 </div>
+                {somenteLeitura && (
+                  <p className="mt-2 text-label text-ink-2">
+                    Período encerrado — matrícula é somente leitura, mas você ainda pode editar os dados da disciplina.
+                  </p>
+                )}
               </div>
               <div className="flex shrink-0 items-center gap-1">
                 <button
@@ -146,13 +152,17 @@ export function DisciplinaDetalhePanel({ periodoOrdem }: DisciplinaDetalhePanelP
                     return (
                       <div
                         key={t.id}
-                        onClick={() => !bloqueada && setTurmaEscolhida(t.id)}
+                        onClick={() => !bloqueada && !somenteLeitura && setTurmaEscolhida(t.id)}
                         className={`relative rounded-card border p-4 ${
                           bloqueada
                             ? "cursor-not-allowed border-danger/30 bg-danger/10"
-                            : selecionada
-                              ? "cursor-pointer border-2 border-primary shadow-resting"
-                              : "cursor-pointer border-hairline shadow-resting hover:bg-recess"
+                            : somenteLeitura
+                              ? selecionada
+                                ? "cursor-default border-2 border-primary shadow-resting"
+                                : "cursor-default border-hairline shadow-resting"
+                              : selecionada
+                                ? "cursor-pointer border-2 border-primary shadow-resting"
+                                : "cursor-pointer border-hairline shadow-resting hover:bg-recess"
                         }`}
                       >
                         {selecionada && !bloqueada && (
@@ -268,7 +278,7 @@ export function DisciplinaDetalhePanel({ periodoOrdem }: DisciplinaDetalhePanelP
             </div>
 
             <footer className="mt-5 flex gap-3 border-t border-hairline pt-4">
-              {dados.planoItemId !== null && (
+              {!somenteLeitura && dados.planoItemId !== null && (
                 <button
                   onClick={remover}
                   disabled={removendo}
@@ -285,8 +295,9 @@ export function DisciplinaDetalhePanel({ periodoOrdem }: DisciplinaDetalhePanelP
                 </button>
               )}
               <Button variant="secondary" className="flex-1" onClick={fechar} type="button">
-                Cancelar
+                {somenteLeitura ? "Fechar" : "Cancelar"}
               </Button>
+              {!somenteLeitura && (
               <Button
                 className="flex-[2]"
                 onClick={matricular}
@@ -306,6 +317,7 @@ export function DisciplinaDetalhePanel({ periodoOrdem }: DisciplinaDetalhePanelP
                   `Matricular na Turma ${turmaSelecionada?.codigo ?? ""}`
                 )}
               </Button>
+              )}
             </footer>
           </>
         )}

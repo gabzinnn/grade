@@ -56,6 +56,11 @@ export default async function PerfilPage() {
 
         <Card className="flex flex-col gap-4 xl:col-span-2">
           <h2 className="border-b border-hairline pb-2 text-body font-semibold text-ink">Compartilhamento</h2>
+          <p className="text-body-sm text-ink-2">
+            Convide alguém aqui para que ela veja e/ou edite o seu plano. Para aparecer a página{" "}
+            <span className="font-medium text-ink">Nossa semana</span> com uma pessoa, é ela quem precisa te convidar
+            por aqui, no perfil dela — peça para repetir esse passo escolhendo o seu nome.
+          </p>
           <Compartilhamento
             planoId={plano.id}
             dono={{ id: perfil.id, nome: perfil.nome }}

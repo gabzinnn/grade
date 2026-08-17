@@ -8,6 +8,7 @@ import { Input } from "@/app/components/ui/Input";
 import { Select } from "@/app/components/ui/Select";
 import { buscarEdicaoDisciplina, salvarDisciplina, excluirDisciplina } from "@/actions/disciplinas";
 import { planejadorQueryKey } from "@/app/components/grade/PlanejadorClient";
+import { disciplinaDetalheQueryKey } from "@/hooks/useDisciplinaDetalhe";
 import type { DisciplinaEditavel, OpcoesEdicaoDisciplina } from "@/lib/disciplinaEdicao";
 
 interface EditarDisciplinaDialogProps {
@@ -127,6 +128,9 @@ export function EditarDisciplinaDialog({ open, onClose, planoPeriodoId, discipli
           turmas: form.turmas,
         });
         queryClient.invalidateQueries({ queryKey: planejadorQueryKey(periodoOrdem) });
+        if (form.disciplinaId) {
+          queryClient.invalidateQueries({ queryKey: disciplinaDetalheQueryKey(planoPeriodoId, form.disciplinaId) });
+        }
         onClose();
       } catch (e) {
         setErro(e instanceof Error ? e.message : "Não foi possível salvar");
@@ -143,6 +147,7 @@ export function EditarDisciplinaDialog({ open, onClose, planoPeriodoId, discipli
       try {
         await excluirDisciplina(id);
         queryClient.invalidateQueries({ queryKey: planejadorQueryKey(periodoOrdem) });
+        queryClient.invalidateQueries({ queryKey: disciplinaDetalheQueryKey(planoPeriodoId, id) });
         onClose();
       } catch (e) {
         setErro(e instanceof Error ? e.message : "Não foi possível excluir");

@@ -1,9 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { getSessionPerfilId, assertPodeEditar } from "@/lib/auth";
+import { planejadorCacheTag } from "@/lib/planejador";
 
 const EnfasesSchema = z.object({
   planoId: z.coerce.number().int(),
@@ -46,6 +47,8 @@ export async function criarBloco(input: z.infer<typeof BlocoSchema>): Promise<vo
 
   revalidatePath("/perfil");
   revalidatePath("/nossa-semana");
+  revalidatePath("/planejador");
+  revalidateTag(planejadorCacheTag(perfilId), "max");
 }
 
 export async function removerBloco(blocoId: number): Promise<void> {
@@ -54,6 +57,8 @@ export async function removerBloco(blocoId: number): Promise<void> {
 
   revalidatePath("/perfil");
   revalidatePath("/nossa-semana");
+  revalidatePath("/planejador");
+  revalidateTag(planejadorCacheTag(perfilId), "max");
 }
 
 const PreferenciasSchema = z.object({

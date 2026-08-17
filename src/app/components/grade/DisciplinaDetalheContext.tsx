@@ -5,6 +5,8 @@ import { createContext, ReactNode, useContext, useState } from "react";
 export interface DisciplinaAlvo {
   disciplinaId: number;
   planoPeriodoId: number;
+  /** Período já encerrado: PlanoItem é imutável no banco (trigger), então só a edição de dados do catálogo fica disponível. */
+  somenteLeitura?: boolean;
 }
 
 interface DisciplinaDetalheState {

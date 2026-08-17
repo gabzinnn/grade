@@ -92,28 +92,20 @@ export function construirTrilha(plano: TrilhaPlano, historico: TrilhaHistorico) 
   const ultimoPeriodo = plano.periodos[plano.periodos.length - 1];
   const formaturaLabel = ultimoPeriodo?.semestre ? `${ultimoPeriodo.semestre.ano}/${ultimoPeriodo.semestre.periodo}` : "—";
 
-  const pontosChart = progressaoCumulativa([
-    passado
-      ? {
-          ordem: passado.ateOrdem,
-          obrigatorias: progresso.find((p) => p.categoriaChave === "OBRIGATORIA")?.obtidos ?? 0,
-          eletivas: progresso.filter((p) => p.categoriaChave !== "OBRIGATORIA").reduce((s, p) => s + p.obtidos, 0),
-        }
-      : { ordem: 0, obrigatorias: 0, eletivas: 0 },
-    // `passado` já resume 1..ateOrdem num único ponto — sem esse filtro um
-    // período fechado (ex.: o 5º) aparecia de novo aqui, duplicando a key.
-    ...plano.periodos
-      .filter((p) => p.ordem > (passado?.ateOrdem ?? 0))
-      .map((p) => ({
-        ordem: p.ordem,
-        obrigatorias: p.itens
-          .filter((i) => categoriaPorDisciplina.get(i.disciplinaId)?.chave === "OBRIGATORIA")
-          .reduce((s, i) => s + Number(i.disciplina.creditos), 0),
-        eletivas: p.itens
-          .filter((i) => categoriaPorDisciplina.get(i.disciplinaId)?.chave !== "OBRIGATORIA")
-          .reduce((s, i) => s + Number(i.disciplina.creditos), 0),
-      })),
-  ]);
+  // Um ponto por período (fechado ou não) — os itens do PlanoItem continuam
+  // presentes depois do fechamento, então dá pra plotar a progressão real
+  // em vez de resumir 1..ateOrdem num único ponto (que escondia 1º-4º do gráfico).
+  const pontosChart = progressaoCumulativa(
+    plano.periodos.map((p) => ({
+      ordem: p.ordem,
+      obrigatorias: p.itens
+        .filter((i) => categoriaPorDisciplina.get(i.disciplinaId)?.chave === "OBRIGATORIA")
+        .reduce((s, i) => s + Number(i.disciplina.creditos), 0),
+      eletivas: p.itens
+        .filter((i) => categoriaPorDisciplina.get(i.disciplinaId)?.chave !== "OBRIGATORIA")
+        .reduce((s, i) => s + Number(i.disciplina.creditos), 0),
+    })),
+  );
   const metaGrafico = Math.max(totalMeta, ...pontosChart.map((p) => p.obrigatoriasAcumuladas + p.eletivasAcumuladas));
 
   const lanes = plano.periodos.map((p) => {
