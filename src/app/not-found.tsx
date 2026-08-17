@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { IconCalendar } from "@/app/components/ui/icons";
-import { logoutAction } from "@/actions/auth";
+import { LogoutButton } from "@/app/components/LogoutButton";
 
 export default function NotFound() {
   return (
@@ -23,11 +23,7 @@ export default function NotFound() {
           <Link href="/" className="nf-btn nf-btn-primary">
             Ir para o início
           </Link>
-          <form action={logoutAction}>
-            <button type="submit" className="nf-btn">
-              Trocar de conta
-            </button>
-          </form>
+          <LogoutButton className="nf-btn">Trocar de conta</LogoutButton>
         </div>
       </div>
 

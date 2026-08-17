@@ -67,9 +67,13 @@ export function LoginForm({ perfis }: Props) {
 
     startTransition(async () => {
       const resultado = await loginAction(fd);
-      // loginAction faz redirect em caso de sucesso, então
-      // só chegamos aqui se houver erro
-      if (resultado?.erro) setErro(resultado.erro);
+      if (resultado?.erro) {
+        setErro(resultado.erro);
+        return;
+      }
+      // Reload completo (não router.push): garante que o QueryClient e todo
+      // estado em memória do usuário anterior sejam descartados.
+      window.location.href = "/";
     });
   }
 

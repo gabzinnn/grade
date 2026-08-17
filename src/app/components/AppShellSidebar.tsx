@@ -4,7 +4,7 @@ import { useAppShellNav } from "@/app/components/AppShellNavContext";
 import { SidebarNav } from "@/app/components/SidebarNav";
 import { Avatar } from "@/app/components/ui/Avatar";
 import { IconCalendar, IconLogOut, IconPanelLeft } from "@/app/components/ui/icons";
-import { logoutAction } from "@/actions/auth";
+import { LogoutButton } from "@/app/components/LogoutButton";
 
 interface AppShellSidebarProps {
   planoNome?: string;
@@ -63,11 +63,9 @@ export function AppShellSidebar({ planoNome, usuarioNome }: AppShellSidebarProps
               (usuarioNome ? (
                 <>
                   <span className="flex-1 text-body-sm text-ink">{usuarioNome}</span>
-                  <form action={logoutAction}>
-                    <button type="submit" title="Sair" className="flex text-ink-2 hover:text-ink">
-                      <IconLogOut />
-                    </button>
-                  </form>
+                  <LogoutButton title="Sair" className="flex text-ink-2 hover:text-ink">
+                    <IconLogOut />
+                  </LogoutButton>
                 </>
               ) : (
                 <span className="h-3 w-20 animate-pulse rounded-chip bg-recess" />

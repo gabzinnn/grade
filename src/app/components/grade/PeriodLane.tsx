@@ -3,6 +3,7 @@ import { CourseBlock } from "@/app/components/grade/CourseBlock";
 import { IconGrid } from "@/app/components/ui/icons";
 import { DisciplinaPrefetchLink } from "@/app/components/grade/DisciplinaPrefetchLink";
 import { FecharPeriodoButton } from "@/app/components/grade/FecharPeriodoButton";
+import { TetoCreditosInput } from "@/app/components/grade/TetoCreditosInput";
 
 export type EstadoPeriodo = "CONCLUIDO" | "ATUAL" | "FUTURO";
 
@@ -38,8 +39,16 @@ export function PeriodLane({ id, ordem, label, creditos, tetoCreditos, estado, i
     <div className="flex w-[280px] shrink-0 flex-col snap-start">
       <div className={`flex items-center justify-between rounded-t-card border border-b-0 border-hairline px-3 py-2.5 ${CABECALHO_POR_ESTADO[estado]}`}>
         <span className="text-caps text-ink">{label}</span>
-        <div className="flex items-center gap-2">
-          <span className="font-data text-label text-ink-2">{creditos} cred</span>
+        <div className="flex items-center gap-1.5">
+          <span className="font-data text-label text-ink-2">{creditos} /</span>
+          {estado === "CONCLUIDO" ? (
+            <span className="font-data text-label text-ink-2">{tetoCreditos} cred</span>
+          ) : (
+            <>
+              <TetoCreditosInput planoPeriodoId={id} tetoCreditos={tetoCreditos} />
+              <span className="font-data text-label text-ink-2">cred</span>
+            </>
+          )}
           {estado === "ATUAL" && <FecharPeriodoButton planoPeriodoId={id} itens={itens} />}
         </div>
       </div>

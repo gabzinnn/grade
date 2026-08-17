@@ -20,6 +20,33 @@ export async function adicionarPeriodo(formData: FormData): Promise<void> {
   revalidatePath("/trilha");
 }
 
+const AtualizarTetoSchema = z.object({
+  planoPeriodoId: z.number().int(),
+  tetoCreditos: z.number().int().min(1).max(60).nullable(),
+});
+
+/** Override manual do teto de créditos do período — ex.: reduzir durante um
+ * estágio, que come parte da carga horária semanal disponível pra aulas. */
+export async function atualizarTetoCreditos(input: z.infer<typeof AtualizarTetoSchema>): Promise<void> {
+  const dados = AtualizarTetoSchema.parse(input);
+
+  const periodo = await db.planoPeriodo.findUniqueOrThrow({
+    where: { id: dados.planoPeriodoId },
+    select: { planoId: true },
+  });
+  await assertPodeEditar(periodo.planoId);
+
+  await db.planoPeriodo.update({
+    where: { id: dados.planoPeriodoId },
+    data: { tetoCreditos: dados.tetoCreditos },
+  });
+
+  revalidatePath("/trilha");
+  revalidatePath("/");
+  revalidatePath("/planejador");
+  updateTag(planejadorCacheTag(await getSessionPerfilId()));
+}
+
 const FecharPeriodoSchema = z.object({
   planoPeriodoId: z.number().int(),
   itens: z.array(

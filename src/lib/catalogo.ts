@@ -24,27 +24,30 @@ export interface CatalogoDisciplina {
 }
 
 export async function construirCatalogo(perfilId: string, cursoId?: number | "all") {
-  const plano = await db.plano.findFirst({
-    where: { principal: true, OR: [{ donoId: perfilId }, { acessos: { some: { perfilId } } }] },
-    select: {
-      id: true,
-      nome: true,
-      versaoCurricularId: true,
-      dono: { select: { nome: true, apelido: true } },
-      versaoCurricular: { select: { curso: { select: { id: true, nome: true } } } },
-      periodos: {
-        where: { encerradoEm: null },
-        orderBy: { ordem: "asc" },
-        take: 1,
-        select: {
-          id: true,
-          ordem: true,
-          semestreId: true,
-          itens: { select: { disciplinaId: true, turma: { select: { horarios: true } } } },
-        },
+  const planoSelect = {
+    id: true,
+    nome: true,
+    versaoCurricularId: true,
+    dono: { select: { nome: true, apelido: true } },
+    versaoCurricular: { select: { curso: { select: { id: true, nome: true } } } },
+    periodos: {
+      where: { encerradoEm: null },
+      orderBy: { ordem: "asc" as const },
+      take: 1,
+      select: {
+        id: true,
+        ordem: true,
+        semestreId: true,
+        itens: { select: { disciplinaId: true, turma: { select: { horarios: true } } } },
       },
     },
-  });
+  };
+  // Prefere o plano principal do próprio perfil; só cai pro plano compartilhado
+  // com ele se não tiver um — um OR simples deixava a ordem ao sabor do
+  // banco e podia trazer o plano de outra pessoa primeiro.
+  const plano =
+    (await db.plano.findFirst({ where: { principal: true, donoId: perfilId }, select: planoSelect })) ??
+    (await db.plano.findFirst({ where: { principal: true, acessos: { some: { perfilId } } }, select: planoSelect }));
   if (!plano) return null;
 
   const cursos = await db.curso.findMany({

@@ -22,10 +22,15 @@ export async function buscarPlanejador(periodoOrdem?: number): Promise<Planejado
 
   const dados = await unstable_cache(
     async (ordem?: number) => {
-      const plano = await db.plano.findFirst({
-        where: { principal: true, OR: [{ donoId: perfilId }, { acessos: { some: { perfilId } } }] },
-        include: planejadorPlanoInclude,
-      });
+      // Prefere o plano principal do próprio perfil; só cai pro plano compartilhado
+      // com ele se não tiver um — um OR simples deixava a ordem ao sabor do
+      // banco e podia trazer o plano de outra pessoa primeiro.
+      const plano =
+        (await db.plano.findFirst({ where: { principal: true, donoId: perfilId }, include: planejadorPlanoInclude })) ??
+        (await db.plano.findFirst({
+          where: { principal: true, acessos: { some: { perfilId } } },
+          include: planejadorPlanoInclude,
+        }));
       if (!plano) return null;
 
       const [historico, blocos] = await Promise.all([

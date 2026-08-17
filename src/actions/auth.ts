@@ -2,9 +2,14 @@
 
 import { compare } from "bcryptjs";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 
+// Sem redirect() aqui de propósito: o cliente faz um reload completo da
+// página após o await (window.location), não uma navegação client-side do
+// Next. O QueryClient (React Query) vive no layout raiz e nunca é
+// desmontado numa navegação soft — se o login/logout trocasse de tela sem
+// recarregar o documento, o cache do usuário anterior (as query keys não
+// são escopadas por perfil) continuaria sendo servido pro novo usuário.
 export async function loginAction(formData: FormData) {
   const perfilId = formData.get("perfilId") as string;
   const senha = (formData.get("senha") as string) ?? "";
@@ -33,11 +38,10 @@ export async function loginAction(formData: FormData) {
     sameSite: "lax",
   });
 
-  redirect("/");
+  return { erro: null };
 }
 
-export async function logoutAction() {
+export async function logoutAction(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete("perfil_id");
-  redirect("/login");
 }
