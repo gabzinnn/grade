@@ -157,7 +157,8 @@ export async function construirDetalheDisciplina(
     creditos: Number(disciplina.creditos),
     cargaHoraria: disciplina.cargaHoraria,
     turmas: turmaOpcoes,
-    turmaSelecionadaId: itemExistente?.turmaId ?? turmaOpcoes.find((t) => !t.conflito)?.id ?? null,
+    // Item existente sem turma não herda a sugestão — senão a UI mostra "Sua turma" sem a grade refletir.
+    turmaSelecionadaId: itemExistente ? itemExistente.turmaId : (turmaOpcoes.find((t) => !t.conflito)?.id ?? null),
     planoItemId: itemExistente?.id ?? null,
     prerequisitos,
     destrava,

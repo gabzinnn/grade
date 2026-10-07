@@ -88,12 +88,14 @@ export async function salvarDisciplina(input: z.infer<typeof SalvarDisciplinaSch
         if (!codigosNovos.has(t.codigo)) await tx.turma.delete({ where: { id: t.id } });
       }
 
+      let primeiraTurmaId: number | null = null;
       for (const t of dados.turmas) {
         const turma = await tx.turma.upsert({
           where: { disciplinaId_semestreId_codigo: { disciplinaId: disciplina.id, semestreId: dados.semestreAtualId, codigo: t.codigo } },
           update: { nome: t.nome || null },
           create: { disciplinaId: disciplina.id, semestreId: dados.semestreAtualId, codigo: t.codigo, nome: t.nome || null },
         });
+        primeiraTurmaId ??= turma.id;
 
         const horariosAtuais = await tx.horarioTurma.findMany({ where: { turmaId: turma.id } });
         const chaveNova = new Set(t.horarios.map((h) => `${h.diaSemana}-${h.inicioMin}`));
@@ -123,6 +125,15 @@ export async function salvarDisciplina(input: z.infer<typeof SalvarDisciplinaSch
         } else {
           await tx.turmaProfessor.deleteMany({ where: { turmaId: turma.id } });
         }
+      }
+
+      // Itens matriculados antes da turma existir (ou cuja turma foi apagada) ficam com
+      // turmaId null e nunca entram na grade. ponytail: liga à 1ª turma; a escolha fina é no detalhe.
+      if (primeiraTurmaId) {
+        await tx.planoItem.updateMany({
+          where: { disciplinaId: disciplina.id, turmaId: null, planoPeriodo: { semestreId: dados.semestreAtualId } },
+          data: { turmaId: primeiraTurmaId },
+        });
       }
     }
   });
