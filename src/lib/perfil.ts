@@ -6,11 +6,12 @@ export async function construirPerfil(perfilId: string) {
     include: {
       versaoCurricular: { include: { curso: true, categorias: { where: { ehEnfase: true }, orderBy: { ordem: "asc" } } } },
       preferencias: true,
-      blocos: { orderBy: [{ diaSemana: "asc" }, { inicioMin: "asc" }] },
+      blocos: { include: { semestre: true }, orderBy: [{ diaSemana: "asc" }, { inicioMin: "asc" }] },
       planos: {
         where: { principal: true },
         include: {
           enfasePrincipal: true,
+          periodos: { where: { semestreId: { not: null } }, orderBy: { ordem: "asc" }, include: { semestre: true } },
           contraEnfase: true,
           acessos: { include: { perfil: { select: { id: true, nome: true, apelido: true } } } },
         },
@@ -30,5 +31,9 @@ export async function construirPerfil(perfilId: string) {
     select: { id: true, nome: true, apelido: true },
   });
 
-  return { perfil, plano, outrosPerfis };
+  const semestres = (plano?.periodos ?? []).flatMap((p) =>
+    p.semestre ? [{ id: p.semestre.id, label: `${p.semestre.ano}/${p.semestre.periodo}` }] : [],
+  );
+
+  return { perfil, plano, outrosPerfis, semestres };
 }

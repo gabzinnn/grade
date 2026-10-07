@@ -28,13 +28,15 @@ interface Bloco {
   diaSemana: number;
   inicioMin: number;
   fimMin: number;
+  semestreLabel: string | null;
 }
 
 interface BlocosFixosProps {
   blocos: Bloco[];
+  semestres: { id: number; label: string }[];
 }
 
-export function BlocosFixos({ blocos }: BlocosFixosProps) {
+export function BlocosFixos({ blocos, semestres }: BlocosFixosProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [removendo, setRemovendo] = useState<number | null>(null);
@@ -60,7 +62,7 @@ export function BlocosFixos({ blocos }: BlocosFixosProps) {
             <div>
               <div className="text-body-sm font-medium text-ink">{b.titulo}</div>
               <div className="mt-0.5 font-data text-label text-ink-2">
-                {DIA_ABREV[b.diaSemana]} {formatHora(b.inicioMin)} - {formatHora(b.fimMin)}
+                {DIA_ABREV[b.diaSemana]} {formatHora(b.inicioMin)} - {formatHora(b.fimMin)} · {b.semestreLabel ?? "sempre"}
               </div>
             </div>
           </div>
@@ -83,7 +85,7 @@ export function BlocosFixos({ blocos }: BlocosFixosProps) {
       >
         + Adicionar horário fixo
       </button>
-      <AdicionarBlocoDialog open={dialogAberto} onClose={() => setDialogAberto(false)} />
+      <AdicionarBlocoDialog open={dialogAberto} onClose={() => setDialogAberto(false)} semestres={semestres} />
     </div>
   );
 }

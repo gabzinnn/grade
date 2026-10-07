@@ -69,3 +69,20 @@ export function construirEstagioTurnos(itens: ItemComHorarioNome[]): EstagioTurn
 
   return { dias, score, mensagens };
 }
+
+export interface BlocoHoras {
+  tipo: string;
+  semestreId: number | null;
+  inicioMin: number;
+  fimMin: number;
+}
+
+/** Regra UFRJ: com estágio, o período comporta no máximo 52 − (horas semanais de estágio) créditos.
+ * Conta os blocos ESTAGIO que valem pra sempre ou especificamente nesse semestre. */
+export function tetoComEstagio(teto: number, blocos: BlocoHoras[], semestreId: number | null): number {
+  const minutos = blocos
+    .filter((b) => b.tipo === "ESTAGIO" && (b.semestreId === null || b.semestreId === semestreId))
+    .reduce((s, b) => s + (b.fimMin - b.inicioMin), 0);
+  if (minutos === 0) return teto;
+  return Math.max(0, Math.min(teto, Math.floor(52 - minutos / 60)));
+}

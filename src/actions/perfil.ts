@@ -36,6 +36,7 @@ const BlocoSchema = z.object({
   diaSemana: z.number().int().min(1).max(7),
   inicioMin: z.number().int().min(0).max(1439),
   fimMin: z.number().int().min(0).max(1439),
+  semestreId: z.number().int().nullable(),
 });
 
 export async function criarBloco(input: z.infer<typeof BlocoSchema>): Promise<void> {

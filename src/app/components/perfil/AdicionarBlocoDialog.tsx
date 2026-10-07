@@ -32,9 +32,10 @@ function minutosDoHorario(hhmm: string): number {
 interface AdicionarBlocoDialogProps {
   open: boolean;
   onClose: () => void;
+  semestres: { id: number; label: string }[];
 }
 
-export function AdicionarBlocoDialog({ open, onClose }: AdicionarBlocoDialogProps) {
+export function AdicionarBlocoDialog({ open, onClose, semestres }: AdicionarBlocoDialogProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [titulo, setTitulo] = useState("");
@@ -42,6 +43,7 @@ export function AdicionarBlocoDialog({ open, onClose }: AdicionarBlocoDialogProp
   const [diaSemana, setDiaSemana] = useState(1);
   const [inicio, setInicio] = useState("08:00");
   const [fim, setFim] = useState("10:00");
+  const [semestreId, setSemestreId] = useState<number | null>(null);
   const [erro, setErro] = useState<string | null>(null);
 
   function salvar() {
@@ -54,6 +56,7 @@ export function AdicionarBlocoDialog({ open, onClose }: AdicionarBlocoDialogProp
           diaSemana,
           inicioMin: minutosDoHorario(inicio),
           fimMin: minutosDoHorario(fim),
+          semestreId,
         });
         router.refresh();
         setTitulo("");
@@ -80,6 +83,18 @@ export function AdicionarBlocoDialog({ open, onClose }: AdicionarBlocoDialogProp
           {DIAS.map((d) => (
             <option key={d.valor} value={d.valor}>
               {d.label}
+            </option>
+          ))}
+        </Select>
+        <Select
+          aria-label="Vale para"
+          value={semestreId ?? ""}
+          onChange={(e) => setSemestreId(e.target.value ? Number(e.target.value) : null)}
+        >
+          <option value="">Vale para todos os períodos</option>
+          {semestres.map((s) => (
+            <option key={s.id} value={s.id}>
+              Só em {s.label}
             </option>
           ))}
         </Select>

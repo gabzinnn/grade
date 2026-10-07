@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { construirEstagioTurnos } from "./estagio";
+import { construirEstagioTurnos, tetoComEstagio } from "./estagio";
 
 describe("construirEstagioTurnos", () => {
   it("dá score 5 quando todo dia tem manhã ou tarde livre", () => {
@@ -28,5 +28,20 @@ describe("construirEstagioTurnos", () => {
       { nome: "EEI634", horarios: [{ diaSemana: 3, inicioMin: 840, fimMin: 960 }] },
     ]);
     expect(out.mensagens).toEqual([{ diaSemana: 3, texto: "Quarta perdeu a tarde por causa de EEI634 (14:00–16:00)" }]);
+  });
+});
+
+describe("tetoComEstagio", () => {
+  const estagio = (semestreId: number | null, horas: number) => ({ tipo: "ESTAGIO", semestreId, inicioMin: 480, fimMin: 480 + horas * 60 });
+
+  it("sem estágio mantém o teto", () => {
+    expect(tetoComEstagio(32, [{ tipo: "PESSOAL", semestreId: null, inicioMin: 0, fimMin: 1200 }], 1)).toBe(32);
+  });
+  it("30h de estágio → min(32, 22) = 22", () => {
+    expect(tetoComEstagio(32, [1, 2, 3, 4, 5].map(() => estagio(7, 6)), 7)).toBe(22);
+  });
+  it("estágio de outro semestre não conta; pouco estágio não sobe o teto", () => {
+    expect(tetoComEstagio(32, [estagio(8, 30)], 7)).toBe(32);
+    expect(tetoComEstagio(32, [estagio(null, 4)], 7)).toBe(32);
   });
 });

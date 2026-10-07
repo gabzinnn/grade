@@ -6,6 +6,7 @@ import { SubmitButton } from "@/app/components/ui/SubmitButton";
 import { PeriodRail } from "@/app/components/grade/PeriodRail";
 import { PeriodLane } from "@/app/components/grade/PeriodLane";
 import { CreditBalanceChart } from "@/app/components/grade/CreditBalanceChart";
+import { MetaCRCalculadora } from "@/app/components/grade/MetaCRCalculadora";
 import { db } from "@/lib/db";
 import { getSessionPerfilId } from "@/lib/auth";
 import { construirTrilha, trilhaPlanoInclude } from "@/lib/trilha";
@@ -67,6 +68,17 @@ export default async function TrilhaPage() {
                 <p className="text-label text-ink-2">créditos concluídos</p>
               </div>
               <ProgressRing value={trilha.totalObtidos} max={trilha.totalMeta || 1} />
+            </Card>
+
+            <Card>
+              <p className="text-caps uppercase text-ink-2">CRA</p>
+              <p className="text-title font-semibold text-ink">{trilha.cra.cr?.toFixed(2) ?? "—"}</p>
+              <p className="mb-4 text-label text-ink-2">{trilha.cra.creditos} créditos com nota</p>
+              <MetaCRCalculadora
+                soma={trilha.cra.soma}
+                creditos={trilha.cra.creditos}
+                creditosFuturos={trilha.creditosFuturos}
+              />
             </Card>
 
             <Card>

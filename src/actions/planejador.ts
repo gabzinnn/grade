@@ -37,7 +37,7 @@ export async function buscarPlanejador(periodoOrdem?: number): Promise<Planejado
         db.historicoItem.findMany({ where: { perfilId: plano.donoId } }),
         db.blocoIndisponibilidade.findMany({
           where: { perfilId: plano.donoId },
-          select: { id: true, titulo: true, diaSemana: true, inicioMin: true, fimMin: true, semestreId: true },
+          select: { id: true, titulo: true, tipo: true, diaSemana: true, inicioMin: true, fimMin: true, semestreId: true },
         }),
       ]);
       return construirPlanejador(plano, historico, ordem, blocos);

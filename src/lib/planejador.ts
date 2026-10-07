@@ -3,7 +3,7 @@ import { choque, diasPresenciais, creditosDoPeriodo, turnoDe, Intervalo, Turno }
 import { prerequisitosCumpridos } from "@/lib/requisitos";
 import { corPorDisciplina } from "@/lib/cor";
 import { detectarChoques, detectarPreRequisitosPendentes, Alerta } from "@/lib/alertas";
-import { construirEstagioTurnos } from "@/lib/estagio";
+import { construirEstagioTurnos, tetoComEstagio } from "@/lib/estagio";
 import { WeekGridItem } from "@/app/components/grade/WeekGrid";
 import { PendingItemData } from "@/app/components/grade/PendingSidebar";
 import { EstadoPeriodo } from "@/app/components/grade/PeriodLane";
@@ -47,6 +47,7 @@ export function planejadorCacheTag(perfilId: string): string {
 export interface PlanejadorBloco {
   id: number;
   titulo: string;
+  tipo: string;
   diaSemana: number;
   inicioMin: number;
   fimMin: number;
@@ -182,7 +183,7 @@ export function construirPlanejador(
     ordem: p.ordem,
     encerrado: p.encerradoEm !== null,
     creditos: creditosDoPeriodo(p.itens.map((i) => ({ creditos: Number(i.disciplina.creditos) }))),
-    tetoCreditos: p.tetoCreditos ?? plano.versaoCurricular.tetoCreditosPadrao,
+    tetoCreditos: tetoComEstagio(p.tetoCreditos ?? plano.versaoCurricular.tetoCreditosPadrao, blocos, p.semestreId),
     temChoque: detectarChoques(p.itens.map((i) => ({ nome: i.disciplina.nome, horarios: i.turma?.horarios ?? [] }))).length > 0,
     semestreLabel: p.semestre ? `${p.semestre.ano}/${p.semestre.periodo}` : undefined,
   }));

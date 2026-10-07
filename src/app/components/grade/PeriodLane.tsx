@@ -24,8 +24,11 @@ interface PeriodLaneProps {
   label: string;
   creditos: number;
   tetoCreditos: number;
+  /** teto já descontado o estágio do semestre — igual a tetoCreditos quando não há estágio */
+  tetoEstagio?: number;
   estado: EstadoPeriodo;
   itens: PeriodLaneItem[];
+  cr?: number;
 }
 
 const CABECALHO_POR_ESTADO: Record<EstadoPeriodo, string> = {
@@ -34,11 +37,14 @@ const CABECALHO_POR_ESTADO: Record<EstadoPeriodo, string> = {
   FUTURO: "bg-recess/60",
 };
 
-export function PeriodLane({ id, ordem, label, creditos, tetoCreditos, estado, itens }: PeriodLaneProps) {
+export function PeriodLane({ id, ordem, label, creditos, tetoCreditos, tetoEstagio = tetoCreditos, estado, itens, cr }: PeriodLaneProps) {
   return (
     <div className="flex w-[280px] shrink-0 flex-col snap-start">
       <div className={`flex items-center justify-between rounded-t-card border border-b-0 border-hairline px-3 py-2.5 ${CABECALHO_POR_ESTADO[estado]}`}>
-        <span className="text-caps text-ink">{label}</span>
+        <span className="text-caps text-ink">
+          {label}
+          {cr !== undefined && <span className="ml-2 font-data text-ink-2">CR {cr.toFixed(1)}</span>}
+        </span>
         <div className="flex items-center gap-1.5">
           <span className="font-data text-label text-ink-2">{creditos} /</span>
           {estado === "CONCLUIDO" ? (
@@ -47,6 +53,14 @@ export function PeriodLane({ id, ordem, label, creditos, tetoCreditos, estado, i
             <>
               <TetoCreditosInput planoPeriodoId={id} tetoCreditos={tetoCreditos} />
               <span className="font-data text-label text-ink-2">cred</span>
+              {tetoEstagio < tetoCreditos && (
+                <span
+                  className="font-data text-label text-warn"
+                  title={`Com o estágio desse semestre, o máximo é ${tetoEstagio} créditos (52 − horas de estágio)`}
+                >
+                  · máx {tetoEstagio}
+                </span>
+              )}
             </>
           )}
           {estado === "ATUAL" && <FecharPeriodoButton planoPeriodoId={id} itens={itens} />}
@@ -85,7 +99,7 @@ export function PeriodLane({ id, ordem, label, creditos, tetoCreditos, estado, i
             </DisciplinaPrefetchLink>
           ),
         )}
-        {estado !== "CONCLUIDO" && creditos < tetoCreditos && (
+        {estado !== "CONCLUIDO" && creditos < tetoEstagio && (
           <Link
             href={`/planejador?periodo=${ordem}`}
             className="relative mt-1 flex h-20 flex-col items-center justify-center gap-1 rounded-block border border-dashed border-hairline bg-recess/50 text-ink-2 transition-colors hover:border-primary/50"

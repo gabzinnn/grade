@@ -38,6 +38,7 @@ async function carregarPessoa(donoId: string): Promise<Pessoa | null> {
       where: { plano: { donoId, principal: true }, encerradoEm: null },
       orderBy: { ordem: "asc" },
       select: {
+        semestreId: true,
         itens: {
           select: {
             disciplina: { select: { id: true, codigo: true, nome: true } },
@@ -48,7 +49,7 @@ async function carregarPessoa(donoId: string): Promise<Pessoa | null> {
     }),
     db.blocoIndisponibilidade.findMany({
       where: { perfilId: donoId },
-      select: { titulo: true, diaSemana: true, inicioMin: true, fimMin: true },
+      select: { titulo: true, diaSemana: true, inicioMin: true, fimMin: true, semestreId: true },
     }),
   ]);
 
@@ -63,12 +64,15 @@ async function carregarPessoa(donoId: string): Promise<Pessoa | null> {
     })),
   );
 
-  const blocosPessoaisFormatados: BlocoPessoa[] = blocosPessoais.map((b) => ({
-    titulo: b.titulo,
-    diaSemana: b.diaSemana,
-    inicioMin: b.inicioMin,
-    fimMin: b.fimMin,
-  }));
+  // mesma regra do planejador: bloco sem semestre vale sempre, com semestre só naquele período
+  const blocosPessoaisFormatados: BlocoPessoa[] = blocosPessoais
+    .filter((b) => b.semestreId === null || b.semestreId === periodoAtual?.semestreId)
+    .map((b) => ({
+      titulo: b.titulo,
+      diaSemana: b.diaSemana,
+      inicioMin: b.inicioMin,
+      fimMin: b.fimMin,
+    }));
 
   return {
     perfilId: perfil.id,

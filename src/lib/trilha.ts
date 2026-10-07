@@ -1,12 +1,20 @@
 import { Prisma } from "@prisma/client";
 import { creditosPorCategoria, progressaoCumulativa, CreditoItem } from "@/lib/requisitos";
 import { corPorDisciplina } from "@/lib/cor";
+import { acumularCR } from "@/lib/cr";
+import { tetoComEstagio } from "@/lib/estagio";
 import { EstadoPeriodo } from "@/app/components/grade/PeriodLane";
 
 const APROVADOS: Array<"CONCLUIDA" | "DISPENSADA"> = ["CONCLUIDA", "DISPENSADA"];
 
 export const trilhaPlanoInclude = {
-  dono: { select: { nome: true, apelido: true } },
+  dono: {
+    select: {
+      nome: true,
+      apelido: true,
+      blocos: { where: { tipo: "ESTAGIO" as const }, select: { tipo: true, semestreId: true, inicioMin: true, fimMin: true } },
+    },
+  },
   versaoCurricular: {
     include: {
       categorias: true,
@@ -36,7 +44,14 @@ export function construirTrilha(plano: TrilhaPlano, historico: TrilhaHistorico) 
   const { enfasePrincipalId, contraEnfaseId, versaoCurricular } = plano;
 
   const categoriaPorDisciplina = new Map(versaoCurricular.disciplinas.map((dv) => [dv.disciplinaId, dv.categoria]));
-  const historicoPorDisciplina = new Map(historico.map((h) => [h.disciplinaId, h]));
+  // chave (disciplina, semestre): refazer uma reprovada não pode apagar a nota da lane antiga
+  const historicoPorChave = new Map(historico.map((h) => [`${h.disciplinaId}:${h.semestreId}`, h]));
+  const itemCR = (h: TrilhaHistorico[number]) => ({
+    status: h.status,
+    nota: h.nota === null ? null : Number(h.nota),
+    creditos: Number(h.disciplina.creditos),
+  });
+  const cra = acumularCR(historico.map(itemCR));
 
   // ponytail: categoria de ênfase não tem creditosExigidos fixo — vem de RegraEnfase
   // conforme o papel (PRINCIPAL/CONTRA) que o plano deu a ela.
@@ -47,6 +62,9 @@ export function construirTrilha(plano: TrilhaPlano, historico: TrilhaHistorico) 
     const regra = versaoCurricular.regrasEnfase.find((r) => r.papel === papel);
     return regra ? Number(regra.creditosExigidos) : 0;
   }
+
+  const tetoDoPeriodo = (p: (typeof plano.periodos)[number]) =>
+    tetoComEstagio(p.tetoCreditos ?? versaoCurricular.tetoCreditosPadrao, plano.dono.blocos, p.semestreId);
 
   const metaPorChave = new Map(versaoCurricular.categorias.map((c) => [c.chave, metaDaCategoria(c)]));
 
@@ -85,7 +103,7 @@ export function construirTrilha(plano: TrilhaPlano, historico: TrilhaHistorico) 
   const nos = plano.periodos.map((p) => ({
     ordem: p.ordem,
     creditos: p.itens.reduce((s, i) => s + Number(i.disciplina.creditos), 0),
-    tetoCreditos: p.tetoCreditos ?? versaoCurricular.tetoCreditosPadrao,
+    tetoCreditos: tetoDoPeriodo(p),
     atual: p.ordem === primeiroOrdemAberto,
   }));
 
@@ -116,9 +134,13 @@ export function construirTrilha(plano: TrilhaPlano, historico: TrilhaHistorico) 
       label: p.semestre ? `${p.semestre.ano}.${p.semestre.periodo}` : `${p.ordem}º período`,
       creditos: p.itens.reduce((s, i) => s + Number(i.disciplina.creditos), 0),
       tetoCreditos: p.tetoCreditos ?? versaoCurricular.tetoCreditosPadrao,
+      tetoEstagio: tetoDoPeriodo(p),
       estado,
+      cr: p.encerradoEm
+        ? (acumularCR(historico.filter((h) => h.semestreId === p.semestreId).map(itemCR)).cr ?? undefined)
+        : undefined,
       itens: p.itens.map((item) => {
-        const hist = historicoPorDisciplina.get(item.disciplinaId);
+        const hist = historicoPorChave.get(`${item.disciplinaId}:${p.semestreId}`);
         const local = item.turma?.horarios[0]?.local;
         return {
           disciplinaId: item.disciplinaId,
@@ -127,7 +149,7 @@ export function construirTrilha(plano: TrilhaPlano, historico: TrilhaHistorico) 
           corCategoria: categoriaPorDisciplina.get(item.disciplinaId)?.corHex ?? "#7A7367",
           corDisciplina: corPorDisciplina(String(item.disciplinaId)),
           sala: local ? `${local.predio} ${local.sala}` : undefined,
-          nota: hist?.nota ? Number(hist.nota) : undefined,
+          nota: hist?.nota != null ? Number(hist.nota) : undefined,
           reprovada: hist?.status === "REPROVADA",
         };
       }),
@@ -145,5 +167,9 @@ export function construirTrilha(plano: TrilhaPlano, historico: TrilhaHistorico) 
     pontosChart,
     metaGrafico: metaGrafico || 1,
     lanes,
+    cra,
+    creditosFuturos: plano.periodos
+      .filter((p) => p.encerradoEm === null)
+      .reduce((s, p) => s + p.itens.reduce((t, i) => t + Number(i.disciplina.creditos), 0), 0),
   };
 }

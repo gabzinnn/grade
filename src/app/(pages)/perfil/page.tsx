@@ -10,7 +10,7 @@ import { construirPerfil } from "@/lib/perfil";
 
 export default async function PerfilPage() {
   const perfilId = await getSessionPerfilId();
-  const { perfil, plano, outrosPerfis } = await construirPerfil(perfilId);
+  const { perfil, plano, outrosPerfis, semestres } = await construirPerfil(perfilId);
   if (!plano) notFound();
 
   return (
@@ -51,7 +51,13 @@ export default async function PerfilPage() {
 
         <Card className="flex flex-col gap-4">
           <h2 className="border-b border-hairline pb-2 text-body font-semibold text-ink">Meus horários fixos</h2>
-          <BlocosFixos blocos={perfil.blocos} />
+          <BlocosFixos
+            blocos={perfil.blocos.map((b) => ({
+              ...b,
+              semestreLabel: b.semestre ? `${b.semestre.ano}/${b.semestre.periodo}` : null,
+            }))}
+            semestres={semestres}
+          />
         </Card>
 
         <Card className="flex flex-col gap-4 xl:col-span-2">
