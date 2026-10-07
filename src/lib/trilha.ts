@@ -46,6 +46,13 @@ export function construirTrilha(plano: TrilhaPlano, historico: TrilhaHistorico) 
   const categoriaPorDisciplina = new Map(versaoCurricular.disciplinas.map((dv) => [dv.disciplinaId, dv.categoria]));
   // chave (disciplina, semestre): refazer uma reprovada não pode apagar a nota da lane antiga
   const historicoPorChave = new Map(historico.map((h) => [`${h.disciplinaId}:${h.semestreId}`, h]));
+  // histórico importado do BOA vem sem semestre: atribui à última tentativa
+  // encerrada da matéria (a aprovada), não às reprovações anteriores.
+  const ultimaTentativa = new Map<number, number>();
+  for (const p of plano.periodos) if (p.encerradoEm) for (const i of p.itens) ultimaTentativa.set(i.disciplinaId, p.ordem);
+  const historicoDoItem = (disciplinaId: number, p: (typeof plano.periodos)[number]) =>
+    historicoPorChave.get(`${disciplinaId}:${p.semestreId}`) ??
+    (ultimaTentativa.get(disciplinaId) === p.ordem ? historicoPorChave.get(`${disciplinaId}:null`) : undefined);
   const itemCR = (h: TrilhaHistorico[number]) => ({
     status: h.status,
     nota: h.nota === null ? null : Number(h.nota),
@@ -137,10 +144,10 @@ export function construirTrilha(plano: TrilhaPlano, historico: TrilhaHistorico) 
       tetoEstagio: tetoDoPeriodo(p),
       estado,
       cr: p.encerradoEm
-        ? (acumularCR(historico.filter((h) => h.semestreId === p.semestreId).map(itemCR)).cr ?? undefined)
+        ? (acumularCR(p.itens.flatMap((i) => historicoDoItem(i.disciplinaId, p) ?? []).map(itemCR)).cr ?? undefined)
         : undefined,
       itens: p.itens.map((item) => {
-        const hist = historicoPorChave.get(`${item.disciplinaId}:${p.semestreId}`);
+        const hist = historicoDoItem(item.disciplinaId, p);
         const local = item.turma?.horarios[0]?.local;
         return {
           disciplinaId: item.disciplinaId,
